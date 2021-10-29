@@ -23,7 +23,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <GPIOS.h>
+#include <TIMERS.h>
+#include <MOTORS.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +52,6 @@ IPCC_HandleTypeDef hipcc;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
-static void MX_GPIO_Init(void);
 static void MX_IPCC_Init(void);
 int MX_OPENAMP_Init(int RPMsgRole, rpmsg_ns_bind_cb ns_bind_cb);
 /* USER CODE BEGIN PFP */
@@ -105,8 +106,26 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+
   /* USER CODE BEGIN 2 */
+
+/* ------------------- GPIOS ------------------- */
+  GPIO_Init();
+
+
+/* ------------------- IPCC ------------------- */
+
+
+
+/* ------------------- MOTORS ------------------- */
+  TIMER_INIT();
+  TIMER4_RUN(); //lance le timer 4 des moteurs
+  ON_LED(LED8_BLUE);
+
+/* ------------------- ROBOT ------------------- */
+
+
+
 
   /* USER CODE END 2 */
 
@@ -114,10 +133,26 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+
+      //Toggle de la led orange pour valider le boot (à enlever plus tard)
+      TOGGLE_LED(LED7_ORANGE);
+      HAL_Delay(100);
+
+
+
+
+      /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+
+
+
   }
+
+
+
+
   /* USER CODE END 3 */
 }
 
@@ -248,19 +283,6 @@ static void MX_IPCC_Init(void)
 
 }
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-
-}
 
 /* USER CODE BEGIN 4 */
 
