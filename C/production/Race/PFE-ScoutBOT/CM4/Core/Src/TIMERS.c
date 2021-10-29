@@ -108,10 +108,13 @@ extern void TIM4_setDuty(uint32_t duty){
 
 
 extern void TIMER4_RUN(){
-	__HAL_TIM_ENABLE(&htim4);
+	  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+	  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+	  __HAL_TIM_ENABLE(&htim4);
 }
 
 extern void TIMER4_STOP(){
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_4);
 	__HAL_TIM_DISABLE(&htim4);
 }
-
