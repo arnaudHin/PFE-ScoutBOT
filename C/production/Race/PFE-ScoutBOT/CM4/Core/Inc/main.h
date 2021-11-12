@@ -29,6 +29,21 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32mp1xx_hal.h"
+#include <config.h>
+#include <lib/stm32mp1xx_systemclock.h>
+#include <lib/stm32mp1xx_gpio.h>
+#include <lib/stm32mp1xx_uart.h>
+#include <lib/stm32mp1xx_vuart.h>
+#include <lib/stm32mp1xx_ipcc.h>
+#include <com_pocket/dispatcher_robot.h>
+#include <com_pocket/postman_robot.h>
+#include <lib/TIMERS.h>
+#include <lib/MOTORS.h>
+//#include "openamp.h"
+//#include "openamp_log.h"
+//#include "virt_uart.h"
+
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */

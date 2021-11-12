@@ -9,6 +9,8 @@
 #define INC_TIMERS_H_
 
 #include "stm32mp1xx_hal.h"
+#include <lib/stm32mp1xx_gpio.h>
+#include <config.h>
 
 extern void TIMER_INIT();
 extern void TIM4_setDuty(uint32_t duty);

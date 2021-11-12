@@ -5,8 +5,7 @@
  *      Author: Arnaud
  */
 
-#include "GPIOS.h"
-#include "TIMERS.h"
+#include <lib/TIMERS.h>
 
 
 extern void MOTORS_stop(){

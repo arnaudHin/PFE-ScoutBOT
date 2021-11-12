@@ -7,8 +7,8 @@
 
 
 #include "stm32mp1xx_hal.h"
-#include "TIMERS.h"
-#include "GPIOS.h"
+#include <lib/TIMERS.h>
+#include <lib/stm32mp1xx_gpio.h>
 
 
 static TIM_HandleTypeDef htim4;
