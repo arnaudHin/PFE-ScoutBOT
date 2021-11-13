@@ -1,5 +1,5 @@
 /*
- * TIMERS.c
+ * stm32mp1xx_timer.c
  *
  *  Created on: Oct 18, 2021
  *: Arnaud
@@ -7,8 +7,8 @@
 
 
 #include "stm32mp1xx_hal.h"
-#include <lib/TIMERS.h>
 #include <lib/stm32mp1xx_gpio.h>
+#include <lib/stm32mp1xx_timer.h>
 
 
 static TIM_HandleTypeDef htim4;
@@ -21,15 +21,9 @@ static void TIM4_GPIO_INIT();
 
 extern void TIMER_INIT(){
 
-
-
   TIM4_INIT();
 
-
-
-
 }
-
 
 static void TIM4_INIT(){
 
@@ -41,7 +35,7 @@ static void TIM4_INIT(){
 
   //config du timer
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 104*1;
+  htim4.Init.Prescaler = 104*3;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 100;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -96,7 +90,6 @@ static void TIM4_GPIO_INIT(){
   HAL_GPIO_WritePin( ENABLE_MOTOR_NEGATIVE, SET );
   HAL_GPIO_WritePin( DIR_MOTOR_LEFT_NEGATIVE, SET ); //forward
   HAL_GPIO_WritePin( DIR_MOTOR_RIGHT_NEGATIVE, RESET ); //forward
-
 }
 
 

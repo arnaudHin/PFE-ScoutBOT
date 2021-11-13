@@ -43,11 +43,12 @@ static void dispatcher_robot_decode_msg(Pilot_message_r msg){
 
 	case ASK_FOR_BACKWARD_DIRECTION:
 		printf("backward\n");
+		MOTORS_backward();
 		break;
 
 	case ASK_FOR_STOP:
 		printf("stop\n");
-		MOTORS_backward();
+		MOTORS_stop();
 		break;
 
 	case ASK_FOR_URGENT_BREAK:

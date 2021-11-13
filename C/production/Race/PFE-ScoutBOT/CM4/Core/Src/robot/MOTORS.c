@@ -5,7 +5,7 @@
  *      Author: Arnaud
  */
 
-#include <lib/TIMERS.h>
+#include <lib/stm32mp1xx_timer.h>
 
 
 extern void MOTORS_stop(){

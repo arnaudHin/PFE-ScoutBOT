@@ -1,5 +1,5 @@
 /*
- * TIMERS.h
+ * stm32mp1xx_timer.h
  *
  *  Created on: Oct 18, 2021
  *      Author: Arnaud

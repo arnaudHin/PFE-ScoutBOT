@@ -37,8 +37,8 @@ extern "C" {
 #include <lib/stm32mp1xx_ipcc.h>
 #include <com_pocket/dispatcher_robot.h>
 #include <com_pocket/postman_robot.h>
-#include <lib/TIMERS.h>
-#include <lib/MOTORS.h>
+#include <lib/stm32mp1xx_timer.h>
+#include <robot/MOTORS.h>
 //#include "openamp.h"
 //#include "openamp_log.h"
 //#include "virt_uart.h"

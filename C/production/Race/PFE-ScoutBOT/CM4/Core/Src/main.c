@@ -43,8 +43,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint8_t  myVUARTbuffer[6] = {'a','b','c','d','e','\n'};
-uint16_t bytesToRead = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -123,7 +122,6 @@ int main(void)
   {
 
 	  postman_robot_run();
-
 
   }
   /* USER CODE END 3 */

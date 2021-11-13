@@ -10,7 +10,7 @@
 
 #include "stm32mp1xx.h"
 #include "com_pocket/postman_robot.h"
-#include "lib/MOTORS.h"
+#include "robot/MOTORS.h"
 
 
 extern void dispatcher_robot_set_msg(Pilot_message_r msg);
