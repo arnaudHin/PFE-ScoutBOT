@@ -1,0 +1,17 @@
+stm32mp1xx_hal_ipcc.c:125:19:HAL_IPCC_Init	24	static
+stm32mp1xx_hal_ipcc.c:174:19:HAL_IPCC_DeInit	24	static
+stm32mp1xx_hal_ipcc.c:218:13:HAL_IPCC_MspInit	16	static
+stm32mp1xx_hal_ipcc.c:233:13:HAL_IPCC_MspDeInit	16	static
+stm32mp1xx_hal_ipcc.c:311:19:HAL_IPCC_ActivateNotification	32	static
+stm32mp1xx_hal_ipcc.c:368:19:HAL_IPCC_DeActivateNotification	32	static
+stm32mp1xx_hal_ipcc.c:422:27:HAL_IPCC_GetChannelStatus	40	static
+stm32mp1xx_hal_ipcc.c:463:19:HAL_IPCC_NotifyCPU	40	static
+stm32mp1xx_hal_ipcc.c:510:6:HAL_IPCC_TX_IRQHandler	32	static
+stm32mp1xx_hal_ipcc.c:548:6:HAL_IPCC_RX_IRQHandler	40	static
+stm32mp1xx_hal_ipcc.c:596:13:HAL_IPCC_RxCallback	24	static
+stm32mp1xx_hal_ipcc.c:621:13:HAL_IPCC_TxCallback	24	static
+stm32mp1xx_hal_ipcc.c:657:23:HAL_IPCC_GetState	16	static
+stm32mp1xx_hal_ipcc.c:686:6:IPCC_MaskInterrupt	24	static
+stm32mp1xx_hal_ipcc.c:716:6:IPCC_UnmaskInterrupt	24	static
+stm32mp1xx_hal_ipcc.c:739:6:IPCC_SetDefaultCallbacks	24	static
+stm32mp1xx_hal_ipcc.c:754:6:IPCC_Reset_Register	16	static

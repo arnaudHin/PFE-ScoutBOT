@@ -1,0 +1,7 @@
+mutex.h:65:20:__metal_mutex_acquire	32	static
+mutex.h:75:20:__metal_mutex_release	24	static
+mutex.h:80:19:__metal_mutex_is_acquired	24	static
+mutex.h:57:20:metal_mutex_acquire	16	static
+mutex.h:67:20:metal_mutex_release	16	static
+mutex.h:77:19:metal_mutex_is_acquired	16	static
+condition.c:17:5:metal_condition_wait	64	static

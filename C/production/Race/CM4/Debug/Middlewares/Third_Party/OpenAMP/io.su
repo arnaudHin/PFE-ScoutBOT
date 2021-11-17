@@ -1,0 +1,5 @@
+io.h:132:1:metal_io_virt	16	static
+io.c:12:6:metal_io_init	64	static
+io.c:35:5:metal_io_block_read	56	static
+io.c:72:5:metal_io_block_write	56	static
+io.c:109:5:metal_io_block_set	56	static
