@@ -1,0 +1,35 @@
+
+
+@startuml
+
+
+skinparam monochrome false
+skinparam shadowing false
+
+frame Remote as "Remote" #LightYellow {
+
+    folder comPocket as "comPocket" #WhiteSmoke;line:IndianRed; {
+        class PostmanPocketRemote <<medium>>
+        class DispatcherPocketRemote <<medium>>
+        class ProtocolPocketRemote <<medium>>
+        class ProxyPilot <<medium>>
+    }
+
+    folder appli as "appli" #WhiteSmoke;line:IndianRed; {
+
+        class Appli
+
+    }
+
+
+}
+
+DispatcherPocketRemote --> PostmanPocketRemote
+ProxyPilot --> PostmanPocketRemote
+ProxyPilot --> ProtocolPocketRemote
+DispatcherPocketRemote --> ProtocolPocketRemote
+
+Appli --> ProxyPilot
+DispatcherPocketRemote -> Appli
+
+@enduml

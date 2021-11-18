@@ -1,0 +1,67 @@
+@startuml
+
+left to right direction
+
+skinparam monochrome false
+skinparam shadowing false
+
+
+
+frame Pocket as "Pocket" #LightYellow {
+
+    folder comRace as "comRace" #WhiteSmoke;line:IndianRed; {
+
+        class DispatcherRacePocket <<active>> <<medium>>
+        class  PostmanRacePocket <<medium>>
+        class ProxyRace <<medium>>
+        class ProtocolRacePocket <<medium>>
+
+    }
+
+    folder comRemote as "comRemote" #WhiteSmoke;line:IndianRed; {
+        class DispatcherRemotePocket <<active>> <<medium>>
+        class  PostmanRemotePocket <<medium>>
+        class ProxyRemote <<medium>>
+        class ProtocolRemotePocket <<medium>>
+
+    }
+
+    folder pilot as "pilot" #WhiteSmoke;line:IndianRed; {
+        class Pilot <<active>>
+    }
+
+    folder localizer as "localizer" #WhiteSmoke;line:IndianRed; {
+
+        folder mapping as "mapping" #WhiteSmoke;line:IndianRed; {
+            class Mapper
+
+        }
+
+        folder positionning as "positionning" #WhiteSmoke;line:IndianRed; {
+            class Positionning
+        }
+
+        folder cartographer as "cartographer" #WhiteSmoke;line:IndianRed; {
+            class Cartographer
+        }
+    }
+
+}
+
+'RACE
+ProxyRace --> PostmanRacePocket
+ProxyRace --> ProtocolRacePocket
+DispatcherRacePocket --> PostmanRacePocket
+DispatcherRacePocket --> ProtocolRacePocket
+
+ProxyRemote --> PostmanRemotePocket
+ProxyRemote --> ProtocolRemotePocket
+DispatcherRemotePocket --> PostmanRemotePocket
+DispatcherRemotePocket --> ProtocolRemotePocket
+
+'POCKET
+Pilot --> ProxyRace
+DispatcherRemotePocket --> Pilot
+
+
+@enduml

@@ -1,0 +1,37 @@
+
+
+@startuml
+
+
+skinparam monochrome false
+skinparam shadowing false
+
+frame Race as "Race" #LightYellow {
+
+    folder comPocket as "comPocket" #WhiteSmoke;line:IndianRed; {
+        class PostmanPocketRace <<medium>>
+        class DispatcherPocketRace <<active>> <<medium>> 
+        class ProtocolPocketRace <<medium>>
+        class ProxyPilot <<medium>>
+    }
+
+    folder motorRace as "motorRace" #WhiteSmoke;line:IndianRed; {
+        class Robot <<active>>
+        class Motor
+    }
+
+}
+
+DispatcherPocketRace --> PostmanPocketRace
+ProxyPilot --> PostmanPocketRace
+ProxyPilot --> ProtocolPocketRace
+DispatcherPocketRace --> ProtocolPocketRace
+
+Robot --> ProxyPilot
+Robot --> Motor
+DispatcherPocketRace -> Robot
+
+
+
+
+@enduml
