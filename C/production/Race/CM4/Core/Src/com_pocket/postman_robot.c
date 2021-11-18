@@ -34,7 +34,13 @@ static void postman_dispatch (unsigned char * buffer_read, Pilot_message_r * pil
 
 
 extern void postman_robot_run(){
-	VIRT_UART_Callback_0();
+
+	VIRT_UART_Callback_0(); //Check message on VUART_0
+
+	if(get_RX_msg_0() == 0 ){
+		return;
+	}
+
 	if (get_RX_msg_0()) {
 		printf("Message received from A7\n");
 		set_RX_msg_0(flag);
@@ -58,7 +64,8 @@ static Pilot_message_r postman_robot_read_message(){
 	unsigned char buffer_read [MAX_RECEPTION_VUART_SIZE];//[FLAG_SIZE + SLAVE_ADDR_SIZE + CMD_SIZE + MAX_DATA];
 	memset(buffer_read,0x00,sizeof(buffer_read));
 
-	memcpy(buffer_read, VIRT_UART_read_message_0(), MAX_RECEPTION_VUART_SIZE);
+	uint8_t* pMessage = VIRT_UART_read_message_0();
+	memcpy(buffer_read, pMessage, MAX_RECEPTION_VUART_SIZE);
 
 	postman_dispatch(buffer_read, &pilot_message);
 
