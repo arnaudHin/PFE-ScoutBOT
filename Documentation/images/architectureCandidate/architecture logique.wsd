@@ -1,0 +1,127 @@
+@startuml
+hide empty description
+skinparam shadowing false
+hide circle
+skinparam classAttributeIconSize 0
+
+
+
+Package Pocket {
+class Pilot
+class Network_pilot <<active>> <<singleton>>
+Package Com_Pocket {
+class Dispatcher_pocket <<medium>> <<active>>
+class Postman_pocket <<medium>>
+class Proxy_Map_viewer <<medium>>
+class Proxy_network_gui <<medium>>
+}
+Package Race {
+Package Com_Race {
+class Dispatcher_pilot <<medium>> <<active>>
+class Postman_pilot <<medium>>
+class Proxy_robot <<medium>>
+}
+}
+package Positionning {
+class TagPositionning 
+class AdminPositionning 
+}
+class Robot_state <<protected>>{
+}
+package Mapper {
+class MapperScanner 
+class AdminMapperScanner
+}
+class Cartographer <<active>> {
+}
+}
+
+class Pilot <<active>> <<singleton>> {
+}
+
+Package JumpC {
+class Map
+class Map_viewer
+class Network_gui <<medium>>
+
+Package Com_JumpC {
+class Dispatcher_jumpC <<medium>> <<active>>
+class Proxy_pilot  <<medium>>
+class Postman_jumpC  <<medium>>
+class Proxy_network_pilot <<medium>>
+}
+Package Gui {}
+
+}
+class Map_viewer <<protected>> {
+- map_build : Bitmap
++ draw_map() : void
+}
+
+class Map {
++ width : int 
++ height : int
++ list_gaps : Obstacle[]
+}
+
+
+class Dispatcher_pocket <<active>> <<medium>> {
+}
+class Network_gui <<active>>{
+
+
+}
+class Postman_pocket <<medium>> {
+
+}
+class MapperScanner <<boundary>> {
+
+}
+
+class TagPositionning <<boundary>> {
+
+}
+class AdminPositionning <<active>> {
+}
+class Pilot <<active>> <<singleton>>
+
+class Proxy_Map_viewer <<medium>> {
+
+
+}
+
+class AdminMapperScanner <<active>>{
+
+}
+
+AdminMapperScanner <--> MapperScanner
+AdminPositionning <--> TagPositionning 
+AdminMapperScanner <-up-> Cartographer
+AdminPositionning <--> Cartographer
+Cartographer -right-> Proxy_Map_viewer
+Dispatcher_pocket --> Postman_pocket
+Dispatcher_pocket --> Network_pilot
+Dispatcher_pocket -up-> Cartographer
+Proxy_network_gui --> Postman_pocket 
+Proxy_network_gui <-up-> Pilot
+Proxy_Map_viewer --> Postman_pocket
+Dispatcher_pilot --> Robot_state 
+Dispatcher_pilot --> Postman_pilot
+Dispatcher_pilot --> Pilot
+Pilot --> Robot_state
+Pilot --> Proxy_robot
+Proxy_robot --> Postman_pilot
+Network_pilot --> Proxy_network_gui
+
+Dispatcher_jumpC --> Postman_jumpC
+Proxy_pilot --> Postman_jumpC
+Proxy_network_pilot --> Postman_jumpC
+Dispatcher_jumpC --> Map_viewer
+Dispatcher_jumpC --> Network_gui
+Gui --> Map_viewer
+Gui --> Network_gui
+Gui --> Proxy_pilot
+Gui --> Proxy_network_pilot
+Map <-- Map_viewer
+
+@enduml

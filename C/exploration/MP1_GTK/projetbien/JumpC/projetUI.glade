@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.39.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkWindow" id="window">
+    <property name="can-focus">False</property>
+    <property name="window-position">center-always</property>
+    <property name="type-hint">splashscreen</property>
+    <child>
+      <object class="GtkFixed" id="fixed1">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="buttonPlay">
+            <property name="label" translatable="yes">Play</property>
+            <property name="width-request">95</property>
+            <property name="height-request">62</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="margin-bottom">9</property>
+            <property name="relief">none</property>
+          </object>
+          <packing>
+            <property name="x">47</property>
+            <property name="y">281</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="pauseButton">
+            <property name="label" translatable="yes">Pause</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="relief">none</property>
+          </object>
+          <packing>
+            <property name="x">145</property>
+            <property name="y">270</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="leftButton">
+            <property name="label" translatable="yes">Left</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">183</property>
+            <property name="y">123</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSwitch" id="powerOnOff">
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+          </object>
+          <packing>
+            <property name="x">54</property>
+            <property name="y">83</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="forwardButton">
+            <property name="label" translatable="yes">Forward</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="forwardButton_clicked_cb" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">305</property>
+            <property name="y">21</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="rightButton">
+            <property name="label" translatable="yes">Right</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="right_clicked_cb" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">426</property>
+            <property name="y">125</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="movebackButton">
+            <property name="label" translatable="yes">Moveback</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="moveBack_clicked_cb" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">304</property>
+            <property name="y">224</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="stopButton">
+            <property name="width-request">47</property>
+            <property name="height-request">48</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="x">478</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="stopActionButton">
+            <property name="label" translatable="yes">Stop</property>
+            <property name="height-request">64</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">328</property>
+            <property name="y">131</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="moveScreen">
+            <property name="label" translatable="yes">Mapping</property>
+            <property name="width-request">76</property>
+            <property name="height-request">54</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="cb_moveScreen" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">59</property>
+            <property name="y">211</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="window1">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkFixed" id="fixed2">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkDrawingArea" id="draw1">
+            <property name="name">draw1</property>
+            <property name="width-request">496</property>
+            <property name="height-request">224</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-right">166</property>
+            <signal name="draw" handler="on_draw1_draw" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">15</property>
+            <property name="y">12</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="map">
+            <property name="label" translatable="yes">Map</property>
+            <property name="width-request">88</property>
+            <property name="height-request">44</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="cb_map" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">37</property>
+            <property name="y">267</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
