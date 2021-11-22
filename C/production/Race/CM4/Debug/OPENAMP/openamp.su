@@ -1,0 +1,10 @@
+rpmsg.h:286:20:rpmsg_init_ept	24	static
+rpmsg.h:348:28:is_rpmsg_ept_ready	16	static
+device.h:146:1:metal_device_io_region	16	static
+openamp.c:72:12:OPENAMP_shmem_init	64	static
+openamp.c:140:5:MX_OPENAMP_Init	56	static
+openamp.c:210:6:OPENAMP_DeInit	8	static
+openamp.c:226:6:OPENAMP_init_ept	24	static
+openamp.c:239:5:OPENAMP_create_endpoint	48	static
+openamp.c:257:6:OPENAMP_check_for_message	8	static
+openamp.c:265:6:OPENAMP_Wait_EndPointready	16	static

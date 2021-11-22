@@ -1,0 +1,3 @@
+list.h:40:20:metal_list_init	16	static
+init.c:10:5:metal_init	24	static
+init.c:30:6:metal_finish	8	static

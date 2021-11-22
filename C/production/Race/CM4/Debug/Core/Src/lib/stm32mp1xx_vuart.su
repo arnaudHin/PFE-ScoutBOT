@@ -1,0 +1,14 @@
+stm32mp1xx_vuart.c:23:13:VIRT_UART_Init_0	8	static
+stm32mp1xx_vuart.c:36:13:VIRT_UART_Init_1	8	static
+stm32mp1xx_vuart.c:46:13:VIRT_UART_RxCpltCallback_0	16	static
+stm32mp1xx_vuart.c:57:13:VIRT_UART_RxCpltCallback_1	16	static
+stm32mp1xx_vuart.c:68:17:VIRT_UART_read_message_0	8	static
+stm32mp1xx_vuart.c:73:17:VIRT_UART_read_message_1	8	static
+stm32mp1xx_vuart.c:78:13:VIRT_UART_send_message_0	24	static
+stm32mp1xx_vuart.c:85:13:VIRT_UART_send_message_1	24	static
+stm32mp1xx_vuart.c:92:24:get_RX_msg_0	8	static
+stm32mp1xx_vuart.c:97:24:get_RX_msg_1	8	static
+stm32mp1xx_vuart.c:102:13:set_RX_msg_0	16	static
+stm32mp1xx_vuart.c:107:13:set_RX_msg_1	16	static
+stm32mp1xx_vuart.c:112:13:VIRT_UART_Callback_0	8	static
+stm32mp1xx_vuart.c:120:13:VIRT_UART_Callback_1	8	static

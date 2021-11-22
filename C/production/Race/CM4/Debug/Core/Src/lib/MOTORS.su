@@ -1,0 +1,5 @@
+MOTORS.c:11:13:MOTORS_stop	8	static
+MOTORS.c:15:13:MOTORS_forward	8	static
+MOTORS.c:19:13:MOTORS_backward	8	static
+MOTORS.c:28:13:MOTORS_turn_left	8	static
+MOTORS.c:37:13:MOTORS_turn_right	8	static

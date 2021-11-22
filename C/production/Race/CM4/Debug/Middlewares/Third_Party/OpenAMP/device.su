@@ -1,0 +1,17 @@
+list.h:40:20:metal_list_init	16	static
+list.h:45:20:metal_list_add_before	16	static
+list.h:69:20:metal_list_add_tail	16	static
+list.h:80:20:metal_list_del	16	static
+cache.h:26:20:__metal_cache_flush	16	static
+cache.h:31:20:__metal_cache_invalidate	16	static
+cache.h:33:20:metal_cache_flush	16	static
+cache.h:46:20:metal_cache_invalidate	16	static
+device.c:18:5:metal_bus_register	16	static
+device.c:30:5:metal_bus_unregister	16	static
+device.c:39:5:metal_bus_find	24	static
+device.c:55:5:metal_device_open	32	static
+device.c:80:6:metal_device_close	16	static
+device.c:87:5:metal_register_generic_device	16	static
+device.c:99:5:metal_generic_dev_open	32	static
+device.c:118:5:metal_generic_dev_dma_map	32	static
+device.c:141:6:metal_generic_dev_dma_unmap	32	static

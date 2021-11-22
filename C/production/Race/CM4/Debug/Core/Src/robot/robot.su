@@ -1,0 +1,8 @@
+robot.c:115:26:robot_init	8	static
+robot.c:138:13:robot_start	16	static
+robot.c:143:26:robot_free	8	static
+robot.c:148:13:robot_run	24	static
+robot.c:167:13:robot_perform_action	16	static
+robot.c:198:13:robot_set_direction	16	static
+robot.c:202:13:robot_set_state	16	static
+robot.c:209:13:robot_try_direction	16	static

@@ -1,0 +1,4 @@
+postman_robot.c:42:26:postman_robot_init	8	static
+postman_robot.c:59:26:postman_robot_free	8	static
+postman_robot.c:68:13:postman_robot_run	8	static
+postman_robot.c:89:13:postman_robot_read_message	8	static

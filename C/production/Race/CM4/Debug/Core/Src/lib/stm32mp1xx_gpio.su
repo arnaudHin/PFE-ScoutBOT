@@ -1,0 +1,8 @@
+stm32mp1xx_gpio.c:10:6:GPIO_Init	16	static
+stm32mp1xx_gpio.c:29:6:BSP_GPIO_PinCfg	48	static
+stm32mp1xx_gpio.c:46:6:PIN_On	16	static
+stm32mp1xx_gpio.c:50:6:PIN_Off	16	static
+stm32mp1xx_gpio.c:54:6:PIN_Toggle	16	static
+stm32mp1xx_gpio.c:58:6:ON_Led	16	static
+stm32mp1xx_gpio.c:77:6:OFF_Led	16	static
+stm32mp1xx_gpio.c:96:6:TOGGLE_Led	16	static
