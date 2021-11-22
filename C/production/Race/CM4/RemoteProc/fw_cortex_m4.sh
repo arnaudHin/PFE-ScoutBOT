@@ -2,7 +2,7 @@
 
 rproc_class_dir="/sys/class/remoteproc/remoteproc0"
 fmw_dir="/lib/firmware"
-fmw_name="testMP1_CM4.elf"
+fmw_name="Race_M4.elf"
 
 cd $(/usr/bin/dirname $(/usr/bin/readlink -f $0))
 

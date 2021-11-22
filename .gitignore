@@ -1,4 +1,6 @@
 *.cproject
 *.project
+*.launch
+*.cfg
 
 [Dd]ebug
