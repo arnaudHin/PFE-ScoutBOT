@@ -106,7 +106,7 @@ int main(void)
   /* USER CODE END 2 */
 	  TIMER_INIT();
 	  TIMER4_RUN();
-	  MOTORS_stop();
+
 
   /* USER CODE BEGIN SysInit */
   printf("Cortex-M4 boot successful with STM32Cube FW version: v%ld.%ld.%ld \r\n",
@@ -116,18 +116,16 @@ int main(void)
 
   printf("Virtual UART0 OpenAMP-rpmsg channel creation\r\n");
 
-
-
   VIRT_UART_Init_0();
 
   postman_robot_init();
   robot_init();
+  robot_start();
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  while (1)
-  {
+  while (1){
 
 	  postman_robot_run();
 

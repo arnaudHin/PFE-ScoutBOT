@@ -126,14 +126,19 @@ extern ScoutBOT_Status_e robot_init(){
 		return ERROR_BOT;
 	}
 
-	myRobot->myDirection = STOP;
-	myRobot->myState = S_IDLE;
+	robot_set_direction(STOP);
+	robot_set_state(S_IDLE);
 
 	TIMER4_STOP();
 
 	return OK_BOT;
 }
 
+
+extern void robot_start(){
+	Robot_mq_t msg = {STOP, E_START_ROBOT};
+	robot_run(msg);
+}
 
 extern ScoutBOT_Status_e robot_free(){
 	free(myRobot);
@@ -167,7 +172,6 @@ static void robot_perform_action(Robot_transition_action_e action, Robot_mq_t me
 			TIMER4_RUN();
 			robot_try_direction(STOP);
 			robot_set_state(S_RUNNING);
-
 			break;
 
 		case T_TRY_DIR:

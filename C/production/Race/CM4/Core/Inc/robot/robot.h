@@ -58,8 +58,11 @@ extern ScoutBOT_Status_e robot_free();
  */
 extern void robot_run(Robot_mq_t message);
 
-
-
+/**
+ * @fn void robot_start()
+ * @brief
+ */
+extern void robot_start();
 
 
 #endif /* INC_ROBOT_ROBOT_H_ */
