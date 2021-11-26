@@ -13,6 +13,7 @@
 #include "stdlib.h"
 #include "lib/MOTORS.h"
 #include "lib/TIMERS.h"
+#include "commun.h"
 
 
 /*********************************************************************************/
@@ -59,7 +60,7 @@ static Robot_tab_transition_action_t myTransistion[NB_STATE][NB_ENTREE] ={
  */
 typedef struct{
 	Robot_state_e myState;
-	Robot_direction_e myDirection;
+	Direction_e myDirection;
 }Robot_t;
 
 
@@ -89,7 +90,7 @@ static void robot_perform_action(Robot_transition_action_e action, Robot_mq_t me
  * @brief
  * @param dir :
  */
-static void robot_set_direction(Robot_direction_e dir);
+static void robot_set_direction(Direction_e dir);
 
 
 /**
@@ -104,7 +105,7 @@ static void robot_set_state(Robot_state_e state);
  * @brief
  * @param direction
  */
-static void robot_try_direction(Robot_direction_e direction);
+static void robot_try_direction(Direction_e direction);
 
 
 
@@ -195,7 +196,7 @@ static void robot_perform_action(Robot_transition_action_e action, Robot_mq_t me
 }
 
 
-static void robot_set_direction(Robot_direction_e dir){
+static void robot_set_direction(Direction_e dir){
 	myRobot->myDirection = dir;
 }
 
@@ -206,7 +207,7 @@ static void robot_set_state(Robot_state_e state){
 
 
 
-static void robot_try_direction(Robot_direction_e direction){
+static void robot_try_direction(Direction_e direction){
 
 	switch (direction) {
 		case FORWARD:
