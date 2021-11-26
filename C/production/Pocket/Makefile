@@ -32,7 +32,7 @@ DEP = $(MAIN:.c=.d)
 
 ## ------------- EXEC file -------------  
 # Executable to generate
-EXEC = ../bin/Pocket.elf
+EXEC = bin/Pocket_new.elf
 
 ## ------------- FLAGS -------------  
 # Inclusion from the package level.
@@ -47,28 +47,19 @@ export LDFLAGS  = -lpthread -lrt
 
 export CCFLAGS += -I.
 
-#
-# Rules of Makefile.
-# for p in $(PACKAGES); do (cd $$p; $(MAKE) $@); done
-# $(MAKE) CCFLAGS="$(CCFLAGS)" LDFLAGS="$(LDFLAGS)" $(EXEC)
 
-# Compilation.
-all: $(EXEC)
+## ------------- Rules of Makefile -------------  
+# Compilation
+all:
+	for p in $(PACKAGES); do (cd $$p; $(MAKE) $@); done
+	$(MAKE) CCFLAGS="$(CCFLAGS)" LDFLAGS="$(LDFLAGS)" $(EXEC)
 
 
 $(EXEC): $(OBJ) $(MAIN)
 	$(CC) $(CCFLAGS) $(OBJ) $(MAIN) -MF $(DEP) -o $(EXEC) $(LDFLAGS)
 
-$(OBJ) :
-	make -C pilot
-	make -C com_race
-	make -C com_remote
-
-
 $(MAIN_OBJ) : $(MAIN)
 	@$(CC) $(CCFLAGS) -c $(MAIN) -o $(MAIN_OBJ)
-
-
 
 # Clean.
 .PHONY: clean

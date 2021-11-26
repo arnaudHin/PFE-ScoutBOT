@@ -1,14 +1,14 @@
 /* -*- mode: c; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /**
- * @file  postman_pocket.c
+ * @file  postman_remote.c
  * @author Montet Julien & Marbeuf Pierre
  * @version 3.0
  * @date 11/06/2020
- * @brief Postman pocket network
+ * @brief Postman remote network
  *
  */
 
-#include "../../pocket/com_Pocket/postman_pocket.h"
+#include "postman_remote.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include "commun.h"
 #include <sys/types.h>
-#include "../../util.h"
+#include "../util.h"
 #include <pthread.h>
 
 /************************************** DEFINE ****************************************************************/
@@ -34,81 +34,59 @@
 #define MAX_PENDING_CONNECTIONS (5)
 /************************************** END DEFINE ************************************************************/
 
-static int a_socket = -1;
+
+
+static int mySocket = -1; 
 static pthread_mutex_t mutex_thread = PTHREAD_MUTEX_INITIALIZER;
 
 
-void postman_pocket_send_msg(unsigned char * data, int length)
+
+extern ssize_t postman_remote_write(uint8_t * bufferToWrite , ssize_t nbBytes)
 {
+
 	int mutex_lock = pthread_mutex_lock(&mutex_thread);
 	assert(mutex_lock == 0 && "Error to lock mutex\n");
-	int error_code = 0;
-	for(int i=0;i<length;i++){
-		printf("%02X ",data[i]);
-	}printf("\n");
 
-	TRACE("POSTMAN WRITING : %s\r\n",data);
-	if(write (a_socket, data, length)==-1)
-	{
-		perror("Error : Information not send\r\n");
-		exit(EXIT_FAILURE);
-	}else{
-		TRACE("Success : Information send \r\n");
-	}
+	//---- LOCK SECTION ---
+
+  	int resultWrite = 0;
+
+  	resultWrite = write (mySocket, bufferToWrite, nbBytes);
+
+  	if (resultWrite == -1){
+    perror("ERROR POSTMAN MONITOR APP WRITE\n");
+  	}
+
+	//---- UNLOCK SECTION ---
 
 	mutex_lock = pthread_mutex_unlock(&mutex_thread);
 	assert(mutex_lock == 0 && "Error to lock mutex\n");
+
+	return resultWrite;
 }
 
 
-void postman_pocket_receive_msg(unsigned char * buffer, int size)
-{
-	char buffer_read[size];
-	memset(buffer,0,size);
-	memset(buffer_read,0,size);
+extern ssize_t postman_remote_receive(uint8_t * bufferToReceive , ssize_t nbBytes){
 
-	int current_size = 0;
-	int returnBytes = 0;
+	int resultRead = 0;
+	resultRead  = recv(mySocket, bufferToReceive, nbBytes, MSG_WAITALL);
 
-	TRACE("Postman pocket is receiving ... \r\n");
-	if (a_socket == -1)
-	{
-		perror("Error : incorrect port socket data");
-		exit(EXIT_FAILURE);
-	}else{
-		while(current_size<size){
-			returnBytes = read (a_socket, buffer_read, size);
-			if (returnBytes==-1) ///< save informations in buffer, use of the address directly to counter the malloc
-			{
-				perror("Error : lecture impossible\r\n");
-				exit(EXIT_FAILURE);
-			}
-
-			// returnBytes can be equal to 0 in the end of the connection
-			if (returnBytes!=0){
-				for(int i=0;i<returnBytes;i++){
-					buffer[current_size+i] = buffer_read[i];
-				};
-
-				current_size = current_size + returnBytes;
-				TRACE("returnBytes : %d\r\n",size);
-				TRACE("returnBytes : %d\r\n",returnBytes);
-			}else{
-				break;
-			}
-		}
+	if (resultRead == -1){
+		perror("ERROR POSTMAN MONITOR APP READ\n");
 	}
+
+	return resultRead;
 }
 
 
-void postman_pocket_start()
+void postman_remote_start()
 {
 	// Create socket
-	a_socket = -1;
+	mySocket = -1;
 
 	struct sockaddr_in mon_adresse;
-	a_socket = socket (PF_INET, SOCK_STREAM, 0);
-	if (a_socket==-1)
+	mySocket = socket (PF_INET, SOCK_STREAM, 0);
+	if (mySocket==-1)
 	{
 		perror("Error : initialization socket incorrect");
 		exit(EXIT_FAILURE);
@@ -128,14 +106,15 @@ void postman_pocket_start()
 	*/
 
 	int enable = 1;
-	if (setsockopt(a_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) != 0)
+	if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) != 0)
 	{
 	    perror("Error : cannot give setsockopt value");
 	    exit(EXIT_FAILURE);
 	}
+	
 	// Bind
 	TRACE("BIND\r\n");
-	if (bind (a_socket, (struct sockaddr *)&mon_adresse, sizeof (mon_adresse))<0)
+	if (bind (mySocket, (struct sockaddr *)&mon_adresse, sizeof (mon_adresse))<0)
 	{
 		TRACE("BIND ERROR \r\n");
 		perror("Error: bind - local adress locale not assign");
@@ -143,7 +122,7 @@ void postman_pocket_start()
 	}
 
 	// Listen
-	if (listen (a_socket, MAX_PENDING_CONNECTIONS) == -1)
+	if (listen (mySocket, MAX_PENDING_CONNECTIONS) == -1)
 	{
 		TRACE("SOCKET LISTEN ERROR \r\n");
 		perror("Error : Problem listen server of socket");
@@ -154,24 +133,24 @@ void postman_pocket_start()
 
 
 	// Accept
-	a_socket = accept (a_socket, NULL, 0);
-	if (a_socket == -1)
+	mySocket = accept (mySocket, NULL, 0);
+	if (mySocket == -1)
 	{
 		TRACE("SOCKET ACCEPT ERROR \r\n");
 		perror("Error : Problem accept of socket \n");
 		exit(EXIT_FAILURE);
 	}else{
-		TRACE("SOCKET ACCEPTED \r\n");
+		printf("SOCKET ACCEPTED \r\n");
 	}
 }
 
 
 
-void postman_pocket_stop()
+void postman_remote_stop()
 {
 	TRACE("SERVER STOP\r\n");
 	int id_error;
-	id_error = close(a_socket);
+	id_error = close(mySocket);
 	if (id_error==-1)
 	{
 		perror("ERROR : SERVER STOP INCORRECT \n");

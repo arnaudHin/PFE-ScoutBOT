@@ -8,14 +8,11 @@
  *
  */
 
-#include <pocket/com_Pocket/dispatcher_pocket.h>
-#include <pocket/com_Race/dispatcher_pilot.h>
-#include <pocket/com_Race/proxy_robot.h>
-// #include <pocket/copilot.h>
-// #include <pocket/display.h>
-// #include <pocket/geographer.h>
-// #include <pocket/obstacle_sender.h>
-#include <pocket/network_pilot.h>
+#include <com_remote/dispatcher_remote.h>
+#include <com_race/race_protocol.h>
+#include <com_race/dispatcher_race.h>
+#include <com_race/proxy_robot.h>
+#include <network_pilot.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -25,8 +22,6 @@
 #include "util.h"
 #include "assert.h"
 
-#define AVEC_VUART
-//#define SANS_VUART
 
 /**************************************************************************************************************/
 
@@ -40,7 +35,9 @@ int main (int argc, char *argv[])
 	printf("\n                                    Pocket start\n\n");
 	printf("************************************************************************************************\n\n");
 	robot_state_mutex_init();
-	map_raw_new();
+	race_protocol_init();
+	
+	//map_raw_new();
 	TRACE("map_raw_new(); OK\n");
 
 	//display_start();
@@ -52,7 +49,7 @@ int main (int argc, char *argv[])
 
 	// network_pilot_start();
 	// TRACE("network_pilot_start(); OK\n");
-	dispatcher_pilot_start();
+	dispatcher_race_start();
 	TRACE("dispatcher_pilot_start(); OK\n");
 
 	//display_send_txt_lidar_distance("Init en cours...");
@@ -63,51 +60,21 @@ int main (int argc, char *argv[])
 	//TRACE("test envoi A7->M4\n");
 	//postman_send_message()
 
-#ifdef AVEC_VUART
-	dispatcher_pocket_start();
-	TRACE("dispatcher_pocket_start(); OK\n");
-#endif
-#ifdef SANS_VUART
-	new_dispatcher_pocket_start();
-	TRACE("new_dispatcher_pocket_start(); OK\n");
-#endif
+	dispatcher_remote_start();
+	pilot_start();
 
-	// geographer_ask_map();
 
-	dispatcher_pocket_stop();
-	dispatcher_pilot_stop();
 
-	//display_stop();
+	dispatcher_remote_stop();
+	
+	dispatcher_race_stop();
 
+	pilot_stop();
 	// network_pilot_stop();
 	// geographer_stop();
 	// obstacle_sender_stop();
 	// map_raw_free();
 	robot_state_mutex_destroy();
-
-	/*************************************** TEST ****************************************************************/
-//		Odometry odometry_begin = {12,10,0};
-//		Coord coord_final = {40,10}; //X Y has to be interverted
-//		TRACE("x:%d,y:%d",coord_final.x,coord_final.y);
-//
-//		assert(coord_final.x <map_raw_get_width()-1  && "FORBIDDEN WIDTH\n"); // Halt the execution of the thread until it achieves his execution
-//		assert(coord_final.y <map_raw_get_height()-1 && "FORBIDDEN HEIGHT\n"); // Halt the execution of the thread until it achieves his execution
-//
-//		if (is_available(coord_final)){
-//			int my_path_length = 0;
-//			memcpy(astar_path,calculate_path(odometry_begin,coord_final,&my_path_length,map_get_matrix(),map_raw_get_width(),map_raw_get_height()),my_path_length*sizeof(Odometry));
-//
-//			printf("len path : %d\n",my_path_length);
-//
-//			for (int i=0;i<my_path_length;i++){
-//				printf("x:%d,y:%d\n",astar_path[i].x,astar_path[i].y);
-//			}
-//
-//		}else{
-//			TRACE("FORBIDDEN COORD\n");
-//		}
-
-	/**************************************** END TEST ***********************************************************/
 
 
 	printf("\n************************************************************************************************\n");

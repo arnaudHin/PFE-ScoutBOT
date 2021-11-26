@@ -16,9 +16,9 @@
 
 #define MAX_MESSAGE_LENGTH (128)
 
-#include "../../pocket/pilot.h"
-#include "../../pocket/robot_state.h"
+#include "../pilot/pilot.h"
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #define PARSE_SYMBOL \
@@ -65,7 +65,7 @@ typedef struct {
 	uint8_t slave_addr;
 	Order_s order_s;                   // An order dedicated to define the message type
 	uint8_t max_data;
-	Odometry * multipts_data;
+	//Odometry * multipts_data;
 	uint8_t stop_flag;
 }Pilot_message_s;
 
@@ -76,32 +76,34 @@ typedef struct {
 typedef struct {
 	uint8_t start_flag;
 	Order_r order_r;                   // An order dedicated to define the message type
-	Sensors_state my_sensors_state;     // The current value of the 4 bumpers
-	Odometry my_current_position;       // The current position + angle
-	Lidar_state my_lidar_state;			// The current value of the vl53l1x sensors
+	//Sensors_state my_sensors_state;     // The current value of the 4 bumpers
+	//Odometry my_current_position;       // The current position + angle
+	//Lidar_state my_lidar_state;			// The current value of the vl53l1x sensors
 	uint8_t stop_flag;
 }Pilot_message_r;
 
 /* \fn extern void postman_start()
  *  \brief Function dedicated to start the postman (Open the serial port)
  */
-extern void postman_start();
+extern void postman_race_start();
 
 /* \fn extern void postman_stop()
  *  \brief Function dedicated to stop the postman (Close the serial port)
  */
-extern void postman_stop();
+extern void postman_race_stop();
 
 /* \fn extern pilot_message postman_read_message()
  * \brief Function dedicated to read message on the given serial port
  * \return Pilot_message the structure which contain a read message
  */
-extern Pilot_message_r postman_read_message();
+extern Pilot_message_r postman_race_read_message();
+
+
 
 /* \fn extern void postman_send_message(Pilot_message msg)
  * \brief Function dedicated to send message on the given serial port
  * \param Pilot_message the structure which contain the message to send
  */
-extern void postman_send_message(Pilot_message_s msg);
+extern void postman_race_send_message(uint8_t * bufferToWrite, uint16_t bytesToSend);
 
 #endif /* SRC_POCKET_COM_RACE_POSTMAN_PILOT_H_ */

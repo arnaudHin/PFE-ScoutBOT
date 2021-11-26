@@ -22,7 +22,9 @@
 #define _unused(x) ((void)(x))
 
 #ifndef NDEBUG
-#define TRACE(fmt, ...) do {fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__); fflush (stderr); } while(0);
+//#define TRACE(fmt, ...) do {fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__); fflush (stderr); } while(0);
+#define TRACE  printf
+
 #define TRACE_PUML_START fprintf(stderr, "%s\n", "@startuml"); fflush(stderr);
 #define TRACE_PUML_END fprintf(stderr, "%s\n", "@enduml"); fflush(stderr);
 #define TRACE_PUML(fmt, ...) fprintf(stderr,fmt, ##__VA_ARGS__); fflush(stderr);

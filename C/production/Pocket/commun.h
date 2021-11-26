@@ -14,17 +14,23 @@
 
 #include <stdint.h>
 
-#include "../pocket/map_raw.h"
+//#include "../pocket/map_raw.h"
 /*
  * Orders that can be received from the Android app
  */
-#define INDICATE_R "IN"
-#define FORWARD_R "DF"
-#define BACKWARD_R "DB"
-#define LEFT_R "DL"
-#define RIGHT_R "DR"
-#define BREAK_R "BR"
-#define END_R "EN"
+
+#define LIDAR_POINTS_PER_DEGREE			5
+#define LIDAR_TOTAL_DEGREE				360
+#define LIDAR_SIZE_BYTE_DATA			(LIDAR_POINTS_PER_DEGREE)*(LIDAR_TOTAL_DEGREE)*2*( sizeof(int16_t) ) 
+#define POSITION_NB_BEACONS_BLE			9
+#define POSITION_SIZE_BYTE_DATA 		(POSITION_NB_BEACONS_BLE + 1)*2*( sizeof(int16_t) )
+
+#define MAX_SIZE_BYTE_DATA_TO_SEND		(LIDAR_SIZE_BYTE_DATA)
+#define MAX_SIZE_BYTE_DATA_TO_RECEIVE	(1)
+
+#define CMD_SIZE_BYTE					1
+#define BUFF_SIZE_TO_RECEIVE			(MAX_SIZE_BYTE_DATA_TO_RECEIVE)+CMD_SIZE_BYTE + ( sizeof(uint16_t) )
+
 #define SOCKET_CLOSED_R "\0"
 
 
@@ -36,82 +42,67 @@ typedef enum
 }Network_error;
 
 
-/*
- * Network_msg : expected structure to receive
- */
 
 typedef enum
 {
-	// FROM Jump
-	NOP = 0,
-	DIR_FORWARD,
-	DIR_BACKWARD,
-	DIR_LEFT,
-	DIR_RIGHT,
+	DEFAULT=0,
+	LEFT,
+	RIGHT,
+	FORWARD,
+	BACKWARD,
 	STOP,
-	CLOSE,
-	REINIT_POS,
-	POSITION_ROBOT_DEST,
-	START_ODOMETRY,
-	STOP_ODOMETRY,
-	START_OBSTACLE_SENDER,
-	STOP_OBSTACLE_SENDER,
-	EMERGENCY_STOP,
-
-	// FROM-TO jump
-	INDICATE = 128,
-
-	// TO Jump
-	POSITION_ROBOT_CURRENT = 129,
-	SEND_MAP = 130,
-	ERROR = 131,
-	AUTO = 132,
-	MANUAL = 133,
-	SEND_OBSTACLE = 134,
-	SEND_COORD = 135
-}Network_CMD;
+	BREAK
+} Direction_e;
 
 
 
-typedef struct
+typedef enum{
+	MODE_MANUAL=0,
+	MODE_AUTO
+}MODE_e;
+
+typedef enum
 {
-	Network_CMD cmd;
-	int size;
-	//Coord coord;
-}Network_msg;
+	NOP = 0,
+	ASK_TRY_DIR,
+	ASK_SET_MODE,
+	ASK_CHECK_CONNECTION,
+	ASK_QUIT,
+	ASK_LIDAR_MAPPING,
+	ASK_POSITION,
+	NB_CMD_FROM_JUMP
+}CMD_from_jump_e;
+
+
+typedef enum
+{
+	CHECK_CONNECTION,
+	SET_ASK_QUIT,
+	SET_CHECK_CONNECTION,
+	SET_LIDAR_MAPPING,
+	SET_POSITION,
+	NB_CMD_TO_JUMP
+}CMD_to_jump_e;
+
+
+typedef struct{
+	Direction_e direction;
+	MODE_e mode;
+}DATA_from_jump_t;
+
+
+typedef struct{
+	CMD_from_jump_e command;
+	uint16_t sizeData;
+	DATA_from_jump_t data;
+}Message_from_jump_t;
+
+
+typedef struct{
+	CMD_to_jump_e command;
+	uint16_t size;
+	uint8_t bufferToSend[MAX_SIZE_BYTE_DATA_TO_SEND];
+}Message_to_jump_t;
 
 
 #endif /* SRC_POCKET_COMMUN_H_ */
-
-// typedef enum
-// {
-//     PLAY = 0,
-//     PAUSE
-// } RemoteState;
-
-// /**
-//  * @brief Is the remote connected to the car ?
-//  * 
-//  */
-// typedef enum
-// {
-//     CONNECTED = 0,
-//     UNCONNECTED
-// } Connexion;
-
-// /**
-//  * @brief Car direction
-//  * 
-//  */
-// typedef enum
-// {
-//     LEFT = 0,
-//     RIGHT,
-//     FORWARD,
-//     MOVEBACK
-// } Direction;
-
-// typedef struct
-// {
-//     Direction dir;
-// } Data;

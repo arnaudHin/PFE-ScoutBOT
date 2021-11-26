@@ -21,15 +21,10 @@
 #include <stdbool.h>
 
 #include "pilot.h"
-//#include "display.h"
 #include "../util.h"
-#include "com_race/postman_pilot.h"
+#include "com_race/postman_race.h"
 #include "com_race/proxy_robot.h"
-// #include "com_Pocket/proxy_map_viewer.h"
-// #include "com_Pocket/proxy_network_gui.h"
-// #include "robot_state.h"
-// #include "copilot.h"
-// #include "map_raw.h"
+#include "robot_state.h"
 
 /************************************** DEFINE ****************************************************************/
 
@@ -86,10 +81,10 @@ const char *const event_pilot_name[] = {EVENT_GENERATION};
 static const char queue_name[] = "/pilot_postman"; //name of mailbox
 static mqd_t id_bal;							   //ID mailbox
 static pthread_t id_thread;						   //ID thread
-static Direction direction = PILOT_DEFAULT_DIRECTION;
+static Direction_e direction = PILOT_DEFAULT_DIRECTION;
 //static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORIZED_DIRECTION - 1] = false};
 static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORIZED_DIRECTION - 1] = true};
-static Odometry astar_path[MAX_PATH_LEN] = {0};
+//static Odometry astar_path[MAX_PATH_LEN] = {0};
 
 typedef struct char_direction
 {
@@ -114,21 +109,20 @@ typedef struct
 typedef struct
 {
 	Event evenement;
-	Coord coord;
+	//Coord coord;
 } Mb_message;
 
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
 
-static void pilot_perform_action(Transition_action an_action, Coord coord_final);
+static void pilot_perform_action(Transition_action an_action);
 static void *pilot_run();
 static void pilot_mq_init();
 static Mb_message pilot_mq_receive();
-static void pilot_mq_send(Event pilot_event, Coord coord_final);
+static void pilot_mq_send(Event pilot_event);
 static void pilot_mq_done();
-static void pilot_check_authorized(Direction dir);
+static void pilot_check_authorized(Direction_e dir);
 static void pilot_update_authorized(void);
 
-static const Coord COORD_DEFAULT = {0, 0};
 
 /********************************** END OF STATIC FUNCTIONS DECLARATIONS *******************************************/
 
@@ -228,11 +222,11 @@ static void pilot_mq_init()
  *  \param Event the event to send through the mailbox
  */
 
-static void pilot_mq_send(Event pilot_event, Coord coord_final)
+static void pilot_mq_send(Event pilot_event)
 {
 	Mb_message pilot_msg;
 	pilot_msg.evenement = pilot_event;
-	pilot_msg.coord = coord_final;
+	
 	TRACE("Evenement de pilot : %d", pilot_msg);
 	mqd_t bal_send = mq_send(id_bal, (const char *)&pilot_msg, sizeof(Mb_message), 0); //Priority 0 to 31 (highest priority first)
 	assert(id_bal != -1 && "Error mq_send pilot\n");
@@ -302,7 +296,7 @@ static void *pilot_run()
 		if (mySm[my_state][pilot_msg.evenement].destination_state != S_FORGET)
 		{
 			an_action = mySm[my_state][pilot_msg.evenement].action;
-			pilot_perform_action(an_action, pilot_msg.coord);
+			pilot_perform_action(an_action);
 
 			my_state = mySm[my_state][pilot_msg.evenement].destination_state;
 		}
@@ -316,7 +310,7 @@ static void *pilot_run()
  *
  *  \param  Transition_action an Action to perform, compute from the event receive in the mailbox
  */
-static void pilot_perform_action(Transition_action an_action, Coord coord_final)
+static void pilot_perform_action(Transition_action an_action)
 {
 
 	switch (an_action)
@@ -331,99 +325,25 @@ static void pilot_perform_action(Transition_action an_action, Coord coord_final)
 		// display_send_txt_connection("WAITING_FOR_CONNECTION");
 		break;
 
-	case T_START_SCAN:
-		TRACE("START SCANNING ENVIRONMENT\n");
-		// display_send_txt_connection("CONNECTED");
-		// display_send_txt_state("NORMAL");
-		break;
-
-	case T_STOP_SCAN:
-		TRACE("STOP SCANNING ENVIRONMENT\n");
-		robot_try_mvmt(BREAK);
-		robot_stop_scanning();
-		// display_send_txt_state("DISCONNECTED");
-		// display_send_txt_connection("WAITING_FOR_CONNECTION");
-		break;
-
-	case T_START_AUTO_SCAN:
-		TRACE("START AUTO SCANNING ENVIRONMENT\n");
-		// display_send_txt_connection("CONNECTED");
-		// display_send_txt_state("NORMAL");
-		// TODO ajouter fonction demarrage auto scan
-
-		break;
-
-	case T_STOP_AUTO_SCAN:
-		TRACE("STOP AUTO SCANNING ENVIRONMENT\n");
-		// TODO ajouter fonction arret du auto scan
-		robot_stop_scanning();
-		// display_send_txt_state("DISCONNECTED");
-		// display_send_txt_connection("WAITING_FOR_CONNECTION");
-		break;
-
 	case T_UPDATE_DIR:
 		TRACE("UPDATE & CHECK DIRECTION : %s\n", DIRECTION_STR(direction));
-		// display_send_txt_msg(DIRECTION_STR(direction));
-		// pilot_update_authorized();
-		 pilot_check_authorized(direction);
-
-		/*const char buffer_lidar_distance[4];
-			Lidar_state lidar_begin = robot_state_get_lidar_sensors_state();
-			TRACE("==> lidar_begin : %d, size : %d\n", lidar_begin.distance[0], sizeof(lidar_begin.distance[0]));
-			snprintf(buffer_lidar_distance, sizeof(lidar_begin.distance[0]), "%d%d", lidar_begin.distance[0],lidar_begin.distance[1]);
-			TRACE("==> snprintf : %s\n", buffer_lidar_distance);
-			display_send_txt_lidar_distance(buffer_lidar_distance);*/
-
-		//robot_start_scanning();
+		//pilot_check_authorized(direction);
+		DATA_to_race_t data;
+		data.direction = direction;
+		proxy_robot_try_dir( &data );
 
 		break;
 
-	case T_SIGNAL_FORBIDDEN_PATH:
-		TRACE("T_SIGNAL_FORBIDDEN_PATH\n");
-		//proxy_pocket_send_error(UNAUTHORIZED_MOVE);
-		break;
 
-		// case T_TRY_PATH:
-		// 	TRACE("*******************T_TRY_PATH*****************\n");
-
-		// 	Odometry odometry_begin = robot_state_get_odometry();
-		// 	proxy_indicate_auto();
-		// 	Odometry odometry_begin_map;
-		// 	odometry_begin_map.x=odometry_begin.x/(MAP_RATIO/10);
-		// 	odometry_begin_map.y=odometry_begin.y/(MAP_RATIO/10);
-
-		// // 	display_send_txt_state("AUTO");
-
-		// 	int my_path_length = 0;
-		// 	memcpy(astar_path,calculate_path(odometry_begin_map,coord_final,&my_path_length,map_get_matrix(),map_raw_get_width(),map_raw_get_height()),my_path_length*sizeof(Odometry));
-
-		// 	TRACE("len path : %d\n",my_path_length);
-
-		// 	for (int i=0;i<my_path_length;i++){
-		// 		TRACE("x:%d,y:%d\n",astar_path[i].x,astar_path[i].y);
-		// 	}
-
-		// 	robot_try_path(astar_path,my_path_length);
-
-		// 	break;
-
-	case T_SIGNAL_END_DISPLACEMENT:
-		TRACE("T_SIGNAL_END_DISPLACEMENT\n");
-		// display_send_txt_state("MANUAL");
-		//proxy_indicate_manual();
-		break;
-
-	// case T_RESET_POSITION:
-	// 	TRACE("T_RESET_POSITION\n");
-	// 	robot_reset_odometry();
-	// 	break;
 	case T_EMERGENCY_STOP:
 		TRACE("T_EMERGENCY_STOP\n");
-		robot_urgent_break();
+		//robot_urgent_break();
 		break;
 
 	case T_EXIT:
 		TRACE("STOP THE PILOT\n");
+		Event pilot_event = E_EXIT;
+		pilot_mq_send(pilot_event);
 		break;
 
 	default:
@@ -452,8 +372,6 @@ static void pilot_wait_task_termination()
 extern void pilot_stop()
 {
 	TRACE("pilot stop\n\n");
-	Event pilot_event = E_EXIT;
-	pilot_mq_send(pilot_event, COORD_DEFAULT);
 
 	pilot_wait_task_termination();
 	pilot_mq_done();
@@ -461,18 +379,23 @@ extern void pilot_stop()
 
 /********************* 	MAILBOX SEND FONCTION ***************************************************************************/
 
+
+
 /** \fn extern void pilot_set_direction(Direction dir)
  *
  *  \brief Function dedicated to send an event in the mailbox to set the direction
  *
  *  \param  Direction the direction to send to the robot entity
  */
-extern void pilot_set_direction(Direction dir)
+extern void pilot_set_direction(Direction_e dir)
 {
 	direction = dir;
-	TRACE("Pilot : SET DIRECTION : %d\n", direction)
-	pilot_mq_send(E_UPDATE_DIR, COORD_DEFAULT);
+	TRACE("Pilot : SET DIRECTION : %d\n", direction);
+	pilot_mq_send(E_UPDATE_DIR);
 }
+
+
+
 
 /** \fn extern void pilot_signal_end_init()
  *
@@ -480,7 +403,7 @@ extern void pilot_set_direction(Direction dir)
  */
 extern void pilot_signal_end_init()
 {
-	pilot_mq_send(E_END_INIT, COORD_DEFAULT);
+	pilot_mq_send(E_END_INIT);
 }
 
 /** \fn extern void pilot_signal_connection_success()
@@ -489,7 +412,7 @@ extern void pilot_signal_end_init()
  */
 extern void pilot_signal_connection_success()
 {
-	pilot_mq_send(E_SUCCESSFULL_CONNECTION, COORD_DEFAULT);
+	pilot_mq_send(E_SUCCESSFULL_CONNECTION);
 }
 
 /** \fn extern void pilot_signal_connection_failed()
@@ -498,7 +421,7 @@ extern void pilot_signal_connection_success()
  */
 extern void pilot_signal_connection_failed()
 {
-	pilot_mq_send(E_FAIL_CONNECTION, COORD_DEFAULT);
+	pilot_mq_send(E_FAIL_CONNECTION);
 }
 
 /** \fn extern void pilot_signal_emergency_stop()
@@ -507,7 +430,7 @@ extern void pilot_signal_connection_failed()
  */
 extern void pilot_signal_emergency_stop()
 {
-	pilot_mq_send(E_EMERGENCY_STOP, COORD_DEFAULT);
+	pilot_mq_send(E_EMERGENCY_STOP);
 }
 
 /** \fn extern void pilot_signal_robot_arrived()
@@ -516,8 +439,10 @@ extern void pilot_signal_emergency_stop()
  */
 extern void pilot_signal_robot_arrived()
 {
-	pilot_mq_send(E_SIGNAL_END_DISPLACEMENT, COORD_DEFAULT);
+	pilot_mq_send(E_SIGNAL_END_DISPLACEMENT);
 }
+
+
 
 /** \fn extern void pilot_signal_restart_odometry()
  *
@@ -525,7 +450,7 @@ extern void pilot_signal_robot_arrived()
  */
 extern void pilot_signal_restart_odometry()
 {
-	pilot_mq_send(E_RESET_POSITION, COORD_DEFAULT);
+	pilot_mq_send(E_RESET_POSITION);
 }
 
 /** \fn extern void pilot_ask_destination(Coord coord_final)
@@ -534,17 +459,10 @@ extern void pilot_signal_restart_odometry()
  *
  *  \param  Coord the desire position which has been choosen by the user on the android app
  */
-extern void pilot_ask_destination(Coord coord_final)
-{
-	// assert(coord_final.x <=map_raw_get_width()-1  && "FORBIDDEN WIDTH\n");
-	// assert(coord_final.y <=map_raw_get_height()-1  && "FORBIDDEN HEIGHT\n");
-	// if (is_available(coord_final)){
-	// 	pilot_mq_send(E_ASK_DESTINATION,coord_final);
-	// }else{
-	// 	pilot_mq_send(E_SIGNAL_FORBIDDEN_PATH,COORD_DEFAULT);
-	// }
-	TRACE("Ask destination");
-}
+
+
+
+
 
 /********************* 	END OF MAILBOX SEND FONCTION *********************************************************************/
 
@@ -554,13 +472,13 @@ extern void pilot_ask_destination(Coord coord_final)
  *
  *  \param  Direction the direction to send using the mailbox
  */
-static void pilot_check_authorized(Direction dir)
+static void pilot_check_authorized(Direction_e dir)
 {
 	if (authorized_direction[dir] == true)
 	{
 		TRACE("Authorized direction\n");
 		// display_send_txt_state("AUTO");
-		robot_try_mvmt(dir);
+		//robot_try_mvmt(dir);
 	}
 	else
 	{

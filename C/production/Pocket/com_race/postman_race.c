@@ -8,9 +8,9 @@
  *
  */
 
-#include "../../pocket/com_Race/postman_pilot.h"
+#include "postman_race.h"
 
-#include "../../util.h"
+#include "../util.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -24,11 +24,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include "pthread.h"
-#include "../map_raw.h"
 #include <math.h>
-
-//#include "../../pocket/com_Race/dispatcher_pilot.h"
-#include "../../pocket/pilot.h"
+#include "../pilot/pilot.h"
 
 #define FLAG_SIZE 1
 #define SLAVE_ADDR_SIZE 1
@@ -42,36 +39,35 @@
 
 #define SENSOR_SIZE 1
 #define COORD_SIZE 2
-#define LIDAR_DISTANCE_SIZE (LIDAR_SIZE * NB_SENSOR)
+#define LIDAR_DISTANCE_SIZE (LIDAR_SIZE * 3)
 
 #define MAX_MSG_SIZE 1024
 #define BYTE_MSG 8
 #define MAX_READ_ATTEMPT 10
 #define DEVICE_PORT "/dev/ttyRPMSG0"
 #define RPMSG_BUFFER_SIZE	FLAG_SIZE + CMD_SIZE + SENSORS_SIZE + ODOMETRY_SIZE + LIDAR_DISTANCE_SIZE + SERVO_ANGLE_SIZE + FLAG_SIZE
+
+#define MAX_CORNER 30
+#define MAP_RATIO 40
+
 /************************************** STATIC FUNCTION *************************************************************/
 
 static Pilot_message_s send_message_conversion(Pilot_message_s pilot_message_sent);
 static Pilot_message_r receive_message_conversion(Pilot_message_r pilot_message_receive);
 
-static void *postman_run(void *unused);
-static void abort_postman_read_message();
-static void wait_end_of_read_thread();
 
-static void convert_to_str(char* msg,Pilot_message_s pilot_msg);
-
-static void postman_dispatch(char * buffer_read, Pilot_message_r * pilot_message);
+static void postman_race_dispatch(char * buffer_read, Pilot_message_r * pilot_message);
 
 /**************************************END OF STATIC FUNCTION *******************************************************/
 
-static pthread_t compute_thread;
 static int serial_port = 0;
 static bool exit_postman = false;
+
 
 /*
  *  \brief Function dedicated to start the postman (Open the serial port)
  */
-extern void postman_start()
+extern void postman_race_start()
 {
 	struct termios tty;
 	memset(&tty,0,sizeof(tty));
@@ -115,64 +111,28 @@ extern void postman_start()
 		}
 	exit_postman = false;
 
-	int return_thread_creation = 0;
-	return_thread_creation = pthread_create(&compute_thread, NULL, &postman_run, NULL);
-
-	if (return_thread_creation != 0){
-		perror("Error creating thread\n");
-	}
-
 }
 
-/* \fn static void *Postman_run(void *unused)
- * \brief Function dedicated to send a message to the entity postman until the read buffer is empty
- */
-static void *postman_run(void *unused){
-	while(!exit_postman){
-		dispatcher_pilot_set_msg(postman_read_message());
-	}
-	TRACE("Exit postman run");
-	return 0;
-}
 
-/* \fn static void abort_postman_read_message(void)
- * \brief Function dedicated to stop to watch for an incoming message
- */
-static void abort_postman_read_message(void)
-{
-	TRACE("Try abort read message\n");
-	exit_postman = true;
-}
 
-/* \fn static void wait_end_of_read_thread(void)
- * \brief Function dedicated to wait until the end of the current task
- */
-static void wait_end_of_read_thread(void)
-{
-	int return_end_of_compute_thread = 0;
-	TRACE("Wait end of compute thread %d\n",(int)pthread_self());
-	return_end_of_compute_thread = pthread_join(compute_thread, NULL);
 
-	if (return_end_of_compute_thread != 0){
-		perror("Error while trying to end read msg thread");
-	}
-}
 
 /*
  *  \brief Function dedicated to stop the postman (Close the serial port)
  */
-void postman_stop(){
-	abort_postman_read_message();
-	wait_end_of_read_thread();
+void postman_race_stop(){
+
 	close(serial_port);
-	TRACE("Serial port closed\n");
 }
+
+
+
 
 /*
  * \brief Function dedicated to read message on the given serial port
  * \return Pilot_message the structure which contain a read message
  */
-extern Pilot_message_r postman_read_message()
+extern Pilot_message_r postman_race_read_message()
 {
 	Pilot_message_r pilot_message;
 	char my_received_message[RPMSG_BUFFER_SIZE];
@@ -226,24 +186,49 @@ extern Pilot_message_r postman_read_message()
 	}
 	TRACE("Postman_dispatch ...\n");
 
-	postman_dispatch (my_received_message,&pilot_message);
+	postman_race_dispatch (my_received_message,&pilot_message);
 
 	return pilot_message;
 
 }
 
-static void postman_dispatch (char * buffer_read, Pilot_message_r * pilot_message){
+
+/*
+ * \brief Function dedicated to send message on the given serial port
+ * \param Pilot_message the structure which contain the message to send
+ */
+extern void postman_race_send_message(uint8_t * bufferToWrite, uint16_t bytesToSend)
+{
+	/************** DEFAULT VALUE **************/
+
+	ssize_t bytesWritten = write(serial_port, bufferToWrite, bytesToSend);
+	if(bytesWritten == -1){
+		fprintf(stderr, "ERROR POSTMAN_RACE_WRITE \n");
+	}
+	//fprintf(stderr,"postman_race_send_message : envoie de %d \n ", (uint8_t) bufferToWrite[3]);
+
+}
+
+
+
+
+
+
+
+
+
+static void postman_race_dispatch (char * buffer_read, Pilot_message_r * pilot_message){
 
 	pilot_message->start_flag = 0;
 	pilot_message->order_r = 0;
-	pilot_message->my_current_position.x = 0;
-	pilot_message->my_current_position.y = 0;
-	pilot_message->my_current_position.teta = 0;
-	for(uint8_t num_sensor=0 ;num_sensor<NB_SENSOR ;num_sensor++)
-	{
-		pilot_message->my_lidar_state.distance[num_sensor] = 0;
-	}
-	pilot_message->my_lidar_state.servoAngle = 0;
+	//pilot_message->my_current_position.x = 0;
+	//pilot_message->my_current_position.y = 0;
+	//pilot_message->my_current_position.teta = 0;
+	// for(uint8_t num_sensor=0 ;num_sensor<NB_SENSOR ;num_sensor++)
+	// {
+	// 	pilot_message->my_lidar_state.distance[num_sensor] = 0;
+	// }
+	// pilot_message->my_lidar_state.servoAngle = 0;
 
 
 	/*printf("Byte received from Race");
@@ -304,77 +289,3 @@ static void postman_dispatch (char * buffer_read, Pilot_message_r * pilot_messag
 }
 
 
-
-/**
- *  \fn void convert_int16_to_2_bytes(unsigned char * byte, uint16_t value)
- *
- *  \brief Function dedicated to convert an uin16_t to an array of bytes (size 2)
- *
- *  \param byte (unsigned char *) : byte where the data will be stored
- *
- *  \param value (uint16_t) : value to convert
- *
- */
-
-static void convert_uint16_to_2_bytes(unsigned char * byte, uint16_t value){
-
-	value = floor(value * MAP_RATIO -0.5);
-	assert(value <= 65535); // 0xFF 0XFF
-	byte[0] = (value >> 8) & 0xFF;
-	byte[1] = value & 0xFF;
-}
-
-
-/*
- * \brief Function dedicated to send message on the given serial port
- * \param Pilot_message the structure which contain the message to send
- */
-extern void postman_send_message(Pilot_message_s msg)
-{
-	/************** DEFAULT VALUE **************/
-
-
-	unsigned char byte[FLAG_SIZE + SLAVE_ADDR_SIZE + CMD_SIZE + MAX_DATA  + (4 * msg.max_data) + FLAG_SIZE];
-	unsigned char byte_size[4 * msg.max_data];
-
-	uint8_t cmd = msg.order_s;
-	// 8 bits parameters
-
-	byte[0] = 0x7A;
-	byte[1] = 0xFF;
-	byte[2] = cmd & 0xFF;
-	byte[3] = msg.max_data & 0xFF;
-
-	//MULTIPTS DATA
-	int index = 4;
-
-	if (msg.max_data>0){
-		unsigned char buffer_x[COORD_SIZE];
-		unsigned char buffer_y[COORD_SIZE];
-
-		for (int i=0; i<msg.max_data ; i++){
-
-			convert_uint16_to_2_bytes(buffer_x,(uint16_t)msg.multipts_data[i].x);
-			byte[index++] = buffer_x[0];
-			byte[index++] = buffer_x[1];
-			convert_uint16_to_2_bytes(buffer_y,(uint16_t)msg.multipts_data[i].y);
-			byte[index++] = buffer_y[0];
-			byte[index++] = buffer_y[1];
-		}
-	}
-
-	byte[FLAG_SIZE + SLAVE_ADDR_SIZE + CMD_SIZE + MAX_DATA + (4 * msg.max_data)] = 0x7B;
-
-	if (msg.max_data>0){
-		printf("Byte sent to Race :\n");
-		for(int i=0;i<FLAG_SIZE + SLAVE_ADDR_SIZE + CMD_SIZE + MAX_DATA + (4 * msg.max_data) + FLAG_SIZE;i++){
-					printf("%02X ",byte[i]);
-				}printf("\n");
-	}
-
-	if (write(serial_port, &byte ,FLAG_SIZE + SLAVE_ADDR_SIZE + CMD_SIZE + MAX_DATA + (4 * msg.max_data) + FLAG_SIZE) ==-1){
-		perror("Error : Information not send\r\n");
-		exit(EXIT_FAILURE);
-	}
-
-}

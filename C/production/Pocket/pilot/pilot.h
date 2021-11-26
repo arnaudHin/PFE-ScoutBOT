@@ -8,7 +8,6 @@
  *
  */
 
-#include "../pocket/map_raw.h"
 
 #ifndef SRC_POCKET_V1_PILOT_H_
 #define SRC_POCKET_V1_PILOT_H_
@@ -17,15 +16,7 @@
  * \brief Direction structure with the list of available direction to be send over the vuart communication to the robot
  *
  */
-typedef enum
-{
-	LEFT=0,
-	RIGHT,
-	FORWARD,
-	BACKWARD,
-	BREAK,
-	DEFAULT
-} Direction;
+#include "../commun.h"
 
 
 /************************ PROTOTYPE DECLARATION **************************************/
@@ -44,7 +35,7 @@ extern void pilot_stop();
  *  \brief Function dedicated to send an event in the mailbox to set the direction
  *  \param  Direction the direction to send to the robot entity
  */
-extern void pilot_set_direction(Direction dir);
+extern void pilot_set_direction(Direction_e dir);
 
 /** \fn extern void pilot_signal_end_init()
  *  \brief Function dedicated to send an event in the mailbox to signal the end of peripheral initialization of the robot
@@ -80,7 +71,7 @@ extern void pilot_signal_restart_odometry();
  *  \brief Function dedicated to send an event in the mailbox to ask the robot to go to the desire position (using A* algorithm)
  *  \param  Coord the desire position which has been choosen by the user on the android app
  */
-extern void pilot_ask_destination(Coord coord_final);
+//extern void pilot_ask_destination(Coord coord_final);
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 
