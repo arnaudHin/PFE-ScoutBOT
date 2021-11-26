@@ -19,7 +19,6 @@
 #include <pthread.h>
 #include <errno.h>
 #include <stdbool.h>
-
 #include "pilot.h"
 #include "../util.h"
 #include "com_race/postman_race.h"
@@ -37,44 +36,74 @@
 #define DIRECTION_STR(dir) \
 	(FORWARD == dir ? "FORWARD" : (BACKWARD == dir ? "BACKWARD" : (LEFT == dir ? "LEFT" : (RIGHT == dir ? "RIGHT" : (BREAK == dir ? "BREAK" : (DEFAULT == dir ? "DEFAULT" : "unknown"))))))
 
-#define STATE_GENERATION S(S_FORGET) \
-S(S_NOT_INITIALISED) S(S_NOT_CONNECTED) S(S_NORMAL) S(S_DEATH) S(NB_STATE)
-#define S(x) x,
-typedef enum
-{
-	STATE_GENERATION STATE_NB
-} State;
-#undef S
-#define S(x) #x,
-const char *const state_pilot_name[] = {STATE_GENERATION};
-#undef STATE_GENERATION
-#undef S
 
-#define TRANSITION_ACTION_GENERATION S(T_NOP_PILOT) \
-S(T_END_INIT) S(T_START_SCAN) S(T_STOP_SCAN) S(T_START_AUTO_SCAN) S(T_STOP_AUTO_SCAN) S(T_UPDATE_DIR) S(T_SIGNAL_FORBIDDEN_PATH) S(T_TRY_PATH) S(T_SIGNAL_END_DISPLACEMENT) S(T_EMERGENCY_STOP) S(T_RESET_POSITION) S(T_EXIT)
-#define S(x) x,
-typedef enum
-{
-	TRANSITION_ACTION_GENERATION TRANSITION_ACTION_NB
-} Transition_action;
-#undef S
-#define S(x) #x,
-const char *const transition_action_pilot_name[] = {TRANSITION_ACTION_GENERATION};
-#undef TRANSITION_ACTION_GENERATION
-#undef S
+// #define STATE_GENERATION S(S_FORGET) \
+// S(S_NOT_INITIALISED) S(S_NOT_CONNECTED) S(S_NORMAL) S(S_DEATH) S(NB_STATE)
+// #define S(x) x,
+// typedef enum
+// {
+// 	STATE_GENERATION STATE_NB
+// } State;
+// #undef S
+// #define S(x) #x,
+// const char *const state_pilot_name[] = {STATE_GENERATION};
+// #undef STATE_GENERATION
+// #undef S
 
-#define EVENT_GENERATION S(E_END_INIT) \
-S(E_SUCCESSFULL_CONNECTION) S(E_FAIL_CONNECTION) S(E_UPDATE_DIR) S(E_SIGNAL_END_DISPLACEMENT) S(E_RESET_POSITION) S(E_SIGNAL_FORBIDDEN_PATH) S(E_ASK_DESTINATION) S(E_EMERGENCY_STOP) S(E_EXIT) S(NB_ENTREE)
-#define S(x) x,
-typedef enum
-{
-	EVENT_GENERATION EVENT_ACTION_NB
-} Event;
-#undef S
-#define S(x) #x,
-const char *const event_pilot_name[] = {EVENT_GENERATION};
-#undef EVENT_GENERATION
-#undef S
+// #define TRANSITION_ACTION_GENERATION S(T_NOP_PILOT) \
+// S(T_END_INIT) S(T_START_SCAN) S(T_STOP_SCAN) S(T_START_AUTO_SCAN) S(T_STOP_AUTO_SCAN) S(T_UPDATE_DIR) S(T_SIGNAL_FORBIDDEN_PATH) S(T_TRY_PATH) S(T_SIGNAL_END_DISPLACEMENT) S(T_EMERGENCY_STOP) S(T_RESET_POSITION) S(T_EXIT)
+// #define S(x) x,
+// typedef enum
+// {
+// 	TRANSITION_ACTION_GENERATION TRANSITION_ACTION_NB
+// } Transition_action;
+// #undef S
+// #define S(x) #x,
+// const char *const transition_action_pilot_name[] = {TRANSITION_ACTION_GENERATION};
+// #undef TRANSITION_ACTION_GENERATION
+// #undef S
+
+// #define EVENT_GENERATION S(E_END_INIT) \
+// S(E_SUCCESSFULL_CONNECTION) S(E_FAIL_CONNECTION) S(E_UPDATE_DIR) S(E_SIGNAL_END_DISPLACEMENT) S(E_RESET_POSITION) S(E_SIGNAL_FORBIDDEN_PATH) S(E_ASK_DESTINATION) S(E_EMERGENCY_STOP) S(E_EXIT) S(NB_ENTREE)
+// #define S(x) x,
+// typedef enum
+// {
+// 	EVENT_GENERATION EVENT_ACTION_NB
+// } Event;
+// #undef S
+// #define S(x) #x,
+// const char *const event_pilot_name[] = {EVENT_GENERATION};
+// #undef EVENT_GENERATION
+// #undef S
+
+
+typedef enum{
+
+	S_IDLE_P=0,
+	S_RUNNING_P,
+	S_DEATH_P,
+	NB_STATE_P
+}Pilot_state_e;
+
+typedef enum{
+	T_START_PILOT_P=0,
+	T_UPDATE_DIR_P,
+	T_EXIT_P,
+	T_SEND_LIDAR_MAPPING_P,
+	T_NB_TRANS_P
+}Pilot_transistion_action_e;
+
+
+typedef enum{
+	E_START_P=0,
+	E_CONNECTION_OK_P,
+	E_FAIL_CONNECTION_P,
+	E_UPDATE_DIR_P,
+	E_SEND_LIDAR_MAPPING_P,
+	E_EXIT_P,
+	E_NB_EVENT_P
+}Pilot_event_e;
+
 
 /************************************** END DEFINE *************************************************************/
 
@@ -82,43 +111,53 @@ static const char queue_name[] = "/pilot_postman"; //name of mailbox
 static mqd_t id_bal;							   //ID mailbox
 static pthread_t id_thread;						   //ID thread
 static Direction_e direction = PILOT_DEFAULT_DIRECTION;
-//static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORIZED_DIRECTION - 1] = false};
 static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORIZED_DIRECTION - 1] = true};
-//static Odometry astar_path[MAX_PATH_LEN] = {0};
 
-typedef struct char_direction
-{
-	char direction[MAX_DIR_SIZE];
-} char_direction;
+// typedef struct char_direction
+// {
+// 	char direction[MAX_DIR_SIZE];
+// } char_direction;
 
 /* \struct Transition
  *
  * \brief Transition structure to determine the following state to reach after a specific event occur
  *
  */
+// typedef struct
+// {
+// 	State destination_state;
+// 	Transition_action action;
+// } Transition;
+
 typedef struct
 {
-	State destination_state;
-	Transition_action action;
-} Transition;
+	Pilot_state_e destinationState;
+	Pilot_transistion_action_e actionToPerform;
+} Transition_t;
 
-/* \struct Mb_message
- * \brief Mb_message structure dedicated to pass the event between multiples threads
+
+
+/* \struct Mq_message_t
+ * \brief Mq_message_t structure dedicated to pass the event between multiples threads
  *
  */
 typedef struct
 {
-	Event evenement;
-	//Coord coord;
-} Mb_message;
+	Pilot_event_e event;
+} Mq_message_t;
+
+typedef struct{
+	Pilot_state_e myPiloteState;
+
+}Pilot_t;
 
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
 
-static void pilot_perform_action(Transition_action an_action);
+static void pilot_perform_action(Pilot_transistion_action_e an_action);
 static void *pilot_run();
 static void pilot_mq_init();
-static Mb_message pilot_mq_receive();
-static void pilot_mq_send(Event pilot_event);
+static Mq_message_t pilot_mq_receive();
+static void pilot_mq_send(Pilot_transistion_action_e pilot_event);
 static void pilot_mq_done();
 static void pilot_check_authorized(Direction_e dir);
 static void pilot_update_authorized(void);
@@ -128,32 +167,42 @@ static void pilot_update_authorized(void);
 
 /***************************************** TRANSITION STRUCT *******************************************************/
 
-static Transition mySm[NB_STATE][NB_ENTREE] =
-	{
-		[S_NOT_INITIALISED][E_END_INIT] = {S_NOT_CONNECTED, T_END_INIT},
-		[S_NOT_INITIALISED][E_EXIT] = {S_DEATH, T_EXIT},
+// static Transition mySm[NB_STATE][NB_ENTREE] =
+// 	{
+// 		[S_NOT_INITIALISED][E_END_INIT] = {S_NOT_CONNECTED, T_END_INIT},
+// 		[S_NOT_INITIALISED][E_EXIT] = {S_DEATH, T_EXIT},
 
-		[S_NOT_CONNECTED][E_SUCCESSFULL_CONNECTION] = {S_NORMAL, T_START_SCAN},
+// 		[S_NOT_CONNECTED][E_SUCCESSFULL_CONNECTION] = {S_NORMAL, T_START_SCAN},
 
-		[S_NORMAL][E_FAIL_CONNECTION] = {S_NOT_CONNECTED, T_STOP_SCAN},
-		[S_NORMAL][E_UPDATE_DIR] = {S_NORMAL, T_UPDATE_DIR},
+// 		[S_NORMAL][E_FAIL_CONNECTION] = {S_NOT_CONNECTED, T_STOP_SCAN},
+// 		[S_NORMAL][E_UPDATE_DIR] = {S_NORMAL, T_UPDATE_DIR},
 
-		[S_NORMAL][E_FAIL_CONNECTION] = {S_NOT_CONNECTED, T_STOP_SCAN},
-		[S_NORMAL][E_UPDATE_DIR] = {S_NORMAL, T_UPDATE_DIR},
+// 		[S_NORMAL][E_FAIL_CONNECTION] = {S_NOT_CONNECTED, T_STOP_SCAN},
+// 		[S_NORMAL][E_UPDATE_DIR] = {S_NORMAL, T_UPDATE_DIR},
 
-		[S_NORMAL][E_SIGNAL_FORBIDDEN_PATH] = {S_NORMAL, T_SIGNAL_FORBIDDEN_PATH},
-		[S_NORMAL][E_ASK_DESTINATION] = {S_NORMAL, T_TRY_PATH},
-		[S_NORMAL][E_SIGNAL_END_DISPLACEMENT] = {S_NORMAL, T_SIGNAL_END_DISPLACEMENT},
+// 		[S_NORMAL][E_SIGNAL_FORBIDDEN_PATH] = {S_NORMAL, T_SIGNAL_FORBIDDEN_PATH},
+// 		[S_NORMAL][E_ASK_DESTINATION] = {S_NORMAL, T_TRY_PATH},
+// 		[S_NORMAL][E_SIGNAL_END_DISPLACEMENT] = {S_NORMAL, T_SIGNAL_END_DISPLACEMENT},
 
-		[S_NORMAL][E_RESET_POSITION] = {S_NORMAL, T_RESET_POSITION},
-		[S_NORMAL][E_EMERGENCY_STOP] = {S_NORMAL, T_EMERGENCY_STOP},
+// 		[S_NORMAL][E_RESET_POSITION] = {S_NORMAL, T_RESET_POSITION},
+// 		[S_NORMAL][E_EMERGENCY_STOP] = {S_NORMAL, T_EMERGENCY_STOP},
 
-		[S_NORMAL][E_EXIT] = {S_DEATH, T_EXIT},
-		[S_NOT_CONNECTED][E_EXIT] = {S_DEATH, T_EXIT},
-};
+// 		[S_NORMAL][E_EXIT] = {S_DEATH, T_EXIT},
+// 		[S_NOT_CONNECTED][E_EXIT] = {S_DEATH, T_EXIT},
+// };
+
+static Transition_t myTransition[NB_STATE_P][E_NB_EVENT_P] = {
+	[S_IDLE_P][E_START_P] = {S_IDLE_P, T_START_PILOT_P},
+
+
+	[S_IDLE_P][E_START_P] = {S_IDLE_P, T_START_PILOT_P},
+
+}
+
 
 /********************************** TEST TOOLS ********************************************************************/
 
+static Pilot_t * mypilot;
 static State a_state_test;
 static Transition_action an_action_test;
 #ifdef NTEST
@@ -201,7 +250,7 @@ static void pilot_mq_init()
 
 	attr.mq_flags = 0;
 	attr.mq_maxmsg = MQ_MAX_MESSAGES;
-	attr.mq_msgsize = sizeof(Mb_message);
+	attr.mq_msgsize = sizeof(Mq_message_t);
 	attr.mq_curmsgs = 0;
 
 	/* Destruct a pre-existing mailbox */
@@ -215,6 +264,7 @@ static void pilot_mq_init()
 	TRACE("Creation de la BAL: %s\nID:%d\n\n", queue_name, id_bal);
 }
 
+
 /** \fn static void pilot_mq_send(Event pilot_event)
  *
  *  \brief Function dedicated to send a special stop message to the mailbox
@@ -222,29 +272,29 @@ static void pilot_mq_init()
  *  \param Event the event to send through the mailbox
  */
 
-static void pilot_mq_send(Event pilot_event)
+static void pilot_mq_send(Pilot_event_e pilot_event)
 {
-	Mb_message pilot_msg;
-	pilot_msg.evenement = pilot_event;
+	Mq_message_t pilot_msg;
+	pilot_msg.event = pilot_event;
 	
 	TRACE("Evenement de pilot : %d", pilot_msg);
-	mqd_t bal_send = mq_send(id_bal, (const char *)&pilot_msg, sizeof(Mb_message), 0); //Priority 0 to 31 (highest priority first)
+	mqd_t bal_send = mq_send(id_bal, (const char *)&pilot_msg, sizeof(Mq_message_t), 0); //Priority 0 to 31 (highest priority first)
 	assert(id_bal != -1 && "Error mq_send pilot\n");
 }
 
-/** \fn static Mb_message pilot_mq_receive()
+/** \fn static Mq_message_t pilot_mq_receive()
  *
  *  \brief Function dedicated to receive a message from the mailbox
  *
- *  \return Mb_message the message received in the mailbox
+ *  \return Mq_message_t the message received in the mailbox
  */
 
-static Mb_message pilot_mq_receive()
+static Mq_message_t pilot_mq_receive()
 {
 	/*Reception of a message from the BAL*/
 
-	Mb_message pilot_msg;
-	ssize_t bal_receive_msg = mq_receive(id_bal, (char *)&pilot_msg, sizeof(Mb_message), NULL); //Null priority => mailbox use as a FIFO
+	Mq_message_t pilot_msg;
+	ssize_t bal_receive_msg = mq_receive(id_bal, (char *)&pilot_msg, sizeof(Mq_message_t), NULL); //Null priority => mailbox use as a FIFO
 	assert(bal_receive_msg != -1 && "Error mq_receive pilot\n");
 
 	return pilot_msg;
@@ -277,7 +327,7 @@ static void pilot_mq_done()
  */
 static void *pilot_run()
 {
-	Mb_message pilot_msg;
+	Mq_message_t pilot_msg;
 	Transition_action an_action = T_NOP_PILOT;
 
 	State my_state = S_NOT_CONNECTED;
@@ -391,10 +441,8 @@ extern void pilot_set_direction(Direction_e dir)
 {
 	direction = dir;
 	TRACE("Pilot : SET DIRECTION : %d\n", direction);
-	pilot_mq_send(E_UPDATE_DIR);
+	pilot_mq_send(E_UPDATE_DIR_P);
 }
-
-
 
 
 /** \fn extern void pilot_signal_end_init()
@@ -412,7 +460,7 @@ extern void pilot_signal_end_init()
  */
 extern void pilot_signal_connection_success()
 {
-	pilot_mq_send(E_SUCCESSFULL_CONNECTION);
+	pilot_mq_send(E_CONNECTION_OK_P);
 }
 
 /** \fn extern void pilot_signal_connection_failed()
@@ -421,37 +469,11 @@ extern void pilot_signal_connection_success()
  */
 extern void pilot_signal_connection_failed()
 {
-	pilot_mq_send(E_FAIL_CONNECTION);
-}
-
-/** \fn extern void pilot_signal_emergency_stop()
- *
- *  \brief Function dedicated to send an event in the mailbox to signal that the user asked for an emergency stop of the robot
- */
-extern void pilot_signal_emergency_stop()
-{
-	pilot_mq_send(E_EMERGENCY_STOP);
-}
-
-/** \fn extern void pilot_signal_robot_arrived()
- *
- *  \brief Function dedicated to send an event in the mailbox to signal that the robot is arrived to the desire position
- */
-extern void pilot_signal_robot_arrived()
-{
-	pilot_mq_send(E_SIGNAL_END_DISPLACEMENT);
+	pilot_mq_send(E_FAIL_CONNECTION_P);
 }
 
 
 
-/** \fn extern void pilot_signal_restart_odometry()
- *
- *  \brief Function dedicated to send an event in the mailbox to ask for a reset of the current position + angle of the robot
- */
-extern void pilot_signal_restart_odometry()
-{
-	pilot_mq_send(E_RESET_POSITION);
-}
 
 /** \fn extern void pilot_ask_destination(Coord coord_final)
  *
@@ -465,27 +487,6 @@ extern void pilot_signal_restart_odometry()
 
 
 /********************* 	END OF MAILBOX SEND FONCTION *********************************************************************/
-
-/** \fn static void pilot_check_authorized(Direction dir)
- *
- *  \brief Function dedicated to send a direction to the robot only if the direction is approved
- *
- *  \param  Direction the direction to send using the mailbox
- */
-static void pilot_check_authorized(Direction_e dir)
-{
-	if (authorized_direction[dir] == true)
-	{
-		TRACE("Authorized direction\n");
-		// display_send_txt_state("AUTO");
-		//robot_try_mvmt(dir);
-	}
-	else
-	{
-		TRACE("Impossible direction\n");
-		//display_send_txt_msg("DIRECTION_UNAUTHORIZED");
-	}
-}
 
 /** \fn static void pilot_update_authorized()
  *

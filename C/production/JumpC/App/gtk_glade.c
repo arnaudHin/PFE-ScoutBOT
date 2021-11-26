@@ -6,6 +6,7 @@
 #include "../ComJumpC/postman_jump.h"
 #include "gtk_glade.h"
 #include "../ComJumpC/util.h"
+#include "../ComJumpC/commun.h"
 /**
  * @brief Current state of the remote (Pause or Play)
  * 
@@ -193,7 +194,7 @@ static void cb_pause(GtkWidget *p_wid, gpointer p_data)
 
 static void cb_left(GtkWidget *p_wid, gpointer p_data)
 {
-   proxy_set_direction(LEFT);
+   proxy_pilot_set_direction(LEFT);
 }
 
 /**
@@ -205,7 +206,7 @@ static void cb_left(GtkWidget *p_wid, gpointer p_data)
 
 static void cb_right(GtkWidget *p_wid, gpointer p_data)
 {
-   proxy_set_direction(RIGHT);
+   proxy_pilot_set_direction(RIGHT);
 }
 
 /**
@@ -217,7 +218,7 @@ static void cb_right(GtkWidget *p_wid, gpointer p_data)
 
 static void cb_forward(GtkWidget *p_wid, gpointer p_data)
 {
-   proxy_set_direction(FORWARD);
+   proxy_pilot_set_direction(FORWARD);
 }
 
 /**
@@ -229,7 +230,7 @@ static void cb_forward(GtkWidget *p_wid, gpointer p_data)
 
 static void cb_moveback(GtkWidget *p_wid, gpointer p_data)
 {
-   proxy_set_direction(BACKWARD);
+   proxy_pilot_set_direction(BACKWARD);
 }
 
 /**
@@ -241,7 +242,7 @@ static void cb_moveback(GtkWidget *p_wid, gpointer p_data)
 
 static void cb_stop(GtkWidget *p_wid, gpointer p_data)
 {
-   proxy_set_direction(STOP);
+   proxy_pilot_set_direction(STOP);
 }
 
 /**
@@ -278,6 +279,7 @@ static void cb_powerOnOff(GtkWidget *p_wid, gpointer p_data)
    //gtk_builder_get_objects   for every objects
    if (gtk_switch_get_active(GTK_WIDGET(gtk_builder_get_object(p_builder, "powerOnOff"))) == 0)
    {
+      
       postman_jumpC_stop();
       switch_block(FALSE);
    }

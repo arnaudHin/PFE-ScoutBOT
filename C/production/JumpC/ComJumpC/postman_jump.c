@@ -38,16 +38,21 @@ static int a_socket = -1;
 static pthread_mutex_t mutex_thread = PTHREAD_MUTEX_INITIALIZER;
 
 
-void postman_jumpC_send_msg(Network_msg msg)
+void postman_jumpC_send_msg(Message_to_pocket_t * msg)
 {
 	int mutex_lock = pthread_mutex_lock(&mutex_thread);
 	assert(mutex_lock == 0 && "Error to lock mutex\n");
-	// for(int i=0;i<msg.size;i++){
-	// 	printf("%02X ", msg.bufferToSend[i]);
-	// }printf("\n");
 
-	TRACE("POSTMAN WRITING : %s\r\n", msg.bufferToSend);
-	if(write (a_socket,  &msg, sizeof(Network_msg))==-1)
+	uint8_t buffToSend[4];
+	memset(buffToSend, 0x00, sizeof(buffToSend) );
+	buffToSend[0] = msg->cmd;
+	buffToSend[1] = (msg->sizeData >> 8) & 0xFF;
+	buffToSend[2] = msg->sizeData & 0xFF;    
+	buffToSend[3] = msg->data.direction;
+
+	ssize_t s = write (a_socket,  buffToSend, sizeof(buffToSend) );
+
+	if( s == -1 )
 	{
 		perror("Error : Information not send\r\n");
 		exit(EXIT_FAILURE);
@@ -137,6 +142,7 @@ void postman_jumpC_start()
 
 void postman_jumpC_stop()
 {
+	
 	TRACE("CLIENT STOP\r\n");
 	int id_error;
 	id_error = close(a_socket);

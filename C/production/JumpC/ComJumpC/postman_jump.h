@@ -20,7 +20,7 @@
  *  \param buffer : buffer in byte to send with a socket
  *  \param length : size of the buffer
  */
-extern void postman_jumpC_send_msg(Network_msg msg);
+extern void postman_jumpC_send_msg(Message_to_pocket_t * msg);
 
 
 /** \fn void postman_jumpC_receive_msg (char * buffer, int length)

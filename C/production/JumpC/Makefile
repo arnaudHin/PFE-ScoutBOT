@@ -10,7 +10,7 @@
 # sources organizations
 #
 
-PROG = gtk_glade
+PROG = jump.elf
 
 # Project packages (to be completed if necessary)
 

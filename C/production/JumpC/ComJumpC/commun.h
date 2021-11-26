@@ -40,17 +40,17 @@ typedef enum
  * Network_msg : expected structure to receive
  */
 
+
 typedef enum
 {
-	// FROM Jump
-	NOP = 0,
-	DIR_LEFT,
-	DIR_RIGHT,
-	DIR_FORWARD,
-	DIR_BACKWARD,
+	DEFAULT=0,
+	LEFT,
+	RIGHT,
+	FORWARD,
+	BACKWARD,
 	STOP,
-	BREAK_NET,
-} Network_CMD;
+	BREAK
+} Direction_e;
 
 typedef enum
 {
@@ -64,12 +64,17 @@ typedef enum
 	NB_CMD_FROM_JUMP
 } CMD_e;
 
+typedef struct{
+	Direction_e direction;
+
+}DATA_to_pocket_t;
+
 typedef struct
 {
-	Network_CMD cmd;
-	uint16_t size;
-	uint8_t bufferToSend[MAX_SIZE_BYTE_DATA_TO_SEND];
-} Network_msg;
+	CMD_e cmd;
+	uint16_t sizeData;
+	DATA_to_pocket_t data;
+} Message_to_pocket_t;
 
 #endif /* SRC_POCKET_COMMUN_H_ */
 
