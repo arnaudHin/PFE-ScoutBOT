@@ -17,7 +17,13 @@ frame Race as "Race" #LightYellow {
 
     folder motorRace as "motorRace" #WhiteSmoke;line:IndianRed; {
         class Robot <<active>>
-        class Motor
+        class Motors
+    }
+
+    folder sensorManager as "sensorManager" #WhiteSmoke;line:IndianRed;{
+        class Accelerometer <<boundary>>
+        class ContactSensor <<boundary>>
+        class Sensors
     }
 
 }
@@ -28,7 +34,12 @@ ProxyPilot --> ProtocolPocketRace
 DispatcherPocketRace --> ProtocolPocketRace
 
 Robot --> ProxyPilot
-Robot --> Motor
+Robot --> Motors
+Sensors --> Accelerometer
+Sensors --> ContactSensor
+
+Robot -l-> Sensors
+
 DispatcherPocketRace -> Robot
 
 
