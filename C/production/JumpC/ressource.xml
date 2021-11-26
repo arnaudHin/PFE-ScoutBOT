@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <file prepprocess="xml-stripblanks">projetUI.glade</file>
+    <gresource prefix="Jump_CSS">
+        <file>gtk.css</file>
+    </gresource>
+</gresources>
