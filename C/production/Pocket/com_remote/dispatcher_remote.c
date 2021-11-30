@@ -56,6 +56,8 @@ extern void dispatcher_remote_start()
                 perror("Error : creation of thread incorrect in remoteUI start");
                 exit(EXIT_FAILURE);
         }
+
+		pilot_signal_connection_success();
 }
 
 
@@ -79,6 +81,8 @@ extern void dispatcher_remote_stop()
         }
 
 		postman_remote_stop();
+
+		pilot_signal_exit();
 
 }
 

@@ -19,11 +19,13 @@
  * Orders that can be received from the Android app
  */
 
-#define LIDAR_POINTS_PER_DEGREE			5
+#define LIDAR_POINTS_PER_DEGREE			2
 #define LIDAR_TOTAL_DEGREE				360
-#define LIDAR_SIZE_BYTE_DATA			(LIDAR_POINTS_PER_DEGREE)*(LIDAR_TOTAL_DEGREE)*2*( sizeof(int16_t) ) 
+#define LIDAR_SIZE_BYTE_DATA			(LIDAR_POINTS_PER_DEGREE)*(LIDAR_TOTAL_DEGREE)) 
+#define LIDAR_TOTAL_DATA				720
 #define POSITION_NB_BEACONS_BLE			9
 #define POSITION_SIZE_BYTE_DATA 		(POSITION_NB_BEACONS_BLE + 1)*2*( sizeof(int16_t) )
+
 
 #define MAX_SIZE_BYTE_DATA_TO_SEND		(LIDAR_SIZE_BYTE_DATA)
 #define MAX_SIZE_BYTE_DATA_TO_RECEIVE	(1)
@@ -54,6 +56,11 @@ typedef enum
 	BREAK
 } Direction_e;
 
+
+typedef struct{
+	int16_t X_buffer[LIDAR_TOTAL_DEGREE];
+	int16_t Y_buffer[LIDAR_TOTAL_DEGREE];
+}Lidar_data_t;
 
 
 typedef enum{
@@ -92,6 +99,10 @@ typedef struct{
 
 
 typedef struct{
+	Lidar_data_t lidarData;
+}DATA_to_jump_t;
+
+typedef struct{
 	CMD_from_jump_e command;
 	uint16_t sizeData;
 	DATA_from_jump_t data;
@@ -101,7 +112,7 @@ typedef struct{
 typedef struct{
 	CMD_to_jump_e command;
 	uint16_t size;
-	uint8_t bufferToSend[MAX_SIZE_BYTE_DATA_TO_SEND];
+	DATA_to_jump_t data;
 }Message_to_jump_t;
 
 

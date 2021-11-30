@@ -21,8 +21,9 @@
 #include <stdbool.h>
 #include "pilot.h"
 #include "../util.h"
-#include "com_race/postman_race.h"
-#include "com_race/proxy_robot.h"
+#include "../com_race/proxy_robot.h"
+#include "../com_race/race_protocol.h"
+
 #include "robot_state.h"
 
 /************************************** DEFINE ****************************************************************/
@@ -37,45 +38,6 @@
 	(FORWARD == dir ? "FORWARD" : (BACKWARD == dir ? "BACKWARD" : (LEFT == dir ? "LEFT" : (RIGHT == dir ? "RIGHT" : (BREAK == dir ? "BREAK" : (DEFAULT == dir ? "DEFAULT" : "unknown"))))))
 
 
-// #define STATE_GENERATION S(S_FORGET) \
-// S(S_NOT_INITIALISED) S(S_NOT_CONNECTED) S(S_NORMAL) S(S_DEATH) S(NB_STATE)
-// #define S(x) x,
-// typedef enum
-// {
-// 	STATE_GENERATION STATE_NB
-// } State;
-// #undef S
-// #define S(x) #x,
-// const char *const state_pilot_name[] = {STATE_GENERATION};
-// #undef STATE_GENERATION
-// #undef S
-
-// #define TRANSITION_ACTION_GENERATION S(T_NOP_PILOT) \
-// S(T_END_INIT) S(T_START_SCAN) S(T_STOP_SCAN) S(T_START_AUTO_SCAN) S(T_STOP_AUTO_SCAN) S(T_UPDATE_DIR) S(T_SIGNAL_FORBIDDEN_PATH) S(T_TRY_PATH) S(T_SIGNAL_END_DISPLACEMENT) S(T_EMERGENCY_STOP) S(T_RESET_POSITION) S(T_EXIT)
-// #define S(x) x,
-// typedef enum
-// {
-// 	TRANSITION_ACTION_GENERATION TRANSITION_ACTION_NB
-// } Transition_action;
-// #undef S
-// #define S(x) #x,
-// const char *const transition_action_pilot_name[] = {TRANSITION_ACTION_GENERATION};
-// #undef TRANSITION_ACTION_GENERATION
-// #undef S
-
-// #define EVENT_GENERATION S(E_END_INIT) \
-// S(E_SUCCESSFULL_CONNECTION) S(E_FAIL_CONNECTION) S(E_UPDATE_DIR) S(E_SIGNAL_END_DISPLACEMENT) S(E_RESET_POSITION) S(E_SIGNAL_FORBIDDEN_PATH) S(E_ASK_DESTINATION) S(E_EMERGENCY_STOP) S(E_EXIT) S(NB_ENTREE)
-// #define S(x) x,
-// typedef enum
-// {
-// 	EVENT_GENERATION EVENT_ACTION_NB
-// } Event;
-// #undef S
-// #define S(x) #x,
-// const char *const event_pilot_name[] = {EVENT_GENERATION};
-// #undef EVENT_GENERATION
-// #undef S
-
 
 typedef enum{
 
@@ -86,10 +48,11 @@ typedef enum{
 }Pilot_state_e;
 
 typedef enum{
-	T_START_PILOT_P=0,
+	T_NOP_P = 0,
+	T_START_PILOT_P,
 	T_UPDATE_DIR_P,
-	T_EXIT_P,
-	T_SEND_LIDAR_MAPPING_P,
+	T_EMERGENCY_STOP_P,
+	T_EXIT_P,	
 	T_NB_TRANS_P
 }Pilot_transistion_action_e;
 
@@ -99,7 +62,6 @@ typedef enum{
 	E_CONNECTION_OK_P,
 	E_FAIL_CONNECTION_P,
 	E_UPDATE_DIR_P,
-	E_SEND_LIDAR_MAPPING_P,
 	E_EXIT_P,
 	E_NB_EVENT_P
 }Pilot_event_e;
@@ -110,7 +72,6 @@ typedef enum{
 static const char queue_name[] = "/pilot_postman"; //name of mailbox
 static mqd_t id_bal;							   //ID mailbox
 static pthread_t id_thread;						   //ID thread
-static Direction_e direction = PILOT_DEFAULT_DIRECTION;
 static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORIZED_DIRECTION - 1] = true};
 
 // typedef struct char_direction
@@ -121,7 +82,6 @@ static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORI
 /* \struct Transition
  *
  * \brief Transition structure to determine the following state to reach after a specific event occur
- *
  */
 // typedef struct
 // {
@@ -129,8 +89,7 @@ static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORI
 // 	Transition_action action;
 // } Transition;
 
-typedef struct
-{
+typedef struct{
 	Pilot_state_e destinationState;
 	Pilot_transistion_action_e actionToPerform;
 } Transition_t;
@@ -139,7 +98,6 @@ typedef struct
 
 /* \struct Mq_message_t
  * \brief Mq_message_t structure dedicated to pass the event between multiples threads
- *
  */
 typedef struct
 {
@@ -148,7 +106,7 @@ typedef struct
 
 typedef struct{
 	Pilot_state_e myPiloteState;
-
+	Direction_e myDirection;
 }Pilot_t;
 
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
@@ -157,7 +115,7 @@ static void pilot_perform_action(Pilot_transistion_action_e an_action);
 static void *pilot_run();
 static void pilot_mq_init();
 static Mq_message_t pilot_mq_receive();
-static void pilot_mq_send(Pilot_transistion_action_e pilot_event);
+static void pilot_mq_send(Pilot_event_e pilot_event);
 static void pilot_mq_done();
 static void pilot_check_authorized(Direction_e dir);
 static void pilot_update_authorized(void);
@@ -167,71 +125,40 @@ static void pilot_update_authorized(void);
 
 /***************************************** TRANSITION STRUCT *******************************************************/
 
-// static Transition mySm[NB_STATE][NB_ENTREE] =
-// 	{
-// 		[S_NOT_INITIALISED][E_END_INIT] = {S_NOT_CONNECTED, T_END_INIT},
-// 		[S_NOT_INITIALISED][E_EXIT] = {S_DEATH, T_EXIT},
-
-// 		[S_NOT_CONNECTED][E_SUCCESSFULL_CONNECTION] = {S_NORMAL, T_START_SCAN},
-
-// 		[S_NORMAL][E_FAIL_CONNECTION] = {S_NOT_CONNECTED, T_STOP_SCAN},
-// 		[S_NORMAL][E_UPDATE_DIR] = {S_NORMAL, T_UPDATE_DIR},
-
-// 		[S_NORMAL][E_FAIL_CONNECTION] = {S_NOT_CONNECTED, T_STOP_SCAN},
-// 		[S_NORMAL][E_UPDATE_DIR] = {S_NORMAL, T_UPDATE_DIR},
-
-// 		[S_NORMAL][E_SIGNAL_FORBIDDEN_PATH] = {S_NORMAL, T_SIGNAL_FORBIDDEN_PATH},
-// 		[S_NORMAL][E_ASK_DESTINATION] = {S_NORMAL, T_TRY_PATH},
-// 		[S_NORMAL][E_SIGNAL_END_DISPLACEMENT] = {S_NORMAL, T_SIGNAL_END_DISPLACEMENT},
-
-// 		[S_NORMAL][E_RESET_POSITION] = {S_NORMAL, T_RESET_POSITION},
-// 		[S_NORMAL][E_EMERGENCY_STOP] = {S_NORMAL, T_EMERGENCY_STOP},
-
-// 		[S_NORMAL][E_EXIT] = {S_DEATH, T_EXIT},
-// 		[S_NOT_CONNECTED][E_EXIT] = {S_DEATH, T_EXIT},
-// };
-
 static Transition_t myTransition[NB_STATE_P][E_NB_EVENT_P] = {
-	[S_IDLE_P][E_START_P] = {S_IDLE_P, T_START_PILOT_P},
+	[S_IDLE_P][E_CONNECTION_OK_P] = {S_RUNNING_P, T_START_PILOT_P},
+	[S_IDLE_P][E_FAIL_CONNECTION_P] = {S_IDLE_P, T_NOP_P},
+	
+	[S_RUNNING_P][E_UPDATE_DIR_P] = {S_RUNNING_P, T_UPDATE_DIR_P},
+	[S_RUNNING_P][E_FAIL_CONNECTION_P] = {S_IDLE_P, T_EMERGENCY_STOP_P},
+
+	[S_RUNNING_P][E_EXIT_P] = {S_DEATH_P, T_EXIT_P},
+	[S_IDLE_P][E_EXIT_P] = {S_DEATH_P, T_EXIT_P},
+};
 
 
-	[S_IDLE_P][E_START_P] = {S_IDLE_P, T_START_PILOT_P},
-
-}
-
-
-/********************************** TEST TOOLS ********************************************************************/
 
 static Pilot_t * mypilot;
-static State a_state_test;
-static Transition_action an_action_test;
-#ifdef NTEST
 
-static void set_state(State state)
-{
-	a_state_test = state;
-}
 
-static void set_action(Transition_action action)
-{
-	an_action_test = action;
-}
 
-#endif
 
-/********************************** END TEST TOOLS ****************************************************************/
 
-/********************************** END OF TRANSITION STRUCT ******************************************************/
+
 
 /** \fn static void pilot_start ()
- *
  *  \brief Function dedicated to start the Pilot
  */
 extern void pilot_start()
 {
 	pilot_mq_init();
 
-	pilot_signal_connection_success();
+	mypilot == NULL;
+	mypilot = calloc(1, sizeof(Pilot_t));
+
+	mypilot->myDirection = BREAK;
+	mypilot->myPiloteState = S_IDLE_P;
+
 	int return_thread = pthread_create(&id_thread, NULL, (void *)&pilot_run, NULL);
 	TRACE("Pilot is starting");
 	assert(return_thread == 0 && "Error Pthread_create pilot\n");
@@ -240,7 +167,6 @@ extern void pilot_start()
 /*********************************** MAILBOX FUNCTION *************************************************************/
 
 /** \fn static void pilot_mq_init ()
- *
  *  \brief Function dedicated to initialize the log queue
  */
 static void pilot_mq_init()
@@ -266,9 +192,7 @@ static void pilot_mq_init()
 
 
 /** \fn static void pilot_mq_send(Event pilot_event)
- *
  *  \brief Function dedicated to send a special stop message to the mailbox
- *
  *  \param Event the event to send through the mailbox
  */
 
@@ -283,9 +207,7 @@ static void pilot_mq_send(Pilot_event_e pilot_event)
 }
 
 /** \fn static Mq_message_t pilot_mq_receive()
- *
  *  \brief Function dedicated to receive a message from the mailbox
- *
  *  \return Mq_message_t the message received in the mailbox
  */
 
@@ -301,7 +223,6 @@ static Mq_message_t pilot_mq_receive()
 }
 
 /** \fn static void pilot_mq_done ()
- *
  *  \brief Function dedicated to destroy the mailbox
  */
 static void pilot_mq_done()
@@ -320,80 +241,62 @@ static void pilot_mq_done()
 /***************************** MAE PERFORMING ACTION MECANISM *****************************************************/
 
 /** \fn static void *pilot_run()
- *
  *  \brief Function dedicated to perform an action when a message is received in the mailbox
- *
  *  \retval NULL
  */
 static void *pilot_run()
 {
 	Mq_message_t pilot_msg;
-	Transition_action an_action = T_NOP_PILOT;
+	Pilot_transistion_action_e an_action = T_NOP_P;
 
-	State my_state = S_NOT_CONNECTED;
-
-	// display_send_txt_state("S_NOT_INITIALISED");
-
-	while (my_state != S_DEATH)
+	while (mypilot->myPiloteState != S_DEATH_P)
 	{
-#ifdef NTEST
-		set_state(my_state);
-		set_action(an_action);
-#endif
-
 		pilot_msg = pilot_mq_receive();
-		TRACE("\n\nState:%s\nEvent:%s\n", state_pilot_name[my_state], event_pilot_name[pilot_msg.evenement]);
-		if (mySm[my_state][pilot_msg.evenement].destination_state != S_FORGET)
+		//TRACE("\n\nState:%s\nEvent:%s\n", state_pilot_name[my_state], event_pilot_name[pilot_msg.evenement]);
+		if (myTransition[mypilot->myPiloteState][pilot_msg.event].destinationState != S_DEATH_P)
 		{
-			an_action = mySm[my_state][pilot_msg.evenement].action;
+			an_action = myTransition[mypilot->myPiloteState][pilot_msg.event].actionToPerform;
 			pilot_perform_action(an_action);
 
-			my_state = mySm[my_state][pilot_msg.evenement].destination_state;
+			mypilot->myPiloteState = myTransition[mypilot->myPiloteState][pilot_msg.event].destinationState;
 		}
 	}
 	return NULL;
 }
 
 /** \fn static void pilot_perform_action(Transition_action an_action)
- *
  *  \brief Function dedicated to perform an action when a message is received in the mailbox
- *
  *  \param  Transition_action an Action to perform, compute from the event receive in the mailbox
  */
-static void pilot_perform_action(Transition_action an_action)
+static void pilot_perform_action(Pilot_transistion_action_e an_action)
 {
+	DATA_to_race_t data;
 
 	switch (an_action)
 	{
-	case T_NOP_PILOT:
+	case T_NOP_P:
 		TRACE("NOTHING TO PERFORM HERE\n");
 		break;
 
-	case T_END_INIT:
+	case T_EXIT_P:
 		TRACE("END OF PERIPHERAL INITIALISATION\n");
-		// display_send_txt_state("MANUAL");
-		// display_send_txt_connection("WAITING_FOR_CONNECTION");
+		
 		break;
 
-	case T_UPDATE_DIR:
-		TRACE("UPDATE & CHECK DIRECTION : %s\n", DIRECTION_STR(direction));
-		//pilot_check_authorized(direction);
-		DATA_to_race_t data;
-		data.direction = direction;
+	case T_UPDATE_DIR_P:
+		printf("\nPilot UPDATE DIR\n");
+		data.direction = mypilot->myDirection;
 		proxy_robot_try_dir( &data );
-
 		break;
 
-
-	case T_EMERGENCY_STOP:
+	case T_EMERGENCY_STOP_P:
 		TRACE("T_EMERGENCY_STOP\n");
 		//robot_urgent_break();
 		break;
 
-	case T_EXIT:
+	case T_START_PILOT_P:
 		TRACE("STOP THE PILOT\n");
-		Event pilot_event = E_EXIT;
-		pilot_mq_send(pilot_event);
+		
 		break;
 
 	default:
@@ -405,7 +308,6 @@ static void pilot_perform_action(Transition_action an_action)
 /*********************************** END OF MAE PERFORMING ACTION MECANISM *****************************************************/
 
 /** \fn static void pilot_wait_task_termination ()
- *
  *  \brief Function dedicated to wait until the end of the current task
  */
 static void pilot_wait_task_termination()
@@ -416,7 +318,6 @@ static void pilot_wait_task_termination()
 }
 
 /** \fn extern void pilot_stop()
- *
  *  \brief Function dedicated to stop the pilot
  */
 extern void pilot_stop()
@@ -425,37 +326,38 @@ extern void pilot_stop()
 
 	pilot_wait_task_termination();
 	pilot_mq_done();
+
+	free(mypilot);
 }
+
+
+
 
 /********************* 	MAILBOX SEND FONCTION ***************************************************************************/
 
 
 
 /** \fn extern void pilot_set_direction(Direction dir)
- *
  *  \brief Function dedicated to send an event in the mailbox to set the direction
- *
  *  \param  Direction the direction to send to the robot entity
  */
 extern void pilot_set_direction(Direction_e dir)
 {
-	direction = dir;
-	TRACE("Pilot : SET DIRECTION : %d\n", direction);
+	mypilot->myDirection = dir;
+	TRACE("Pilot : SET DIRECTION : %d\n", dir);
 	pilot_mq_send(E_UPDATE_DIR_P);
 }
 
 
 /** \fn extern void pilot_signal_end_init()
- *
  *  \brief Function dedicated to send an event in the mailbox to signal the end of peripheral initialization of the robot
  */
-extern void pilot_signal_end_init()
+extern void pilot_signal_exit()
 {
-	pilot_mq_send(E_END_INIT);
+	pilot_mq_send(E_EXIT_P);
 }
 
 /** \fn extern void pilot_signal_connection_success()
- *
  *  \brief Function dedicated to send an event in the mailbox to signal the connection between the android app and pocket
  */
 extern void pilot_signal_connection_success()
@@ -464,7 +366,6 @@ extern void pilot_signal_connection_success()
 }
 
 /** \fn extern void pilot_signal_connection_failed()
- *
  *  \brief Function dedicated to send an event in the mailbox to signal the lost of connection between the android app and pocket
  */
 extern void pilot_signal_connection_failed()
@@ -475,48 +376,6 @@ extern void pilot_signal_connection_failed()
 
 
 
-/** \fn extern void pilot_ask_destination(Coord coord_final)
- *
- *  \brief Function dedicated to send an event in the mailbox to ask the robot to go to the desire position (using A* algorithm)
- *
- *  \param  Coord the desire position which has been choosen by the user on the android app
- */
-
-
-
-
 
 /********************* 	END OF MAILBOX SEND FONCTION *********************************************************************/
 
-/** \fn static void pilot_update_authorized()
- *
- *  \brief Function dedicated to update the list of approved direction thanks to sensor data
- */
-static void pilot_update_authorized()
-{
-
-	Sensors_state *update_sensors_state = robot_state_get_sensors_state();
-	if ((update_sensors_state->bumper_state_bl) | (update_sensors_state->bumper_state_br))
-	{
-		authorized_direction[BACKWARD] = false;
-
-		authorized_direction[LEFT] = false;
-		authorized_direction[RIGHT] = false;
-	}
-	else if ((update_sensors_state->bumper_state_fl) | (update_sensors_state->bumper_state_fr))
-	{
-		authorized_direction[FORWARD] = false;
-
-		authorized_direction[LEFT] = false;
-		authorized_direction[RIGHT] = false;
-	}
-	else
-	{
-		authorized_direction[LEFT] = true;
-		authorized_direction[RIGHT] = true;
-
-		authorized_direction[FORWARD] = true;
-		authorized_direction[BACKWARD] = true;
-		authorized_direction[BREAK] = true;
-	}
-}

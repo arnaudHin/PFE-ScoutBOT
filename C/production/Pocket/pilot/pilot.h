@@ -37,10 +37,10 @@ extern void pilot_stop();
  */
 extern void pilot_set_direction(Direction_e dir);
 
-/** \fn extern void pilot_signal_end_init()
+/** \fn extern void pilot_signal_exit()
  *  \brief Function dedicated to send an event in the mailbox to signal the end of peripheral initialization of the robot
  */
-extern void pilot_signal_end_init();
+extern void pilot_signal_exit();
 
 /** \fn extern void pilot_signal_connection_success()
  *  \brief Function dedicated to send an event in the mailbox to signal the connection between the android app and Pocket
@@ -57,21 +57,7 @@ extern void pilot_signal_connection_failed();
  */
 extern void pilot_signal_emergency_stop();
 
-/** \fn extern void pilot_signal_robot_arrived()
- *  \brief Function dedicated to send an event in the mailbox to signal that the robot is arrived to the desire position
- */
-extern void pilot_signal_robot_arrived();
 
-/** \fn extern void pilot_signal_restart_odometry()
- *  \brief Function dedicated to send an event in the mailbox to ask for a reset of the current position + angle of the robot
- */
-extern void pilot_signal_restart_odometry();
-
-/** \fn extern void pilot_ask_destination(Coord coord_final)
- *  \brief Function dedicated to send an event in the mailbox to ask the robot to go to the desire position (using A* algorithm)
- *  \param  Coord the desire position which has been choosen by the user on the android app
- */
-//extern void pilot_ask_destination(Coord coord_final);
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 

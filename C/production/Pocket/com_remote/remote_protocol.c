@@ -34,18 +34,23 @@ extern void remote_protocol_decode(uint8_t *bufferRead ,  Message_from_jump_t *m
     default:
         break;
     }
-
 }
 
 
 
 
 
-extern void remote_protocol_encode(uint8_t *bufferWrite ,  Message_to_jump_t *messageToWrite){
+extern void remote_protocol_encode(uint8_t *bufferWrite ,  Message_to_jump_t *messageToWrite, __ssize_t byteToEncode){
+
+
+
 
 
 
 }
+
+
+
 
 
 
@@ -69,6 +74,8 @@ static void remote_protocol_decodeCommandSize(uint8_t *bufferRead ,  Message_fro
 
     fprintf(stderr, "\n ---END DECODE CMD+SIZE --- \n");
 }
+
+
 
 static void remote_protocol_dataOne(uint8_t *bufferRead ,  Message_from_jump_t *messageToRead){
     fprintf(stderr, "\n ---DECODE DATA --- \n");

@@ -50,26 +50,22 @@ int main (int argc, char *argv[])
 	// network_pilot_start();
 	// TRACE("network_pilot_start(); OK\n");
 	dispatcher_race_start();
-	TRACE("dispatcher_pilot_start(); OK\n");
+	pilot_start();
 
 	//display_send_txt_lidar_distance("Init en cours...");
 	//display_send_txt_msg("Init en cours...");
 	//display_send_txt_connection("Init en cours...");
 	//display_send_txt_state("Init en cours...");
 
-	//TRACE("test envoi A7->M4\n");
-	//postman_send_message()
-
 	dispatcher_remote_start();
-	pilot_start();
 
 
 
-	dispatcher_remote_stop();
-	
-	dispatcher_race_stop();
 
 	pilot_stop();
+	dispatcher_remote_stop();
+	dispatcher_race_stop();
+
 	// network_pilot_stop();
 	// geographer_stop();
 	// obstacle_sender_stop();
