@@ -12,6 +12,7 @@
 #include <com_race/race_protocol.h>
 #include <com_race/dispatcher_race.h>
 #include <com_race/proxy_robot.h>
+#include "localizer/cartographer/cartographer.h"
 #include <network_pilot.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -58,7 +59,6 @@ int main (int argc, char *argv[])
 	//display_send_txt_state("Init en cours...");
 
 	dispatcher_remote_start();
-
 
 
 

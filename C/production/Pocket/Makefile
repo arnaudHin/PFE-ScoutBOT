@@ -11,13 +11,15 @@
 PACKAGES = pilot
 PACKAGES += com_remote
 PACKAGES += com_race
+PACKAGES += localizer
+
 #PACKAGES += localizer
 
 ## ------------- SRC files -------------  
 # A package level is accessible
 SRC  = $(wildcard */*.c)
 # To add a second level :		
-#SRC  += $(wildcard */*/*.c)
+SRC  += $(wildcard */*/*.c)
 
 OBJ = $(SRC:.c=.o)
 

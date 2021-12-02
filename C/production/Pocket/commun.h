@@ -115,5 +115,10 @@ typedef struct{
 	DATA_to_jump_t data;
 }Message_to_jump_t;
 
+typedef struct{
+	float x;
+	float y;
+}Position;
+
 
 #endif /* SRC_POCKET_COMMUN_H_ */
