@@ -17,7 +17,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <stdbool.h>
-#include "../util.h"
+#include "../utils/util.h"
 #include "postman_race.h"
 #include "race_protocol.h"
 #include "proxy_robot.h"

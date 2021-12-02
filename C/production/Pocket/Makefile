@@ -12,6 +12,7 @@ PACKAGES = pilot
 PACKAGES += com_remote
 PACKAGES += com_race
 PACKAGES += localizer
+PACKAGES += utils
 
 #PACKAGES += localizer
 

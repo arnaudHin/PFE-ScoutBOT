@@ -6,12 +6,13 @@
 
 ## ------------- PACKAGES -------------  
 # Project packages (to be completed if necessary)
-PACKAGES = cartographer
-PACKAGES += mapping
-PACKAGES += positioning
+PACKAGES = Watchdog
+
 
 ## ------------- SRC files -------------  
 SRC = $(wildcard */*.c)
+SRC += $(wildcard *.c)
+
 OBJ = $(SRC:.c=.o)
 DEP = $(SRC:.c=.d)
 

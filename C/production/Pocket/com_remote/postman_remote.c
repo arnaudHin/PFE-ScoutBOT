@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include "commun.h"
 #include <sys/types.h>
-#include "../util.h"
+#include "../utils/util.h"
 #include <pthread.h>
 
 /************************************** DEFINE ****************************************************************/

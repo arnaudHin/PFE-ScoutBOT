@@ -6,7 +6,7 @@
  */
 
 
-#include "../util.h"
+#include "../utils/util.h"
 #include "stdlib.h"
 #include "remote_protocol.h"
 #include "postman_remote.h"

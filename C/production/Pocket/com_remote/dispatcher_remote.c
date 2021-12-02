@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
-#include "../util.h"
+#include "../utils/util.h"
 #include <unistd.h>
 #include <arpa/inet.h>
 

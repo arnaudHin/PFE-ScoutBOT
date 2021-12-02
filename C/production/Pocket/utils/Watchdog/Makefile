@@ -1,8 +1,8 @@
 #
 # @file  Makefile
-# @author Nathan
+# @author Arnaud
 # @version 1.1
-# @date 02/12/2021
+# @date 23/11/2021
 
 
 ## ------------- SRC files -------------  

@@ -20,7 +20,7 @@
 #include "stddef.h"
 #include "string.h"
 #include <math.h>
-#include "util.h"
+#include "utils/util.h"
 #include "assert.h"
 
 

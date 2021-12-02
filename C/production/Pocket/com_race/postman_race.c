@@ -10,7 +10,7 @@
 
 #include "postman_race.h"
 
-#include "../util.h"
+#include "../utils/util.h"
 
 #include <stdbool.h>
 #include <stdio.h>

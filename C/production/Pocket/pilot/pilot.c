@@ -20,7 +20,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include "pilot.h"
-#include "../util.h"
+#include "../utils/util.h"
 #include "../com_race/proxy_robot.h"
 #include "../com_race/race_protocol.h"
 
