@@ -19,7 +19,7 @@
 #
 HOME_TREE := ../
 
-MODULE_NAME := $(notdir $(CURDIR))
+MODULE_NAME := prog.elf
 
 include $(HOME_TREE)/mak_def.inc
 

@@ -72,6 +72,11 @@ int main (int argc, char *argv[])
 	// map_raw_free();
 	robot_state_mutex_destroy();
 
+	// mapper_start();	
+
+	
+	// mapper_stop();
+
 
 	printf("\n************************************************************************************************\n");
 	printf("\n                                    Pocket stop\n\n");

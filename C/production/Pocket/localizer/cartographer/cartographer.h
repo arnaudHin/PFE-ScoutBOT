@@ -15,7 +15,7 @@
 
 #include "../../commun.h"
 #include "../positioning/adminPositioning.h"
-#include "../mapping/maper.h"
+#include "../mapping/mapper.h"
 
 /************************ PROTOTYPE DECLARATION **************************************/
 
@@ -28,7 +28,6 @@ extern void cartographer_start();
  *  \brief Function dedicated to stop the cartographer
  */
 extern void cartographer_stop();
-
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 

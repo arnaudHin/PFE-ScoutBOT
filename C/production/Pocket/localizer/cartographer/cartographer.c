@@ -37,8 +37,10 @@
 /**********************************  PUBLIC FUNCTIONS ************************************************/
 
 extern void cartographer_start(){
-    adminPositioning_start();
+    // adminPositioning_start();
+    mapper_start();
 }
 extern void cartographer_stop(){
-    adminPositioning_stop();
+    // adminPositioning_stop();
+    mapper_stop();
 }
