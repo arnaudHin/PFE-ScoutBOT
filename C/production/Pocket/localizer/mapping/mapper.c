@@ -33,6 +33,7 @@ static LidarData lidarData;
 static void *mapper_run();
 static void mapper_waitTaskTermination();
 static void fileAcquisition();
+static uint8_t stopMapper = 0;
 
 
 static void fileAcquisition(){
@@ -65,7 +66,7 @@ static void fileAcquisition(){
  */
 static void *mapper_run()
 {   
-    while(1){
+    while(stopMapper != 1){
         fileAcquisition();
 
         #if DISPLAY
@@ -110,9 +111,11 @@ extern void mapper_start(){
  */
 extern void mapper_stop(){
     fprintf(stderr,"pilot stop\n\n");
-    mapper_waitTaskTermination();
+    //mapper_waitTaskTermination(); //on utilise pas de bal...
+    stopMapper = 1;
 }
 
+extern void mapper 
 
 extern void mapper_new(){
 
