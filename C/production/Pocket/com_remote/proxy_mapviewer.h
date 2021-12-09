@@ -12,10 +12,7 @@
 
 
 
-
-
-
-extern void proxy_map_send_lidar(DATA_to_jump_t * dataToSend);
+extern void proxy_mapviewer_send_data(DATA_to_jump_t * dataToSend);
 
 
 

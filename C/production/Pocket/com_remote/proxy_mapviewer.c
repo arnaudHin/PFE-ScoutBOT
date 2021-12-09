@@ -10,14 +10,14 @@
 #include "stdlib.h"
 #include "remote_protocol.h"
 #include "postman_remote.h"
-#include "proxy_map.h"
+#include "proxy_mapviewer.h"
 #include "../commun.h"
 
 
 static Message_to_jump_t messageToJumpc;
 
 
-extern void proxy_map_send_lidar(DATA_to_jump_t * dataToSend){
+extern void proxy_mapviewer_send_data(DATA_to_jump_t * dataToSend){
     messageToJumpc.command = SET_LIDAR_MAPPING;
     messageToJumpc.size = sizeof( Lidar_data_t );
     messageToJumpc.data = *dataToSend;

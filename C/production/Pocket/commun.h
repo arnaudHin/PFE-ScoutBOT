@@ -64,6 +64,9 @@ typedef struct{
 	int16_t Y_buffer[LIDAR_TOTAL_DEGREE];
 }Lidar_data_t;
 
+typedef struct{
+	int a;
+}Position_data_t;
 
 typedef enum{
 	MODE_MANUAL=0,
@@ -102,6 +105,8 @@ typedef struct{
 
 typedef struct{
 	Lidar_data_t lidarData;
+	Position_data_t positionData;
+
 }DATA_to_jump_t;
 
 typedef struct{

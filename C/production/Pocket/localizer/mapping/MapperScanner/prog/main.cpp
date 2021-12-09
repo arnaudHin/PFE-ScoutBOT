@@ -120,10 +120,10 @@ int main(int argc, const char * argv[]) {
             fprintf(stderr, "Error, cannot start the scan operation.\n");
             break;
         }
-        if (IS_FAIL(displayValue(drv))) {
-            fprintf(stderr, "Error, cannot grab scan data.\n");
-            break;
-        }
+        // if (IS_FAIL(displayValue2(drv))) {
+        //     fprintf(stderr, "Error, cannot grab scan data.\n");
+        //     break;
+        // }
 
         for (int pos = 0; pos < 10 ; ++pos) {
             if(pos == 9){

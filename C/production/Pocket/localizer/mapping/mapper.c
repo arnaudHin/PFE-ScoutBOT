@@ -43,6 +43,7 @@ static void fileAcquisition(){
     fprintf(stderr, "Ouverture du fichier lidar.sh\n");
     system("./lidar.sh");
     fichier = fopen("position_gtk.txt","r");
+    // fichier = fopen("data_lidar.txt","r");
     if (fichier != NULL)
     {
         do{

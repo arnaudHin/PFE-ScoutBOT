@@ -5,7 +5,9 @@
 #endif
 
 ofstream myfile;
+
 #define displayInformation 1
+
 bool checkRPLIDARHealth(RPlidarDriver * drv)
 {
     u_result     op_result;
@@ -32,7 +34,6 @@ bool checkRPLIDARHealth(RPlidarDriver * drv)
     }
 }
 
-
 u_result displayValue(RPlidarDriver * drv)
 {
     u_result ans;
@@ -47,7 +48,6 @@ u_result displayValue(RPlidarDriver * drv)
     double dvalueA = 0;
     double dvalueD = 0;
 
-    cartesian cart;
     polar pol;
 
     int angleBuffer [2000];
@@ -65,9 +65,11 @@ u_result displayValue(RPlidarDriver * drv)
             dvalueA = valueA;
             dvalueD = valueD;
     
-            setMyStruct(&pol,dvalueD,dvalueA);
+            setMyStructp(&pol,dvalueD,dvalueA);
             pol.angle = pol.angle;
             pol.distance = pol.distance;
+
+            // ConvertToCartesian(pol.distance,pol.angle);
 
             angleBuffer[posi] = pol.angle;
             distanceBuffer[posi] = pol.distance;
@@ -86,14 +88,14 @@ u_result displayValue(RPlidarDriver * drv)
 
 
 
-polar clearMyStruct(polar *stpolar)
+polar clearMyStructp(polar *stpolar)
 {
     stpolar->distance = 0;
     stpolar->angle = 0;
     return *stpolar;
 }
 
-double setMyStruct(polar *stpolar, double distance, double angle)
+double setMyStructp(polar *stpolar, double distance, double angle)
 {
     if (!stpolar)
         return -1;
@@ -118,3 +120,9 @@ void fichier_open(void){
 void fichier_close(void){
     myfile.close();
 }
+
+
+
+
+
+

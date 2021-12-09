@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <signal.h>
+#include <cmath>
+
 
 using namespace rp::standalone::rplidar;
 using namespace std;
@@ -20,8 +22,8 @@ typedef struct {
 } cartesian;
 
 bool checkRPLIDARHealth(RPlidarDriver * drv);
-polar clearMyStruct(polar *stpolar);
-double setMyStruct(polar *stpolar, double distance, double angle);
+polar clearMyStructp(polar *stpolar);
+double setMyStructp(polar *stpolar, double distance, double angle);
 void delay(_word_size_t ms);
 u_result displayValue(RPlidarDriver * drv);
 void fichier_close(void);
