@@ -19,6 +19,16 @@
 
 /************************ PROTOTYPE DECLARATION **************************************/
 
+/** \fn static void cartographer_new()
+ *  \brief Function dedicated to initialize the cartographer
+ */
+extern void cartographer_new();
+
+/** \fn static void cartographer_free()
+ *  \brief Function dedicated to free the cartographer
+ */
+extern void cartographer_free();
+
 /** \fn static void cartographer_start ()
  *  \brief Function dedicated to start the cartographer
  */

@@ -35,6 +35,8 @@
 
 #define SOCKET_CLOSED_R "\0"
 
+#define SIZE_BUFFER_MAX 361
+
 
 typedef enum
 {
@@ -120,5 +122,9 @@ typedef struct{
 	float y;
 }Position;
 
+typedef struct{
+	int16_t bufferX[SIZE_BUFFER_MAX];
+	int16_t bufferY[SIZE_BUFFER_MAX];
+}LidarData;
 
 #endif /* SRC_POCKET_COMMUN_H_ */

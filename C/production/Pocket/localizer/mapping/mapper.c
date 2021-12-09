@@ -22,25 +22,20 @@
 #include "../../utils/util.h"
 
 /************************************** DEFINE ****************************************************************/
-#define SIZE_BUFFER_MAX 361
 #define DISPLAY 1
 /************************************** STATIC VARIABLE *******************************************************/
 static pthread_t mythread;
 
 /************************************** EXTERN VARIABLE *******************************************************/
-int16_t bufferX[SIZE_BUFFER_MAX];
-int16_t bufferY[SIZE_BUFFER_MAX];
 
+static LidarData lidarData;
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
 static void *mapper_run();
 static void mapper_waitTaskTermination();
+static void fileAcquisition();
 
-/** \fn static void *mapper_run()
- *  \brief Function run executed by the thread of mapper
- *  \retval NULL
- */
-static void *mapper_run()
-{   
+
+static void fileAcquisition(){
     FILE* fichier = NULL;
     uint32_t buf_index = 0;
     int16_t x;
@@ -52,8 +47,8 @@ static void *mapper_run()
     {
         do{
             int a = fscanf(fichier, "%hd,%hd,", &x, &y);
-            bufferX[buf_index] = x;
-            bufferY[buf_index] = y;  
+            lidarData.bufferX[buf_index] = x;
+            lidarData.bufferY[buf_index] = y;  
             buf_index++;
         }while( !feof(fichier) );
         fclose(fichier);
@@ -61,18 +56,29 @@ static void *mapper_run()
     else{
         fprintf(stderr,"Error! opening file 'position_gtk.txt'\n");
     }
+}
 
-    #if DISPLAY
-    fprintf(stderr,"\nBUFFER X : \n");
-    for(int i = 0 ; i< SIZE_BUFFER_MAX ; i++){
-        fprintf(stderr,"%hd;", bufferX[i]);
-    }
+/** \fn static void *mapper_run()
+ *  \brief Function run executed by the thread of mapper
+ *  \retval NULL
+ */
+static void *mapper_run()
+{   
+    while(1){
+        fileAcquisition();
 
-    fprintf(stderr,"\nBUFFER Y : \n");
-    for(int i = 0 ; i< SIZE_BUFFER_MAX ; i++){
-        fprintf(stderr,"%hd;", bufferY[i]);
+        #if DISPLAY
+        fprintf(stderr,"\nBUFFER X : \n");
+        for(int i = 0 ; i< SIZE_BUFFER_MAX ; i++){
+            fprintf(stderr,"%hd;", lidarData.bufferX[i]);
+        }
+
+        fprintf(stderr,"\nBUFFER Y : \n");
+        for(int i = 0 ; i< SIZE_BUFFER_MAX ; i++){
+            fprintf(stderr,"%hd;", lidarData.bufferY[i]);
+        }
+        #endif
     }
-    #endif
 }
 
 /** \fn static void mapper_waitTaskTermination ()
@@ -106,3 +112,16 @@ extern void mapper_stop(){
     mapper_waitTaskTermination();
 }
 
+
+extern void mapper_new(){
+
+}
+
+extern void mapper_free(){
+
+}
+
+extern LidarData mapper_getLidarData(){
+
+    
+}
