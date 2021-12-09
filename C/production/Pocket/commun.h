@@ -106,7 +106,6 @@ typedef struct{
 typedef struct{
 	Lidar_data_t lidarData;
 	Position_data_t positionData;
-
 }DATA_to_jump_t;
 
 typedef struct{
