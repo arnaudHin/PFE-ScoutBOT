@@ -20,7 +20,7 @@
 #include <stdbool.h>
 #include "adminPositioning.h"
 #include "../../utils/util.h"
-
+#include "../../utils/Watchdog/watchdog.h"
 
 
 /************************************** DEFINE ****************************************************************/
@@ -30,8 +30,9 @@
 
 static Position robotPosition;
 static pthread_t mythread;						   //ID thread
-pthread_mutex_t mutex=PTHREAD_MUTEX_INITIALIZER;
-
+static Watchdog* myWatchdog;
+static pthread_mutex_t myMutex=PTHREAD_MUTEX_INITIALIZER;
+static bool stopRunning = false ;
 /************************************** END DEFINE *************************************************************/
 
 
@@ -39,6 +40,8 @@ pthread_mutex_t mutex=PTHREAD_MUTEX_INITIALIZER;
 
 static void *adminPositioning_run();
 static void adminPositioning_waitTaskTermination();
+static void time_out();
+
 
 
 /** \fn static adminPositioning_setPosition(Position * position)
@@ -46,10 +49,30 @@ static void adminPositioning_waitTaskTermination();
  */
 static void adminPositioning_setPosition(Position * position)
 {
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&myMutex);
     robotPosition.x = position->x;
     robotPosition.y = position->y;
-    pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&myMutex);
+}
+
+static void time_out(){
+    printf("je suis dans time_out \n");
+    FILE* fichier = NULL;
+        Position actualPosition;
+        system("AnnexPositioningFiles/RSSI_scan.sh");
+        printf("on ouvre le fichier \n");
+        fichier = fopen("position.txt", "r");
+        if (fichier != NULL){
+            fscanf(fichier, "%f %f", &(actualPosition.x), &(actualPosition.y));  
+            adminPositioning_setPosition(&actualPosition);
+            printf("la position est x = %f y = %f",robotPosition.x,robotPosition.y);          
+            fclose(fichier);
+        }else{
+            // On affiche un message d'erreur si on veut
+            printf("Impossible d'ouvrir le fichier position.txt \n");
+        }
+    // Watchdog_start(myWatchdog);
+
 }
 
 /** \fn static void *adminPositioning_run()
@@ -58,10 +81,11 @@ static void adminPositioning_setPosition(Position * position)
  */
 static void *adminPositioning_run()
 {
+    
+    // Watchdog_start(myWatchdog);
     FILE* fichier = NULL;
-    char chaine[TAILLE_MAX] = "";
-    Position actualPosition;
-    while(1){
+    while(stopRunning==false){
+        Position actualPosition;
         system("AnnexPositioningFiles/RSSI_scan.sh");
         printf("on ouvre le fichier \n");
         fichier = fopen("position.txt", "r");
@@ -82,29 +106,47 @@ static void *adminPositioning_run()
  */
 static void adminPositioning_waitTaskTermination()
 {
+    //Watchdog_cancel(myWatchdog);
 	int error_code = pthread_join(mythread, NULL);
 	assert(error_code != -1 && "ERROR Joining current thread\n"); // Halt the execution of the thread until it achieves his execution
 }
 /**********************************  PUBLIC FUNCTIONS ************************************************/
 
 
-extern void adminPositioning_start(){
+extern void adminPositioning_new(){
+    printf("je suis dans adminPositioning_new \n");
+    stopRunning = false ;
+    pthread_mutex_init(&myMutex, NULL);
+    //myWatchdog = Watchdog_construct(1000000, (WatchdogCallback) time_out);
+}
 
+extern void adminPositioning_free(){
+    printf("je suis dans adminPositioning_free \n");
+    stopRunning = true ;
+    pthread_mutex_destroy(&myMutex);
+    //Watchdog_destroy(myWatchdog);
+}
+
+extern void adminPositioning_start(){
+    adminPositioning_new();
+    printf("je suis dans adminPositioning_start \n");
     int return_thread = pthread_create(&mythread, NULL, &adminPositioning_run, NULL);
-	TRACE("adminPositioning is starting");
+    TRACE("adminPositioning is starting");
 	assert(return_thread == 0 && "Error Pthread_create adminPositioning\n");
 }
 
 extern void adminPositioning_stop(){
-    TRACE("pilot stop\n\n");
+    TRACE("adminPositioning stop\n\n");
+    printf("je suis dans adminPositioning_stop\n");
+    adminPositioning_free();
     adminPositioning_waitTaskTermination();
 }
 
 extern Position adminPositioning_getPosition(){
     Position actualPosition;
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&myMutex);
     actualPosition.x = robotPosition.x;
     actualPosition.y = robotPosition.y;
-    pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&myMutex);
     return actualPosition;
 }

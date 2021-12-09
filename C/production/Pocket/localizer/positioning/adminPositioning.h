@@ -18,6 +18,16 @@
 
 /************************ PROTOTYPE DECLARATION **************************************/
 
+/** \fn static void adminPositioning_new()
+ *  \brief Function dedicated to initialize the adminPositioning
+ */
+extern void adminPositioning_new();
+
+/** \fn static void adminPositioning_free()
+ *  \brief Function dedicated to free the adminPositioning
+ */
+extern void adminPositioning_free();
+
 /** \fn static void adminPositioning_start ()
  *  \brief Function dedicated to start the adminPositioning
  */

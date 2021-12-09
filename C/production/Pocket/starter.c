@@ -59,12 +59,14 @@ int main (int argc, char *argv[])
 	//display_send_txt_state("Init en cours...");
 
 	dispatcher_remote_start();
+	cartographer_start();
 
 
 
 	pilot_stop();
 	dispatcher_remote_stop();
 	dispatcher_race_stop();
+	cartographer_stop();
 
 	// network_pilot_stop();
 	// geographer_stop();
