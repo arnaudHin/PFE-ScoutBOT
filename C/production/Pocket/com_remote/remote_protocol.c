@@ -14,8 +14,10 @@
 
 static void remote_protocol_decodeCommandSize(uint8_t *bufferRead ,  Message_from_jump_t *messageToRead);
 static void remote_protocol_dataOne(uint8_t *bufferRead ,  Message_from_jump_t *messageToRead);
-static uint16_t remote_protocol_convert_two_bytes_into_uint16(uint8_t first, uint8_t second);
+static void remote_protocol_encodeData(uint8_t *bufferWrite ,  Message_to_jump_t *messageToWrite);
 
+static uint16_t remote_protocol_convert_two_bytes_into_uint16(uint8_t first, uint8_t second);
+static void remote_protocol_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t value);
 
 /**
  * @brief : 
@@ -42,7 +44,15 @@ extern void remote_protocol_decode(uint8_t *bufferRead ,  Message_from_jump_t *m
 
 extern void remote_protocol_encode(uint8_t *bufferWrite ,  Message_to_jump_t *messageToWrite, __ssize_t byteToEncode){
 
-
+    switch (messageToWrite->command)
+    {
+    case SET_DATA:
+        remote_protocol_encodeData(bufferWrite, messageToWrite);
+        break;
+    
+    default:
+        break;
+    }
 
 
 
@@ -51,7 +61,49 @@ extern void remote_protocol_encode(uint8_t *bufferWrite ,  Message_to_jump_t *me
 
 
 
+static void remote_protocol_encodeData(uint8_t *bufferWrite ,  Message_to_jump_t *messageToWrite){
+    uint16_t index = 0;
+    uint16_t i=0;
 
+    uint8_t cmd = (uint8_t) messageToWrite->command;
+    memcpy( bufferWrite, &cmd, sizeof(uint8_t) );
+    index++;
+
+    uint8_t buf2[sizeof(uint16_t)];
+    remote_protocol_convert_uint16_to_2_bytes(buf2, messageToWrite->size);
+    memcpy( (bufferWrite + index), &buf2, sizeof(uint16_t) );
+    index +=2;  
+
+// DATA Positioning
+    uint8_t buf4[sizeof(float)];
+    memcpy( buf4, &messageToWrite->data.positionData.x, sizeof(float)  );
+    memcpy( (bufferWrite+index), buf4, sizeof(float) );
+    index += sizeof(float);
+    
+    memcpy( buf4, &messageToWrite->data.positionData.y, sizeof(float)  );
+    memcpy( (bufferWrite+index), buf4, sizeof(float) );
+    index += sizeof(float);   
+
+    cmd = (uint8_t) messageToWrite->data.positionData.room;
+    memcpy( (bufferWrite+index), &cmd, sizeof(uint8_t) );
+    index++;
+//DATA Mapping
+    for (i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+    {
+        remote_protocol_convert_uint16_to_2_bytes(buf2, (int16_t) messageToWrite->data.lidarData.X_buffer[i]);
+        memcpy( (bufferWrite + index), &buf2, sizeof(int16_t) );
+        index += sizeof(int16_t);         
+    }
+
+    for (i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+    {
+        remote_protocol_convert_uint16_to_2_bytes(buf2, (int16_t) messageToWrite->data.lidarData.Y_buffer[i]);
+        memcpy( (bufferWrite + index), &buf2, sizeof(int16_t) );
+        index += sizeof(int16_t);         
+    }
+    
+
+}
 
 
 
@@ -94,3 +146,23 @@ static uint16_t remote_protocol_convert_two_bytes_into_uint16(uint8_t first, uin
     res |= second;
     return res;
 }
+
+static void remote_protocol_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t value){
+
+	byte[0] = (value >> 8) & 0xFF;
+	byte[1] = value & 0xFF;
+}
+
+
+static void remote_protocol_convert_float_to_4_bytes(uint8_t * byte, uint16_t value){
+
+	byte[0] = (value >> 32) & 0xFFFF;
+	byte[1] = (value >> 16) & 0xFFFF;
+	byte[2] = (value >> 8) & 0xFFFF;
+	byte[3] = value & 0xFF;
+}
+
+
+
+
+

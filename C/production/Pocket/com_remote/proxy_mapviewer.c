@@ -19,12 +19,12 @@ static Message_to_jump_t messageToJumpc;
 
 extern void proxy_mapviewer_send_data(DATA_to_jump_t * dataToSend){
     messageToJumpc.command = SET_DATA;
-    messageToJumpc.size = sizeof( Lidar_data_t );
+    messageToJumpc.size = sizeof( DATA_to_jump_t );
     messageToJumpc.data = *dataToSend;
 
     uint16_t bytesToSend = 1 + 2 + messageToJumpc.size; 
     uint8_t bufferToSend[bytesToSend]; //1+2+(720*2)
-    memset(bufferToSend, 0x01, sizeof(bufferToSend) );
+    //memset(bufferToSend, 0x01, sizeof(bufferToSend) );
 
     remote_protocol_encode(bufferToSend, &messageToJumpc, bytesToSend);
 

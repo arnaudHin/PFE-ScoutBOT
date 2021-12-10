@@ -21,17 +21,19 @@
 
 #define LIDAR_POINTS_PER_DEGREE			2
 #define LIDAR_TOTAL_DEGREE				360
-#define LIDAR_SIZE_BYTE_DATA			(LIDAR_POINTS_PER_DEGREE)*(LIDAR_TOTAL_DEGREE)) 
-#define LIDAR_TOTAL_DATA				720
-#define POSITION_NB_BEACONS_BLE			9
-#define POSITION_SIZE_BYTE_DATA 		(POSITION_NB_BEACONS_BLE + 1)*2*( sizeof(int16_t) )
+#define LIDAR_DATA_TYPE					int16_t
+#define LIDAR_SIZE_BYTE_DATA			(LIDAR_POINTS_PER_DEGREE)*(LIDAR_TOTAL_DEGREE)*(sizeof(LIDAR_DATA_TYPE))
 
+#define POSITION_SIZE_BYTE_DATA 		(2*sizeof(float) )+1
 
-#define MAX_SIZE_BYTE_DATA_TO_SEND		(LIDAR_SIZE_BYTE_DATA)
+#define MAX_SIZE_BYTE_DATA_TO_SEND		(LIDAR_SIZE_BYTE_DATA)+(POSITION_SIZE_BYTE_DATA)
 #define MAX_SIZE_BYTE_DATA_TO_RECEIVE	(1)
 
 #define CMD_SIZE_BYTE					1
-#define BUFF_SIZE_TO_RECEIVE			(MAX_SIZE_BYTE_DATA_TO_RECEIVE)+CMD_SIZE_BYTE + ( sizeof(uint16_t) )
+#define DATA_SIZE_BYTE					sizeof(uint16_t)
+#define BUFF_SIZE_TO_RECEIVE			(MAX_SIZE_BYTE_DATA_TO_RECEIVE) + (CMD_SIZE_BYTE) + ( DATA_SIZE_BYTE )
+#define BUFF_SIZE_TO_SEND				(MAX_SIZE_BYTE_DATA_TO_SEND) + (CMD_SIZE_BYTE) + ( DATA_SIZE_BYTE )
+
 
 #define SOCKET_CLOSED_R "\0"
 
@@ -46,6 +48,11 @@ typedef enum
 }Network_error;
 
 
+typedef enum{
+	NO_ROOM=0,
+	ROOM_A,
+	ROOM_B,
+}Room_e;
 
 typedef enum
 {
@@ -67,6 +74,7 @@ typedef struct{
 typedef struct{
 	float x;
 	float y;
+	Room_e room;
 }Position_data_t;
 
 typedef enum{
