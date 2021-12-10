@@ -337,9 +337,9 @@ extern void pilot_stop()
 
 
 
-/** \fn extern void pilot_set_direction(Direction dir)
- *  \brief Function dedicated to send an event in the mailbox to set the direction
- *  \param  Direction the direction to send to the robot entity
+/** @fn extern void pilot_set_direction(Direction dir)
+ *  @brief Function dedicated to send an event in the mailbox to set the direction
+ *  @param  Direction the direction to send to the robot entity
  */
 extern void pilot_set_direction(Direction_e dir)
 {
