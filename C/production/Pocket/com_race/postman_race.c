@@ -267,8 +267,8 @@ extern void postman_race_send_message(uint8_t * bufferToWrite, uint16_t bytesToS
 // 	// pilot_message->my_current_position.teta = ntohs(pilot_message->my_current_position.teta);
 
 // 	// TRACE("X dans la frame : %02X\n",&buffer_read[FLAG_SIZE + CMD_SIZE + SENSORS_SIZE], COORD_SIZE);
-// 	// TRACE("Position x : %d\n",pilot_message->my_current_position.x);
-// 	// TRACE("Position y : %d\n",pilot_message->my_current_position.y);
+// 	// TRACE("Position_data_t x : %d\n",pilot_message->my_current_position.x);
+// 	// TRACE("Position_data_t y : %d\n",pilot_message->my_current_position.y);
 // 	// TRACE("Angle teta : %d\n",pilot_message->my_current_position.teta);
 
 // 	// Get value of lidar sensors

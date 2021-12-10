@@ -18,7 +18,7 @@ static Message_to_jump_t messageToJumpc;
 
 
 extern void proxy_mapviewer_send_data(DATA_to_jump_t * dataToSend){
-    messageToJumpc.command = SET_LIDAR_MAPPING;
+    messageToJumpc.command = SET_DATA;
     messageToJumpc.size = sizeof( Lidar_data_t );
     messageToJumpc.data = *dataToSend;
 

@@ -93,7 +93,7 @@ static mqd_t id_bal;
 
 static Cartographer_t * myCartographer;
 
-static DATA_to_jump_t DADAToJump;
+static DATA_to_jump_t DADAToJump; //data a envoyé 
 
 
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
@@ -103,6 +103,7 @@ static void cartographer_mq_init();
 static void cartographer_mq_send(Cartographer_event_e cartographer_event);
 static Mq_message_t cartographer_mq_receive();
 static void cartographer_mq_done();
+static void cartographer_waitTaskTermination();
 
 
 

@@ -65,7 +65,8 @@ typedef struct{
 }Lidar_data_t;
 
 typedef struct{
-	int a;
+	float x;
+	float y;
 }Position_data_t;
 
 typedef enum{
@@ -80,8 +81,7 @@ typedef enum
 	ASK_SET_MODE,
 	ASK_CHECK_CONNECTION,
 	ASK_QUIT,
-	ASK_LIDAR_MAPPING,
-	ASK_POSITION,
+	ASK_4_DATA,
 	NB_CMD_FROM_JUMP
 }CMD_from_jump_e;
 
@@ -91,8 +91,7 @@ typedef enum
 	CHECK_CONNECTION,
 	SET_ASK_QUIT,
 	SET_CHECK_CONNECTION,
-	SET_LIDAR_MAPPING,
-	SET_POSITION,
+	SET_DATA,
 	NB_CMD_TO_JUMP
 }CMD_to_jump_e;
 
@@ -121,14 +120,7 @@ typedef struct{
 	DATA_to_jump_t data;
 }Message_to_jump_t;
 
-typedef struct{
-	float x;
-	float y;
-}Position;
 
-typedef struct{
-	int16_t bufferX[SIZE_BUFFER_MAX];
-	int16_t bufferY[SIZE_BUFFER_MAX];
-}LidarData;
+
 
 #endif /* SRC_POCKET_COMMUN_H_ */

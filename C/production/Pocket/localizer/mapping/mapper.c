@@ -28,7 +28,7 @@ static pthread_t mythread;
 
 /************************************** EXTERN VARIABLE *******************************************************/
 
-static LidarData lidarData;
+static Lidar_data_t lidarData;
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
 static void *mapper_run();
 static void mapper_waitTaskTermination();
@@ -49,8 +49,8 @@ static void fileAcquisition(){
     {
         do{
             int a = fscanf(fichier, "%hd,%hd,", &x, &y);
-            lidarData.bufferX[buf_index] = x;
-            lidarData.bufferY[buf_index] = y;  
+            lidarData.X_buffer[buf_index] = x;
+            lidarData.Y_buffer[buf_index] = y;  
             buf_index++;
         }while( !feof(fichier) );
         fclose(fichier);
@@ -72,12 +72,12 @@ static void *mapper_run()
         #if DISPLAY
         fprintf(stderr,"\nBUFFER X : \n");
         for(int i = 0 ; i< SIZE_BUFFER_MAX ; i++){
-            fprintf(stderr,"%hd;", lidarData.bufferX[i]);
+            fprintf(stderr,"%hd;", lidarData.X_buffer[i]);
         }
 
         fprintf(stderr,"\nBUFFER Y : \n");
         for(int i = 0 ; i< SIZE_BUFFER_MAX ; i++){
-            fprintf(stderr,"%hd;", lidarData.bufferY[i]);
+            fprintf(stderr,"%hd;", lidarData.Y_buffer[i]);
         }
         #endif
     }
@@ -115,7 +115,6 @@ extern void mapper_stop(){
     stopMapper = 1;
 }
 
-extern void mapper 
 
 extern void mapper_new(){
 
@@ -125,7 +124,7 @@ extern void mapper_free(){
 
 }
 
-extern LidarData mapper_getLidarData(){
+extern Lidar_data_t mapper_getLidarData(){
 
     
 }

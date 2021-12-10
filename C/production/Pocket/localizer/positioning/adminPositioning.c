@@ -28,7 +28,7 @@
 
 /************************************** STATIC VARIABLE *******************************************************/
 
-static Position robotPosition;
+static Position_data_t robotPosition;
 static pthread_t mythread;						   //ID thread
 static Watchdog* myWatchdog;
 static pthread_mutex_t myMutex=PTHREAD_MUTEX_INITIALIZER;
@@ -44,10 +44,10 @@ static void time_out();
 
 
 
-/** \fn static adminPositioning_setPosition(Position * position)
+/** \fn static adminPositioning_setPosition(Position_data_t * position)
  *  \brief set position
  */
-static void adminPositioning_setPosition(Position * position)
+static void adminPositioning_setPosition(Position_data_t * position)
 {
     pthread_mutex_lock(&myMutex);
     robotPosition.x = position->x;
@@ -58,7 +58,7 @@ static void adminPositioning_setPosition(Position * position)
 static void time_out(){
     printf("je suis dans time_out \n");
     FILE* fichier = NULL;
-        Position actualPosition;
+        Position_data_t actualPosition;
         system("AnnexPositioningFiles/RSSI_scan.sh");
         printf("on ouvre le fichier \n");
         fichier = fopen("position.txt", "r");
@@ -85,7 +85,7 @@ static void *adminPositioning_run()
     // Watchdog_start(myWatchdog);
     FILE* fichier = NULL;
     while(stopRunning==false){
-        Position actualPosition;
+        Position_data_t actualPosition;
         system("AnnexPositioningFiles/RSSI_scan.sh");
         printf("on ouvre le fichier \n");
         fichier = fopen("position.txt", "r");
@@ -142,8 +142,8 @@ extern void adminPositioning_stop(){
     adminPositioning_waitTaskTermination();
 }
 
-extern Position adminPositioning_getPosition(){
-    Position actualPosition;
+extern Position_data_t adminPositioning_getPosition(){
+    Position_data_t actualPosition;
     pthread_mutex_lock(&myMutex);
     actualPosition.x = robotPosition.x;
     actualPosition.y = robotPosition.y;
