@@ -24,8 +24,6 @@
 #include "../com_race/proxy_robot.h"
 #include "../com_race/race_protocol.h"
 
-#include "robot_state.h"
-
 /************************************** DEFINE ****************************************************************/
 
 #define MAX_AUTHORIZED_DIRECTION 6
@@ -72,7 +70,6 @@ typedef enum{
 static const char queue_name[] = "/pilot_postman"; //name of mailbox
 static mqd_t id_bal;							   //ID mailbox
 static pthread_t id_thread;						   //ID thread
-static bool authorized_direction[MAX_AUTHORIZED_DIRECTION] = {[0 ... MAX_AUTHORIZED_DIRECTION - 1] = true};
 
 // typedef struct char_direction
 // {
@@ -153,14 +150,13 @@ extern void pilot_start()
 {
 	pilot_mq_init();
 
-	mypilot == NULL;
+	mypilot = NULL;
 	mypilot = calloc(1, sizeof(Pilot_t));
 
 	mypilot->myDirection = BREAK;
 	mypilot->myPiloteState = S_IDLE_P;
 
-	int return_thread = pthread_create(&id_thread, NULL, (void *)&pilot_run, NULL);
-	TRACE("Pilot is starting");
+	int return_thread = pthread_create(&id_thread, NULL, &pilot_run, NULL);
 	assert(return_thread == 0 && "Error Pthread_create pilot\n");
 }
 
@@ -187,7 +183,6 @@ static void pilot_mq_init()
 	id_bal = mq_open(queue_name, O_CREAT | O_RDWR, 0666, &attr); // Creation of a new mailbox if any was created before.
 	assert(id_bal != -1 && "Error mq_open pilot\n");
 
-	TRACE("Creation de la BAL: %s\nID:%d\n\n", queue_name, id_bal);
 }
 
 
@@ -201,7 +196,6 @@ static void pilot_mq_send(Pilot_event_e pilot_event)
 	Mq_message_t pilot_msg;
 	pilot_msg.event = pilot_event;
 	
-	TRACE("Evenement de pilot : %d", pilot_msg);
 	mqd_t bal_send = mq_send(id_bal, (const char *)&pilot_msg, sizeof(Mq_message_t), 0); //Priority 0 to 31 (highest priority first)
 	assert(id_bal != -1 && "Error mq_send pilot\n");
 }
@@ -275,32 +269,25 @@ static void pilot_perform_action(Pilot_transistion_action_e an_action)
 	switch (an_action)
 	{
 	case T_NOP_P:
-		TRACE("NOTHING TO PERFORM HERE\n");
 		break;
 
 	case T_EXIT_P:
-		TRACE("END OF PERIPHERAL INITIALISATION\n");
 		
 		break;
 
 	case T_UPDATE_DIR_P:
-		printf("\nPilot UPDATE DIR\n");
 		data.direction = mypilot->myDirection;
 		proxy_robot_try_dir( &data );
 		break;
 
 	case T_EMERGENCY_STOP_P:
-		TRACE("T_EMERGENCY_STOP\n");
-		//robot_urgent_break();
 		break;
 
 	case T_START_PILOT_P:
-		TRACE("STOP THE PILOT\n");
 		
 		break;
 
 	default:
-		TRACE("\nError >>> Unknown action performed in pilot MAE\n"); //we shouldn't enter the default case
 		break;
 	}
 }
@@ -312,7 +299,6 @@ static void pilot_perform_action(Pilot_transistion_action_e an_action)
  */
 static void pilot_wait_task_termination()
 {
-	TRACE("thread number %ld\n\n", id_thread);
 	int error_code = pthread_join(id_thread, NULL);
 	assert(error_code != -1 && "ERROR Joining current thread\n"); // Halt the execution of the thread until it achieves his execution
 }
@@ -322,7 +308,6 @@ static void pilot_wait_task_termination()
  */
 extern void pilot_stop()
 {
-	TRACE("pilot stop\n\n");
 
 	pilot_wait_task_termination();
 	pilot_mq_done();
@@ -344,7 +329,6 @@ extern void pilot_stop()
 extern void pilot_set_direction(Direction_e dir)
 {
 	mypilot->myDirection = dir;
-	TRACE("Pilot : SET DIRECTION : %d\n", dir);
 	pilot_mq_send(E_UPDATE_DIR_P);
 }
 

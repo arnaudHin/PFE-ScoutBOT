@@ -38,7 +38,7 @@ static bool stopRunning = false ;
 
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
 
-static void *adminPositioning_run();
+static void* adminPositioning_run();
 static void adminPositioning_waitTaskTermination();
 static void time_out();
 
@@ -79,7 +79,7 @@ static void time_out(){
  *  \brief Function dedicated to perform an action when a message is received in the mailbox
  *  \retval NULL
  */
-static void *adminPositioning_run()
+static void* adminPositioning_run()
 {
     
     // Watchdog_start(myWatchdog);
@@ -99,6 +99,7 @@ static void *adminPositioning_run()
             printf("Impossible d'ouvrir le fichier position.txt \n");
         }
     }
+    return NULL;
 }
 
 /** \fn static void adminPositioning_waitTaskTermination ()
@@ -131,12 +132,10 @@ extern void adminPositioning_start(){
     adminPositioning_new();
     printf("je suis dans adminPositioning_start \n");
     int return_thread = pthread_create(&mythread, NULL, &adminPositioning_run, NULL);
-    TRACE("adminPositioning is starting");
 	assert(return_thread == 0 && "Error Pthread_create adminPositioning\n");
 }
 
 extern void adminPositioning_stop(){
-    TRACE("adminPositioning stop\n\n");
     printf("je suis dans adminPositioning_stop\n");
     adminPositioning_free();
     adminPositioning_waitTaskTermination();

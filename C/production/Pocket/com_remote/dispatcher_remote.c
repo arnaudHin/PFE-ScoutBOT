@@ -69,11 +69,9 @@ extern void dispatcher_remote_start()
  */
 extern void dispatcher_remote_stop()
 {
-        TRACE("DISPATCHER STOP \r\n");
 
         int returnCode = pthread_join(pthread,NULL);
         
-		TRACE("AFTER DISPATCHER STOP \r\n");
         if (returnCode == -1)
         {
                 perror("Error : join thread incorrect");
@@ -143,6 +141,7 @@ static void * dispatcher_remote_run(){
 				break;
 		}
 	}
+	return NULL;
 }
 
 
@@ -153,7 +152,7 @@ static void dispatcher_remote_check_for_message(){
 
 	resultRead = postman_remote_receive(myBufferFromJump, byteToRead);
 	if(resultRead == -1 || resultRead == 0){
-		fprintf(stderr, "ERROR POSTMAN RECEIVE 0 : %d\n", resultRead);
+		fprintf(stderr, "ERROR POSTMAN RECEIVE 0 : %ld\n", resultRead);
 	}
 
 	//DECODE myBufferFromJump -> myMessageFromJump (CMD + SIZEdata)
@@ -166,7 +165,7 @@ static void dispatcher_remote_check_for_message(){
 
 		resultRead = postman_remote_receive(myTempBuffer, byteToRead);
 		if(resultRead == -1){
-			fprintf(stderr, "ERROR POSTMAN RECEIVE DATA : %d\n", resultRead);
+			fprintf(stderr, "ERROR POSTMAN RECEIVE DATA : %ld\n", resultRead);
 		}
 		
 		//DECODE myTempBuffer -> myMessageFromJump (DATA)
@@ -177,7 +176,6 @@ static void dispatcher_remote_check_for_message(){
 	fprintf(stderr, "\nCMD : %d | ", myMessageFromJump.command);
 	fprintf(stderr, "Size : %d | ", myMessageFromJump.sizeData);
 	fprintf(stderr, "Data dir : %d \n", myMessageFromJump.data.direction);
-
 }
 
 
@@ -185,55 +183,3 @@ static void dispatcher_remote_check_for_message(){
 
 
 
-
-// static void dispatcher_decod(unsigned char * buffer, Network_msg * network_msg)
-// {
-
-// 	network_msg->cmd = NOP;
-// 	network_msg->size = 0;
-// 	// network_msg->coord.x = 0;
-// 	// network_msg->coord.y = 0;
-
-// 	unsigned char size[SIZE_MSG_SIZE];
-
-// 	// Get value of CMD
-// 	memcpy(&network_msg->cmd, &buffer[0], SIZE_MSG_CMD);
-
-// 	// Get value of SIZE
-// 	for(int j=0;j<sizeof(size);j++){
-// 		strcpy((char *)&size[j],(char *)&buffer[SIZE_MSG_CMD+j]);
-// 	}
-// 	network_msg->size = interpret_24_bit_as_int32(size);
-
-// 	#ifdef DEBUG
-// 	//Show more details
-// 	printf("ALL array: ");
-// 	for(int i=0;i<SIZE_MSG_CMD+SIZE_MSG_SIZE;i++){
-// 		printf("%02X ",buffer[i]);
-// 	}printf("\n");
-
-// 	TRACE("CMD : %d\n",network_msg->cmd);
-// 	TRACE("Size : %d\n",network_msg->size);
-
-// 	#endif
-
-// 	// If size > 0, data has been sent
-// 	if (network_msg->size > 0)
-// 	{
-// 		// Continue to read the msg
-// 		unsigned char buffer_data[network_msg->size];
-// 		memset(buffer_data,0x00,sizeof(buffer_data));
-
-// 		// Continue to read the socket
-// 		postman_remote_receive_msg(buffer_data,network_msg->size);
-
-// 		#ifdef DEBUG
-// 		TRACE("DATA : ");
-// 		for(int i=0;i<sizeof(buffer_data);i++){
-// 			printf("%02X ",buffer_data[i]);
-// 		}printf("\n");
-// 		#endif
-
-
-// 	}
-// }

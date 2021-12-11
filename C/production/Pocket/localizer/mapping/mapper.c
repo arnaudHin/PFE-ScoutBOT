@@ -81,6 +81,7 @@ static void *mapper_run()
         }
         #endif
     }
+    return NULL;
 }
 
 /** \fn static void mapper_waitTaskTermination ()
@@ -125,6 +126,6 @@ extern void mapper_free(){
 }
 
 extern Lidar_data_t mapper_getLidarData(){
-
-    
+    Lidar_data_t t;
+    return t;
 }

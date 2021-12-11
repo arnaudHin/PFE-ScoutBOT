@@ -101,7 +101,7 @@ extern void dispatcher_race_start(){
 	
 	dispatcher_race_mq_init();
 
-	if (pthread_create(&id_thread, NULL, (void*)&dispatcher_race_run, NULL)==-1){
+	if (pthread_create(&id_thread, NULL, &dispatcher_race_run, NULL)==-1){
 			perror("ERROR CREATING THREAD...\n");
 	}
 }
@@ -128,7 +128,6 @@ static void dispatcher_race_mq_init(){
 	if (id_bal == -1){
 		perror("Error opening BAL\n");
 	}
-	TRACE("Creation of BAL: %s\nID:%d\n",queue_name,id_bal);
 }
 
 
@@ -151,6 +150,7 @@ static void * dispatcher_race_run(){
 		}
 		
 	}
+	return NULL;
 
 }
 
@@ -193,7 +193,7 @@ static void dispatcher_race_mq_done (){
 	/* close the BAL */
 	mqd_t bal_close = (mq_close(id_bal));
 	if (bal_close == -1){
-		TRACE("ERROR closing the bal\n");
+		perror("ERROR closing the bal");
 	}
 	/* destruct the BAL */
 	if(mq_unlink((const char *)queue_name)==-1){
@@ -224,7 +224,6 @@ static void dispatcher_race_check_for_message(){
  */
 static void wait_task_termination()
 {
-	TRACE("thread number %ld\n",id_thread);
 	if (pthread_join(id_thread,NULL)==-1){ // Halt the exécution of the thread until he achieves his execution
 		perror("ERROR Joining current thread\n");
 	}

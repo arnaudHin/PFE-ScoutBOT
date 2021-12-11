@@ -74,8 +74,6 @@ extern void postman_race_start()
 		perror("Unable to open the serial port:");
 		printf("%s\n",DEVICE_PORT);
 		exit(errno);
-	}else{
-		TRACE("Serial port open successfully !\n");
 	}
 
 	if (tcgetattr(serial_port, &tty) != 0){

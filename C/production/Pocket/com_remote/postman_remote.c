@@ -112,10 +112,8 @@ void postman_remote_start()
 	}
 	
 	// Bind
-	TRACE("BIND\r\n");
 	if (bind (mySocket, (struct sockaddr *)&mon_adresse, sizeof (mon_adresse))<0)
 	{
-		TRACE("BIND ERROR \r\n");
 		perror("Error: bind - local adress locale not assign");
 		exit(EXIT_FAILURE);
 	}
@@ -123,7 +121,6 @@ void postman_remote_start()
 	// Listen
 	if (listen (mySocket, MAX_PENDING_CONNECTIONS) == -1)
 	{
-		TRACE("SOCKET LISTEN ERROR \r\n");
 		perror("Error : Problem listen server of socket");
 		exit(EXIT_FAILURE);
 	}else{
@@ -135,7 +132,6 @@ void postman_remote_start()
 	mySocket = accept (mySocket, NULL, 0);
 	if (mySocket == -1)
 	{
-		TRACE("SOCKET ACCEPT ERROR \r\n");
 		perror("Error : Problem accept of socket \n");
 		exit(EXIT_FAILURE);
 	}else{
@@ -147,7 +143,6 @@ void postman_remote_start()
 
 void postman_remote_stop()
 {
-	TRACE("SERVER STOP\r\n");
 	int id_error;
 	id_error = close(mySocket);
 	if (id_error==-1)

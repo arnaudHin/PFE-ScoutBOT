@@ -132,7 +132,7 @@ extern void cartographer_start(){
 
     cartographer_mq_init();
 
-	int return_thread = pthread_create(&mythread, NULL, (void *)&cartographer_run, NULL);
+	int return_thread = pthread_create(&mythread, NULL, &cartographer_run, NULL);
 	assert(return_thread == 0 && "Error Pthread_create cartographer\n");   
 
     //Start other active classes
@@ -198,7 +198,6 @@ static void cartographer_mq_init()
 	id_bal = mq_open(queue_name, O_CREAT | O_RDWR, 0666, &attr); // Creation of a new mailbox if any was created before.
 	assert(id_bal != -1 && "Error mq_open cartographer\n");
 
-	TRACE("Creation de la BAL: %s\nID:%d\n\n", queue_name, id_bal);
 }
 
 
@@ -212,7 +211,6 @@ static void cartographer_mq_send(Cartographer_event_e cartographer_event)
 	Mq_message_t cartographer_msg;
 	cartographer_msg.event = cartographer_event;
 	
-	TRACE("Evenement de cartographer : %d", cartographer_msg);
 	mqd_t bal_send = mq_send(id_bal, (const char *)&cartographer_msg, sizeof(Mq_message_t), 0); //Priority 0 to 31 (highest priority first)
 	assert(id_bal != -1 && "Error mq_send cartographer\n");
 }
@@ -258,6 +256,9 @@ static void cartographer_waitTaskTermination(){
 
 
 static void *cartographer_run(){
+
+
+	return NULL;
 
 }
 

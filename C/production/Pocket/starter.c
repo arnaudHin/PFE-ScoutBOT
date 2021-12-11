@@ -13,7 +13,6 @@
 #include <com_race/dispatcher_race.h>
 #include <com_race/proxy_robot.h>
 #include "localizer/cartographer/cartographer.h"
-#include <network_pilot.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -35,11 +34,9 @@ int main (int argc, char *argv[])
 	printf("\n************************************************************************************************\n");
 	printf("\n                                    Pocket start\n\n");
 	printf("************************************************************************************************\n\n");
-	robot_state_mutex_init();
 	race_protocol_init();
 	
 	//map_raw_new();
-	TRACE("map_raw_new(); OK\n");
 
 	//display_start();
 	//TRACE("display_start(); OK\n");
@@ -72,12 +69,7 @@ int main (int argc, char *argv[])
 	// geographer_stop();
 	// obstacle_sender_stop();
 	// map_raw_free();
-	robot_state_mutex_destroy();
 
-	// mapper_start();	
-
-	
-	// mapper_stop();
 
 
 	printf("\n************************************************************************************************\n");
