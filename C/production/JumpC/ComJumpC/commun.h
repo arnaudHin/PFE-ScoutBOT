@@ -27,7 +27,16 @@
 #define END_R "EN"
 #define SOCKET_CLOSED_R "\0"
 
-#define MAX_SIZE_BYTE_DATA_TO_SEND	(1)
+#define CMD_SIZE_BYTE 1
+
+#define LIDAR_POINTS_PER_DEGREE 2
+#define LIDAR_TOTAL_DEGREE 360
+#define LIDAR_SIZE_BYTE_DATA (LIDAR_POINTS_PER_DEGREE) * (LIDAR_TOTAL_DEGREE)
+#define LIDAR_TOTAL_DATA 720
+#define POSITION_NB_BEACONS_BLE 9
+#define POSITION_SIZE_BYTE_DATA (POSITION_NB_BEACONS_BLE + 1) * 2 * (sizeof(int16_t))
+
+#define MAX_SIZE_BYTE_DATA_TO_SEND (1)
 
 typedef enum
 {
@@ -41,9 +50,15 @@ typedef enum
  */
 
 
+typedef enum{
+	NO_ROOM=0,
+	ROOM_A,
+	ROOM_B,
+}Room_e;
+
 typedef enum
 {
-	DEFAULT=0,
+	DEFAULT = 0,
 	LEFT,
 	RIGHT,
 	FORWARD,
@@ -64,10 +79,40 @@ typedef enum
 	NB_CMD_FROM_JUMP
 } CMD_e;
 
+
+typedef enum
+{
+	CHECK_CONNECTION,
+	SET_ASK_QUIT,
+	SET_CHECK_CONNECTION,
+	SET_LIDAR_MAPPING,
+	SET_POSITION,
+	NB_CMD_TO_JUMP
+} CMD_from_pocket_e;
+
 typedef struct{
+	float x;
+	float y;
+	Room_e room;
+}Position_data_t;
+
+typedef struct
+{
+	int16_t X_buffer[LIDAR_TOTAL_DEGREE];
+	int16_t Y_buffer[LIDAR_TOTAL_DEGREE];
+} Lidar_data_t;
+
+typedef struct
+{
+	Lidar_data_t lidarData;
+	Position_data_t positionData;
+} DATA_from_pocket_t;
+
+typedef struct
+{
 	Direction_e direction;
 
-}DATA_to_pocket_t;
+} DATA_to_pocket_t;
 
 typedef struct
 {
@@ -75,6 +120,13 @@ typedef struct
 	uint16_t sizeData;
 	DATA_to_pocket_t data;
 } Message_to_pocket_t;
+
+typedef struct
+{
+	CMD_from_pocket_e command;
+	uint16_t size;
+	DATA_from_pocket_t data;
+} Message_from_pocket_t;
 
 #endif /* SRC_POCKET_COMMUN_H_ */
 

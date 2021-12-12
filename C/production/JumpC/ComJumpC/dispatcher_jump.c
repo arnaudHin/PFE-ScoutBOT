@@ -1,276 +1,223 @@
-// /* -*- mode: c; c-basic-offset: 4; indent-tabs-mode: nil -*- */
-// /**
-//  * @file  dispatcher_jump.c
-//  * @author Montet Julien & Marbeuf Pierre
-//  * @version 3.0
-//  * @date 11/06/2020
-//  * @brief Dispatcher network
-//  *
-//  */
-// #include "../../JumpC/ComJumpC/dispatcher_jump.h"
+/**
+ * @file dispatcher_jumpC.c
+ * @author Adrien LE ROUX
+ * @brief 
+ * @version 0.1
+ * @date 2021-11-30
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+#include "../../JumpC/ComJumpC/dispatcher_jump.h"
 
-// #include <pthread.h>
-// #include <stdlib.h>
-// #include <string.h>
-// #include <stdio.h>
-// #include <errno.h>
-// #include "../../util.h"
-// #include <unistd.h>
-// #include <arpa/inet.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include "util.h"
+#include <unistd.h>
+#include <arpa/inet.h>
 
-// #include "../../JumpC/ComJumpC/postman_jump.h"
-// #include "../../JumpC/commun.h"
-// //#include "../../JumpC/.h"
-// //#include "../../JumpC/network_pilot.h"
-// #include "../../JumpC/pilot.h"
-// #include "../map_raw.h"
+#include "../Mapping/map_viewer.h"
+#include "protocol_jump.h"
+#include "../../JumpC/ComJumpC/postman_jump.h"
+#include "commun.h"
+//#include "../../JumpC/.h"
+//#include "../../JumpC/network_pilot.h"
 
-// #define SIZE_MSG_CMD (1)
-// #define SIZE_MSG_SIZE (3)
-// #define SIZE_COORD (2)
+#define SIZE_MSG_CMD (1)
+#define SIZE_MSG_SIZE (2)
+#define SIZE_COORD (2)
 
+static pthread_t pthread;
 
-// static pthread_t pthread;
+/**
+ *  \fn static void dispatcher_jump_dispatch(Message_from_pocket_t network_msg)
+ *
+ *  \brief Function dedicated to look after the network_msg in order to execute a specific action
+ *
+ *  \param Network_msg a structure with the order (two characters) and value (ten characters)
+ *             Values come from the Android app
+ */
 
+static void dispatcher_jumpC_dispatch(Message_from_pocket_t network_msg)
+{
+    TRACE("CMD = %d\r\n", network_msg.command);
+    switch (network_msg.command)
+    {
+    case CHECK_CONNECTION:
 
-// /**
-//  *  \fn static void dispatcher_jump_dispatch(Network_msg network_msg)
-//  *
-//  *  \brief Function dedicated to look after the network_msg in order to execute a specific action
-//  *
-//  *  \param Network_msg a structure with the order (two characters) and value (ten characters)
-//  *             Values come from the Android app
-//  */
+        break;
+    case SET_ASK_QUIT:
 
-// static void dispatcher_jump_dispatch(Network_msg network_msg)
+        break;
+    case SET_CHECK_CONNECTION:
+
+        break;
+    case SET_LIDAR_MAPPING:
+        map_viewer_draw_map_static();
+        break;
+    case SET_POSITION:
+
+        break;
+    default:
+        TRACE("NETWORK MSG ORDER : not recognized \r\n");
+        break;
+    }
+}
+
+/**
+ *  \fn void dispatcher_jumpC_stop()
+ *
+ *  \brief Function dedicated stop the dispatcher
+ *
+ */
+extern void dispatcher_jumpC_stop()
+{
+    TRACE("DISPATCHER STOP \r\n");
+    int returnCode = pthread_join(pthread, NULL);
+    TRACE("AFTER DISPATCHER STOP \r\n");
+    if (returnCode == -1)
+    {
+        perror("Error : join thread incorrect");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ *  \fn void interpret_24_bit_as_int32()
+ *
+ *  \brief Function dedicated convert an hexa-string of 3 bytes in int
+ *
+ *  \param byte_array (char *) : byte_array of 3 bytes to convert
+ *
+ *  \return int : value converted
+ *
+ */
+// static int interpret_24_bit_as_int32(unsigned char *byte_array)
 // {
-// 	TRACE("CMD = %d\r\n",network_msg.cmd);
-// 	switch(network_msg.cmd)
-// 	{
-// 		case(TRY_DIR):
-// 			TRACE("NETWORK MSG ORDER : forward \r\n");
-// 			pilot_set_direction(FORWARD);
-// 			break;
-// 		case(SET_MODE):
-// 			TRACE("NETWORK MSG ORDER : backward \r\n");
-// 			pilot_set_direction(BACKWARD);
-// 			break;
-// 		case(CHECK_CONNECTION):
-// 			TRACE("NETWORK MSG ORDER : left \r\n");
-// 			pilot_set_direction(LEFT);
-// 			break;
-// 		case(ASK_QUIT):
-// 			TRACE("NETWORK MSG ORDER : right \r\n");
-// 			pilot_set_direction(RIGHT);
-// 			break;
-// 		case(LIDAR_MAPPING):
-// 			TRACE("NETWORK MSG ORDER : break \r\n");
-// 			pilot_set_direction(BREAK);
-// 			break;
-// 		case(POSITION):
-// 			TRACE("NETWORK MSG ORDER : socket closed  \r\n");
-// 			pilot_set_direction(BREAK);
-// 			postman_jump_stop();
-// 			break;
-
-// 		default:
-// 			TRACE("NETWORK MSG ORDER : not recognized \r\n");
-// 	}
-// }
-
-
-// /**
-//  *  \fn void dispatcher_jump_stop()
-//  *
-//  *  \brief Function dedicated stop the dispatcher
-//  *
-//  */
-// extern void dispatcher_jump_stop()
-// {
-//         TRACE("DISPATCHER STOP \r\n");
-//         int returnCode = pthread_join(pthread,NULL);
-//         TRACE("AFTER DISPATCHER STOP \r\n");
-//         if (returnCode == -1)
-//         {
-//                 perror("Error : join thread incorrect");
-//                 exit(EXIT_FAILURE);
-//         }
-//         pilot_stop();
-// }
-
-
-// /**
-//  *  \fn void interpret_24_bit_as_int32()
-//  *
-//  *  \brief Function dedicated convert an hexa-string of 3 bytes in int
-//  *
-//  *  \param byte_array (char *) : byte_array of 3 bytes to convert
-//  *
-//  *  \return int : value converted
-//  *
-//  */
-// static int interpret_24_bit_as_int32(unsigned char * byte_array) {
 //     return (
-//         (byte_array[0] << 24) |
-//         (byte_array[1] << 16) |
-//         (byte_array[2] << 8)) >> 8;
+//                (byte_array[0] << 24) |
+//                (byte_array[1] << 16) |
+//                (byte_array[2] << 8)) >>
+//            8;
 // }
 
+/**
+ *  \fn void dispatcher_decod(char * buffer, Network_msg * network_msg)
+ *
+ *  \brief Function dedicated to decode the message received (cmd, size, data) and organize it in a struct
+ *
+ *  \param buffer (char *) : msg received
+ *
+ *  \param network_msg (Network_msg *) : data decoded at the end
+ *
+ */
+static void dispatcher_decod(uint8_t *myTempBuffer, Message_from_pocket_t *network_msg)
+{
+    ssize_t resultRead = 0;
+    ssize_t byteToRead = SIZE_MSG_CMD + SIZE_MSG_SIZE;
+    protocol_jump_decode(myTempBuffer, network_msg, byteToRead);
 
+    if (network_msg->size != 0)
+    {
+        byteToRead = network_msg->size;
+        uint8_t myTempBuffer[byteToRead];
+        memset(myTempBuffer, 0x00, sizeof(myTempBuffer) * network_msg->size);
 
+        resultRead = postman_jumpC_receive_msg(myTempBuffer, byteToRead);
+        if (resultRead == -1)
+        {
+            fprintf(stderr, "ERROR POSTMAN RECEIVE DATA : %ld\n", resultRead);
+        }
 
-// /**
-//  *  \fn void dispatcher_decod(char * buffer, Network_msg * network_msg)
-//  *
-//  *  \brief Function dedicated to decode the message received (cmd, size, data) and organize it in a struct
-//  *
-//  *  \param buffer (char *) : msg received
-//  *
-//  *  \param network_msg (Network_msg *) : data decoded at the end
-//  *
-//  */
-// static void dispatcher_decod(unsigned char * buffer, Network_msg * network_msg)
-// {
+        //DECODE myTempBuffer -> myMessageFromJump (DATA)
+        protocol_jump_decode(myTempBuffer, network_msg, byteToRead);
+    }
 
-// 	network_msg->cmd = NOP;
-// 	network_msg->size = 0;
-// 	network_msg->coord.x = 0;
-// 	network_msg->coord.y = 0;
+    fprintf(stderr, "\nCMD : %d | ", network_msg->command);
+    fprintf(stderr, "Size : %d | ", network_msg->size);
+    //fprintf(stderr, "Data dir : %d \n", network_msg->data.lidarData);
+}
 
-// 	unsigned char size[SIZE_MSG_SIZE];
+/**
+ *  \fn static void dispatcher_jumpC_run()
+ *
+ *  \brief Function dedicated to constantly read the socket
+ *             Once the message is received, it decodes it and requests a dispatch
+ */
+static void *dispatcher_jumpC_run()
+{
+    ssize_t byteToRead = SIZE_MSG_CMD + SIZE_MSG_SIZE + LIDAR_TOTAL_DATA * 2;
+    uint8_t myBufferFromJump[BUFF_SIZE_TO_RECEIVE + CMD_SIZE_BYTE + sizeof(uint16_t)];
+    Message_from_pocket_t network_msg = {.command = NOP_CMD, .size = 0}; //SET_ASK_QUIT
+    memset(network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t)* LIDAR_TOTAL_DEGREE);
+    memset(network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) *LIDAR_TOTAL_DEGREE);
 
-// 	// Get value of CMD
-// 	memcpy(&network_msg->cmd, &buffer[0], SIZE_MSG_CMD);
+    do
+    {
+        TRACE("DISPATCHER RUN \r\n");
+        network_msg.command = SET_ASK_QUIT;
+        postman_jumpC_receive_msg(myBufferFromJump, byteToRead);
+        dispatcher_decod(myBufferFromJump, &network_msg);
 
-// 	// Get value of SIZE
-// 	for(int j=0;j<sizeof(size);j++){
-// 		strcpy((char *)&size[j],(char *)&buffer[SIZE_MSG_CMD+j]);
-// 	}
-// 	network_msg->size = interpret_24_bit_as_int32(size);
+        dispatcher_jumpC_dispatch(network_msg);
+    } while (network_msg.command != SET_ASK_QUIT);
+    return 0;
+}
 
-// 	#ifdef DEBUG
-// 	//Show more details
-// 	printf("ALL array: ");
-// 	for(int i=0;i<SIZE_MSG_CMD+SIZE_MSG_SIZE;i++){
-// 		printf("%02X ",buffer[i]);
-// 	}printf("\n");
+/**
+ *  \fn static void new_dispatcher_jumpC_run()
+ *
+ *  \brief Function dedicated to constantly read test messages
+ *             Once the message is received, it decodes it and requests a dispatch
+ */
+static void *new_dispatcher_jumpC_run()
+{
+    Message_from_pocket_t network_msg = {.command = NOP_CMD, .size = 0}; //SET_ASK_QUIT
+    memset(network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
+    memset(network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
+    uint16_t size_msg = SIZE_MSG_CMD + SIZE_MSG_SIZE;
+    unsigned char buffer[size_msg];
+    do
+    {
+        TRACE("DISPATCHER RUN \r\n");
+        network_msg.command = NOP_CMD;
+        postman_jumpC_receive_msg(buffer, size_msg);
+        dispatcher_decod(buffer, &network_msg);
+        dispatcher_jumpC_dispatch(network_msg);
+    } while (network_msg.command != SET_ASK_QUIT);
+    return 0;
+}
 
-// 	TRACE("CMD : %d\n",network_msg->cmd);
-// 	TRACE("Size : %d\n",network_msg->size);
+/**
+ *  \fn static void dispatcher_jumpC_start()
+ *
+ *  \brief Function dedicated to start the dispatcher and postman and pilot.
+ */
+extern void dispatcher_jumpC_start()
+{
+    postman_jumpC_start();
+    int returnError = pthread_create(&pthread, NULL, &dispatcher_jumpC_run, NULL);
+    if (returnError == -1)
+    {
+        perror("Error : creation of thread incorrect in remoteUI start");
+        exit(EXIT_FAILURE);
+    }
+}
 
-// 	#endif
-
-// 	// If size > 0, data has been sent
-// 	if (network_msg->size > 0)
-// 	{
-// 		// Continue to read the msg
-// 		unsigned char buffer_data[network_msg->size];
-// 		memset(buffer_data,0x00,sizeof(buffer_data));
-
-// 		// Continue to read the socket
-// 		postman_jump_receive_msg(buffer_data,network_msg->size);
-
-// 		#ifdef DEBUG
-// 		TRACE("DATA : ");
-// 		for(int i=0;i<sizeof(buffer_data);i++){
-// 			printf("%02X ",buffer_data[i]);
-// 		}printf("\n");
-// 		#endif
-
-// 		// Can become a switch case in the future
-// 		if (network_msg->cmd == POSITION_ROBOT_DEST){
-
-// 			// Get value of abscissa and ordinate
-// 			memcpy(&network_msg->coord.x, &buffer_data[0], SIZE_COORD);
-// 			memcpy(&network_msg->coord.y, &buffer_data[SIZE_COORD], SIZE_COORD);
-// 			network_msg->coord.x = ntohs(network_msg->coord.x);
-// 			network_msg->coord.y = ntohs(network_msg->coord.y);
-
-// 			TRACE("Abscissa : %d - Ordinate : %d\r\n",network_msg->coord.x,network_msg->coord.y);
-
-// 		}else{
-// 			TRACE("Expect data but CMD not defined");
-// 		}
-// 	}
-// }
-
-
-// /**
-//  *  \fn static void dispatcher_jump_run()
-//  *
-//  *  \brief Function dedicated to constantly read the socket
-//  *             Once the message is received, it decodes it and requests a dispatch
-//  */
-// static void * dispatcher_jump_run()
-// {
-// 	Network_msg network_msg = {.cmd = 30, .size=0, .coord ={0,0}}; //CLOSE
-// 	int size_msg =SIZE_MSG_CMD+SIZE_MSG_SIZE;
-// 	unsigned char buffer[size_msg];
-// 	do
-// 	{
-// 		TRACE("DISPATCHER RUN \r\n");
-// 		network_msg.cmd = CLOSE;
-// 		postman_jump_receive_msg(buffer,size_msg);
-// 		dispatcher_decod(buffer,&network_msg);
-// 		dispatcher_jump_dispatch(network_msg);
-// 	}while(network_msg.cmd!=CLOSE);
-// 	return 0;
-// }
-
-// /**
-//  *  \fn static void new_dispatcher_jump_run()
-//  *
-//  *  \brief Function dedicated to constantly read test messages
-//  *             Once the message is received, it decodes it and requests a dispatch
-//  */
-// static void * new_dispatcher_jump_run()
-// {
-// 	Network_msg network_msg = {.cmd = 30, .size=0, .coord ={0,0}}; //CLOSE
-// 	int size_msg =SIZE_MSG_CMD+SIZE_MSG_SIZE;
-// 	unsigned char buffer[size_msg];
-// 	do
-// 	{
-// 		TRACE("DISPATCHER RUN \r\n");
-// 		network_msg.cmd = CLOSE;
-// 		postman_jump_receive_msg(buffer,size_msg);
-// 		dispatcher_decod(buffer,&network_msg);
-// 		dispatcher_jump_dispatch(network_msg);
-// 	}while(network_msg.cmd!=CLOSE);
-// 	return 0;
-// }
-
-
-// /**
-//  *  \fn static void dispatcher_jump_start()
-//  *
-//  *  \brief Function dedicated to start the dispatcher and postman and pilot.
-//  */
-// extern void dispatcher_jump_start()
-// {
-//         postman_jump_start();
-//         pilot_start();
-//         int returnError = pthread_create(&pthread,NULL,&dispatcher_jump_run,NULL);
-//         if (returnError == -1)
-//         {
-//                 perror("Error : creation of thread incorrect in remoteUI start");
-//                 exit(EXIT_FAILURE);
-//         }
-// }
-
-// /**
-//  *  \fn static void new_dispatcher_jump_start()
-//  *
-//  *  \brief Function dedicated to start the dispatcher  with pilot and without postman.
-//  */
-// extern void new_dispatcher_jump_start()
-// {
-//         //postman_jump_start();
-//         pilot_start();
-//         int returnError = pthread_create(&pthread,NULL,&new_dispatcher_jump_run,NULL);
-//         if (returnError == -1)
-//         {
-//                 perror("Error : creation of thread incorrect in remoteUI start");
-//                 exit(EXIT_FAILURE);
-//         }
-// }
-
+/**
+ *  \fn static void new_dispatcher_jumpC_start()
+ *
+ *  \brief Function dedicated to start the dispatcher  with pilot and without postman.
+ */
+extern void new_dispatcher_jumpC_start()
+{
+    //postman_jumpC_start();
+    int returnError = pthread_create(&pthread, NULL, &new_dispatcher_jumpC_run, NULL);
+    if (returnError == -1)
+    {
+        perror("Error : creation of thread incorrect in remoteUI start");
+        exit(EXIT_FAILURE);
+    }
+}

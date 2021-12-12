@@ -1,6 +1,6 @@
 /**
  * @file gtk_glade.h
- * @author your name (you@domain.com)
+ * @author Adrien LE ROUX (you@domain.com)
  * @brief 
  * @version 0.1
  * @date 2021-10-29
@@ -9,9 +9,9 @@
  * 
  */
 
-typedef struct Point {
+typedef struct  {
     int x;
     int y;
     int next_x;
     int next_y;
-};
+}Point;

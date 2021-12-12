@@ -6,7 +6,6 @@
 #include "../ComJumpC/postman_jump.h"
 #include "gtk_glade.h"
 #include "../ComJumpC/util.h"
-#include "../ComJumpC/commun.h"
 /**
  * @brief Current state of the remote (Pause or Play)
  * 
@@ -21,7 +20,7 @@ static void switch_block(bool state);
 
 static pthread_mutex_t mutex_amount = PTHREAD_MUTEX_INITIALIZER; //On créé le mutex qu'on intilialise par PTHREAD_MUTEX_INITIALIZER
 GtkBuilder *p_builder = NULL;
-struct Point *p1, *p2, *start;
+Point *p1, *p2, *start;
 
 GtkWidget *p_win1;
 /**
@@ -118,7 +117,7 @@ static void draw_brush(GtkWidget *p_wid, gdouble x, gdouble y)
    }
    // p1->x = x;
    // p1->y = y;
-   start = malloc(sizeof(struct Point));
+   start = malloc(sizeof(Point));
    start->x = p1->next_x;
    start->y = p1->next_y;
    gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(p_builder, "draw1")));
@@ -126,24 +125,24 @@ static void draw_brush(GtkWidget *p_wid, gdouble x, gdouble y)
 
 static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
 {
-   guint width, height;
+  // guint width, height;
 
-   width = gtk_widget_get_allocated_width(p_wid);
-   height = gtk_widget_get_allocated_height(p_wid);
+   //width = gtk_widget_get_allocated_width(p_wid);
+   //height = gtk_widget_get_allocated_height(p_wid);
 
    cairo_set_line_width(cr, 1.0);
 
    // if (start == NULL)
    //    return FALSE;
-   int old_x = start->x;
-   int old_y = start->y;
+   // int old_x = start->x;
+   // int old_y = start->y;
 
    //p1 = start->next;
 
    // while (p1 != NULL)
    // {
    cairo_set_source_rgb(cr, 1.0, 1.0, 0.0);
-   int z = 0;
+   //int z = 0;
    // for (int i = 0; i < 20; i++)
    // {
    //    z++;
@@ -260,7 +259,7 @@ static void cb_moveScreen(GtkWidget *p_wid, gpointer p_data)
 
 static void cb_map(GtkWidget *p_wid, gpointer p_data)
 {
-   p1 = malloc(sizeof(struct Point));
+   p1 = malloc(sizeof( Point));
    p1->x = 3;
    p1->y = 8;
    p1->next_x = 50;
@@ -279,7 +278,6 @@ static void cb_powerOnOff(GtkWidget *p_wid, gpointer p_data)
    //gtk_builder_get_objects   for every objects
    if (gtk_switch_get_active(GTK_WIDGET(gtk_builder_get_object(p_builder, "powerOnOff"))) == 0)
    {
-      
       postman_jumpC_stop();
       switch_block(FALSE);
    }

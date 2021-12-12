@@ -1,17 +1,19 @@
-/*
- * postmanJumpC.h
- *
- * @file  postman_JumpC.c
- * @author Montet Julien & Marbeuf Pierre
- * @version 3.0
- * @date 11/06/2020
- * @brief Postman JumpC network
- *
+/**
+ * @file postman_jump.h
+ * @author Adrien LE ROUX (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2021-11-30
+ * 
+ * @copyright Copyright (c) 2021
+ * 
  */
 #ifndef SRC_JUMPC_COM_JUMPC_POSTMAN_JUMPC_H_
 #define SRC_JUMPC_COM_JUMPC_POSTMAN_JUMPC_H_
 
 #include "commun.h"
+//#include <unistd.h>
+#include <sys/types.h>
 
 /************************ PROTOTYPE DECLARATION **************************************/
 
@@ -23,12 +25,12 @@
 extern void postman_jumpC_send_msg(Message_to_pocket_t * msg);
 
 
-/** \fn void postman_jumpC_receive_msg (char * buffer, int length)
+/** \fn ssize_t postman_jumpC_receive_msg (uint8_t * bufferToReceive, __ssize_t nbBytes)
  *  \brief Function dedicated to receive a message of a specific length and store it in a buffer.
- *  \param buffer : buffer where the msg in bytes received is stored
- *  \param length : expected size of the msg
+ *  \param bufferToReceive : buffer where the msg in bytes received is stored
+ *  \param nbBytes : expected size of the msg
  */
-extern void postman_jumpC_receive_msg(unsigned char * buffer, int length);
+extern ssize_t postman_jumpC_receive_msg(uint8_t * bufferToReceive, __ssize_t nbBytes);
 
 /** \fn void postman_jumpC_start ()
  *  \brief Function dedicated to create a new socket, bind it, listen it, and accept it.
