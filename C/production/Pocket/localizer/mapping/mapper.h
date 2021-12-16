@@ -44,7 +44,7 @@ extern void mapper_stop();
  *  \brief Function dedicated to obtain the actual lidar data
  * \return return lidarData
  */
-extern Lidar_data_t mapper_getLidarData();
+extern Lidar_data_t * mapper_getLidarData();
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 
 #endif /* SRC_POCKET_V1_MAPPER_H_ */

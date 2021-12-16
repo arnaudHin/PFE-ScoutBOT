@@ -141,11 +141,11 @@ extern void adminPositioning_stop(){
     adminPositioning_waitTaskTermination();
 }
 
-extern Position_data_t adminPositioning_getPosition(){
+extern Position_data_t * adminPositioning_getPosition(){
     Position_data_t actualPosition;
     pthread_mutex_lock(&myMutex);
     actualPosition.x = robotPosition.x;
     actualPosition.y = robotPosition.y;
     pthread_mutex_unlock(&myMutex);
-    return actualPosition;
+    return &actualPosition;
 }

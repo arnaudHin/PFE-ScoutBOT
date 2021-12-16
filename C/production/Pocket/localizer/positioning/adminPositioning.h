@@ -42,7 +42,7 @@ extern void adminPositioning_stop();
  *  \brief Function dedicated to obtain the actual position of the robot
  * \return retourne la position du robot
  */
-extern Position_data_t adminPositioning_getPosition();
+extern Position_data_t * adminPositioning_getPosition();
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 

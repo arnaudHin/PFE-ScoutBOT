@@ -25,6 +25,7 @@
 #define DISPLAY 1
 /************************************** STATIC VARIABLE *******************************************************/
 static pthread_t mythread;
+static pthread_mutex_t myMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /************************************** EXTERN VARIABLE *******************************************************/
 
@@ -125,7 +126,10 @@ extern void mapper_free(){
 
 }
 
-extern Lidar_data_t mapper_getLidarData(){
-    Lidar_data_t t;
-    return t;
+extern Lidar_data_t * mapper_getLidarData(){
+    Lidar_data_t actualLidarData;
+    pthread_mutex_lock(&myMutex);
+    actualLidarData = lidarData;
+    pthread_mutex_unlock(&myMutex);
+    return &actualLidarData;
 }
