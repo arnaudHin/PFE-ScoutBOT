@@ -52,6 +52,7 @@ static void adminPositioning_setPosition(Position_data_t * position)
     pthread_mutex_lock(&myMutex);
     robotPosition.x = position->x;
     robotPosition.y = position->y;
+    robotPosition.room = position->room;
     pthread_mutex_unlock(&myMutex);
 }
 
@@ -86,18 +87,19 @@ static void* adminPositioning_run()
     FILE* fichier = NULL;
     while(stopRunning==false){
         Position_data_t actualPosition;
-        system("AnnexPositioningFiles/RSSI_scan.sh");
+        system("./Indoor_positioning/bash/RSSI_scan.sh");
         printf("on ouvre le fichier \n");
-        fichier = fopen("position.txt", "r");
+        fichier = fopen("Indoor_positioning/results/data_indoor_pos.txt", "r");
         if (fichier != NULL){
-            fscanf(fichier, "%f %f", &(actualPosition.x), &(actualPosition.y));  
+            fscanf(fichier, "%f %f %d", &(actualPosition.x), &(actualPosition.y),  &(actualPosition.room));  
             adminPositioning_setPosition(&actualPosition);
-            printf("la position est x = %f y = %f",robotPosition.x,robotPosition.y);          
+            printf("la position est x = %f y = %f room = %d",robotPosition.x,robotPosition.y,robotPosition.room);          
             fclose(fichier);
         }else{
             // On affiche un message d'erreur si on veut
             printf("Impossible d'ouvrir le fichier position.txt \n");
         }
+        
     }
     return NULL;
 }

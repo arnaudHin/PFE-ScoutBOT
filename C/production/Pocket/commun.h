@@ -74,7 +74,7 @@ typedef struct{
 typedef struct{
 	float x;
 	float y;
-	Room_e room;
+	uint8_t room;
 }Position_data_t;
 
 typedef enum{

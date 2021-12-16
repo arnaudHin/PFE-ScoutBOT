@@ -3,7 +3,7 @@ def check_RSSI(addrMac,x):
     j=0
     block_MACaddr = ""
     RSSI_number = [0 for i in range(x)]
-    with open('../bash/btsnoop_hci.txt') as temp_f:
+    with open('Indoor_positioning/bash/btsnoop_hci.txt') as temp_f:
         datafile = temp_f.read().split('HCI Event: LE Meta Event')
     for block in datafile:
         for k in range(0,x):

@@ -1,5 +1,5 @@
 #!/bin/bash
 
-./init.sh
-python3 ../python/main.py
+./Indoor_positioning/bash/init.sh
+python3 Indoor_positioning/python/main.py
 
