@@ -19,8 +19,10 @@ static Message_to_jump_t messageToJumpc;
 
 extern void proxy_mapviewer_send_data(DATA_to_jump_t * dataToSend){
     messageToJumpc.command = SET_DATA;
-    messageToJumpc.size = sizeof( DATA_to_jump_t );
+    messageToJumpc.size = MAX_SIZE_BYTE_DATA_TO_SEND;
     messageToJumpc.data = *dataToSend;
+
+    sizeof(Room_e);
 
     uint16_t bytesToSend = 1 + 2 + messageToJumpc.size; 
     uint8_t bufferToSend[bytesToSend]; //1+2+(720*2)
