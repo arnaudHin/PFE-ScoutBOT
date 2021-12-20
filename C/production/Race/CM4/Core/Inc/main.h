@@ -39,6 +39,7 @@ extern "C" {
 #include <com_pocket/postman_robot.h>
 #include <lib/TIMERS.h>
 #include <lib/MOTORS.h>
+#include <lib/sensors/MPU6050.h>
 //#include "openamp.h"
 //#include "openamp_log.h"
 //#include "virt_uart.h"

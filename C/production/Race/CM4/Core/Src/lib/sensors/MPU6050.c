@@ -16,10 +16,11 @@ int16_t Gyro_X_RAW = 0;
 int16_t Gyro_Y_RAW = 0;
 int16_t Gyro_Z_RAW = 0;
 
-float Ax, Ay, Az, Gx, Gy, Gz;
-
-
 extern void MPU6050_Init(void){
+
+	I2C_Init(MPU6050_I2C, 100000);
+	BSP_GPIO_PinCfg(MPU6050_VCC, GPIO_MODE_OUTPUT_PP, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH, 0);
+	PIN_On(MPU6050_VCC);
 
 	uint8_t check;
 	uint8_t Data;
@@ -55,6 +56,7 @@ extern void MPU6050_Init(void){
 extern void MPU6050_Read_Accel (void)
 {
 	uint8_t Rec_Data[6];
+	float Ax, Ay, Az;
 
 	// Read 6 BYTES of data starting from ACCEL_XOUT_H register
 
@@ -80,6 +82,7 @@ extern void MPU6050_Read_Accel (void)
 extern void MPU6050_Read_Gyro (void)
 {
 	uint8_t Rec_Data[6];
+	float Gx, Gy, Gz;
 
 	// Read 6 BYTES of data starting from GYRO_XOUT_H register
 
