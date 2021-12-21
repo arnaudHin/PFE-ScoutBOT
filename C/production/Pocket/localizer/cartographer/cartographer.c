@@ -5,9 +5,7 @@
  * @version 2.0
  * @date 01/12/2021
  * @brief Make cartography
- *
  * The purpose of the cartographer is to make calcul and estimation of the position
- *
  */
 
 #include <stdio.h>
@@ -33,6 +31,7 @@ typedef enum{
 
 	S_IDLE_C=0,
 	S_RUNNING_C,
+	S_INIT_C,
 	S_DEATH_C,
 	NB_STATE_C
 }Cartographer_state_e;
@@ -41,6 +40,7 @@ typedef enum{
 	T_NOP_C = 0,
 	T_START_CARTO_C,
 	T_STOP_CARTO_C,
+	T_INIT_CARTO_C,
 	T_ASK_4_DATA_C,
 	T_NB_TRANS_C
 }Cartographer_transistion_action_e;
@@ -48,6 +48,7 @@ typedef enum{
 
 typedef enum{
 	E_START_C=0,
+	E_ACK_INIT_C,
 	E_STOP_C,
     E_ASK_4_DATA_C,
 	E_NB_EVENT_C
@@ -80,7 +81,9 @@ typedef struct{
 
 
 static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
-	[S_IDLE_C][E_START_C] = {S_RUNNING_C, T_START_CARTO_C},
+	[S_IDLE_C][E_START_C] = {S_INIT_C, T_INIT_CARTO_C},
+	[S_INIT_C][E_ACK_INIT_C] = {S_RUNNING_C, T_START_CARTO_C},
+
 	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_RUNNING_C, T_ASK_4_DATA_C},
 	
 	[S_RUNNING_C][E_STOP_C] = {S_DEATH_C, T_STOP_CARTO_C},
@@ -93,8 +96,6 @@ static const char queue_name[] = "/cartographer"; //name of mailbox
 static mqd_t id_bal;	
 
 static Cartographer_t * myCartographer;
-
-static DATA_to_jump_t DADAToJump; //data a envoyer
 
 static DATA_to_jump_t actualData; //Actual data lidar and position
 
@@ -211,9 +212,10 @@ static void perform_signal_stop(){
 }
 
 static void perform_ask_4_data(){
-	actualData.positionData = *adminPositioning_getPosition();
+
 	actualData.lidarData = *mapper_getLidarData();
 	proxy_mapviewer_send_data(&actualData);
+
 }
 
 
@@ -333,7 +335,6 @@ extern void cartographer_ask4data(){
 extern void cartographer_signal_stop(){
     cartographer_mq_send(E_STOP_C);
 }
-
 
 
 

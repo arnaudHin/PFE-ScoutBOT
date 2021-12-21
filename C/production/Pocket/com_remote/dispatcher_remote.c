@@ -152,7 +152,7 @@ static void dispatcher_remote_check_for_message(){
 
 	resultRead = postman_remote_receive(myBufferFromJump, byteToRead);
 	if(resultRead == -1 || resultRead == 0){
-		fprintf(stderr, "ERROR POSTMAN RECEIVE 0 : %ld\n", resultRead);
+		fprintf(stderr, "ERROR POSTMAN RECEIVE 0 : %d\n", resultRead);
 	}
 
 	//DECODE myBufferFromJump -> myMessageFromJump (CMD + SIZEdata)
@@ -165,7 +165,7 @@ static void dispatcher_remote_check_for_message(){
 
 		resultRead = postman_remote_receive(myTempBuffer, byteToRead);
 		if(resultRead == -1){
-			fprintf(stderr, "ERROR POSTMAN RECEIVE DATA : %ld\n", resultRead);
+			fprintf(stderr, "ERROR POSTMAN RECEIVE DATA : %d\n", resultRead);
 		}
 		
 		//DECODE myTempBuffer -> myMessageFromJump (DATA)
