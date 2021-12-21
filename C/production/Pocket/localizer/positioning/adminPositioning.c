@@ -80,8 +80,7 @@ static void time_out(){
  *  \brief Function dedicated to perform an action when a message is received in the mailbox
  *  \retval NULL
  */
-static void* adminPositioning_run()
-{
+static void* adminPositioning_run(){
     
     // Watchdog_start(myWatchdog);
     FILE* fichier = NULL;
@@ -146,8 +145,10 @@ extern void adminPositioning_stop(){
 extern Position_data_t * adminPositioning_getPosition(){
     Position_data_t actualPosition;
     pthread_mutex_lock(&myMutex);
+
     actualPosition.x = robotPosition.x;
     actualPosition.y = robotPosition.y;
+    
     pthread_mutex_unlock(&myMutex);
     return &actualPosition;
 }

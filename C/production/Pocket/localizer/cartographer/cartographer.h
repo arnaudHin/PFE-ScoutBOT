@@ -41,7 +41,13 @@ extern void cartographer_stop();
 
 
 
+extern void cartographer_ask4data();
 
+extern void cartographer_signal_start();
+
+extern void cartographer_signal_ack_init();
+
+extern void cartographer_signal_stop();
 
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/
