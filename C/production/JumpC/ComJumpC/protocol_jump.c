@@ -10,6 +10,7 @@
  */
 #include "commun.h"
 #include "protocol_jump.h"
+#include "postman_jump.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -18,9 +19,12 @@
 #define SIZE_MSG_CMD (1)
 #define SIZE_MSG_SIZE (2)
 
+#define MAX_SIZE_BYTE_DATA_TO_RECEIVE (MAX_SIZE_BYTE_DATA_TO_SEND)
 static void protocol_jump_decodeCommandSize(uint8_t *bufferRead, Message_from_pocket_t *messageToRead);
 static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket_t *messageToRead);
 static uint16_t protocol_jump_convert_two_bytes_into_uint16(uint8_t first, uint8_t second);
+static void protocol_jump_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t value);
+static void protocol_jump_encodeData(uint8_t *bufferWrite, Message_to_pocket_t *messageToWrite);
 
 extern void protocol_jump_decode(uint8_t *bufferRead, Message_from_pocket_t *messageToRead, __ssize_t byteToDecode)
 {
@@ -29,7 +33,7 @@ extern void protocol_jump_decode(uint8_t *bufferRead, Message_from_pocket_t *mes
     case 3:
         protocol_jump_decodeCommandSize(bufferRead, messageToRead);
         break;
-    case 1449:
+    case MAX_SIZE_BYTE_DATA_TO_RECEIVE:
         protocol_jump_dataPositions(bufferRead, messageToRead);
         break;
     default:
@@ -39,8 +43,34 @@ extern void protocol_jump_decode(uint8_t *bufferRead, Message_from_pocket_t *mes
 
 extern void protocol_jump_encode(uint8_t *bufferWrite, Message_to_pocket_t *messageToWrite, __ssize_t byteToEncode)
 {
+    switch (messageToWrite->cmd)
+    {
+    case ASK_4_DATA:
+        //protocol_jump_encodeData(bufferWrite, messageToWrite);
+        postman_jumpC_send_msg(messageToWrite);
+        break;
+    case ASK_QUIT:
+        //protocol_jump_encodeData(bufferWrite, messageToWrite);
+        postman_jumpC_send_msg(messageToWrite);
+        break;
+    default:
+        break;
+    }
 }
 
+static void protocol_jump_encodeData(uint8_t *bufferWrite, Message_to_pocket_t *messageToWrite)
+{
+    uint16_t index = 0;
+
+    uint8_t cmd = (uint8_t)messageToWrite->cmd;
+    memcpy(bufferWrite, &cmd, sizeof(uint8_t));
+    index++;
+
+    uint8_t buf2[sizeof(uint16_t)];
+    protocol_jump_convert_uint16_to_2_bytes(buf2, messageToWrite->sizeData);
+    memcpy((bufferWrite + index), &buf2, sizeof(uint16_t));
+    index += 2;
+}
 static void protocol_jump_decodeCommandSize(uint8_t *bufferRead, Message_from_pocket_t *messageToRead)
 {
     fprintf(stderr, "\n ---DECODE CMD+SIZE --- \n");
@@ -71,7 +101,7 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
     memcpy(&messageToRead->data.positionData.y, (uint8_t *)bufferRead, sizeof(float));
     index += sizeof(float);
 
-    memcpy((uint8_t)&messageToRead->data.positionData.room, (uint8_t *)bufferRead, sizeof(uint8_t));
+    memcpy(&messageToRead->data.positionData.room, (uint8_t *)bufferRead, sizeof(uint8_t));
     index++;
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
@@ -83,8 +113,6 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
         memcpy((CMD_from_pocket_e *)&messageToRead->data.lidarData.Y_buffer, (uint8_t *)bufferRead + index, sizeof(int16_t));
         index += sizeof(int16_t);
     }
-    fprintf(stderr, "\nCMDreaden : %d | ", messageToRead->command);
-    fprintf(stderr, "SIZEreaden : %d\n", messageToRead->size);
 
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
@@ -101,4 +129,10 @@ static uint16_t protocol_jump_convert_two_bytes_into_uint16(uint8_t first, uint8
     res = res << 8;
     res |= second;
     return res;
+}
+
+static void protocol_jump_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t value){
+
+	byte[0] = (value >> 8) & 0xFF;
+	byte[1] = value & 0xFF;
 }

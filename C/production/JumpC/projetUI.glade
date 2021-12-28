@@ -2,157 +2,223 @@
 <!-- Generated with glade 3.39.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkApplicationWindow" id="popup">
+    <property name="can-focus">False</property>
+    <property name="type">popup</property>
+    <property name="window-position">center</property>
+    <property name="gravity">center</property>
+    <child>
+      <object class="GtkFixed" id="fixed5">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="acquitteButton">
+            <property name="label" translatable="yes">Ok</property>
+            <property name="width-request">127</property>
+            <property name="height-request">49</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_acquitteButton_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">191</property>
+            <property name="y">139</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="width-request">369</property>
+            <property name="height-request">89</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Une erreur est apparu lors de la tentative de connexion. 
+Veuillez à réessayer s'l vous plait.</property>
+            <attributes>
+              <attribute name="font-desc" value="Lohit Gujarati 8"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="gravity" value="north"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="x">65</property>
+            <property name="y">38</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="can-focus">False</property>
     <property name="window-position">center-always</property>
-    <property name="type-hint">splashscreen</property>
+    <signal name="delete-event" handler="on_window_delete_event" swapped="no"/>
     <child>
       <object class="GtkFixed" id="fixed1">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
-          <object class="GtkButton" id="buttonPlay">
-            <property name="label" translatable="yes">Play</property>
-            <property name="width-request">95</property>
-            <property name="height-request">62</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="margin-bottom">9</property>
-            <property name="relief">none</property>
-          </object>
-          <packing>
-            <property name="x">47</property>
-            <property name="y">281</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="pauseButton">
-            <property name="label" translatable="yes">Pause</property>
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="relief">none</property>
-          </object>
-          <packing>
-            <property name="x">145</property>
-            <property name="y">270</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkButton" id="leftButton">
-            <property name="label" translatable="yes">Left</property>
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="label" translatable="yes">L</property>
+            <property name="width-request">57</property>
+            <property name="height-request">50</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">183</property>
-            <property name="y">123</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSwitch" id="powerOnOff">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-          </object>
-          <packing>
-            <property name="x">54</property>
-            <property name="y">83</property>
+            <property name="x">428</property>
+            <property name="y">151</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="forwardButton">
-            <property name="label" translatable="yes">Forward</property>
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="label" translatable="yes">F</property>
+            <property name="width-request">57</property>
+            <property name="height-request">47</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="forwardButton_clicked_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">305</property>
-            <property name="y">21</property>
+            <property name="x">496</property>
+            <property name="y">87</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="rightButton">
-            <property name="label" translatable="yes">Right</property>
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="label" translatable="yes">R</property>
+            <property name="width-request">58</property>
+            <property name="height-request">52</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="right_clicked_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">426</property>
-            <property name="y">125</property>
+            <property name="x">564</property>
+            <property name="y">149</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="movebackButton">
-            <property name="label" translatable="yes">Moveback</property>
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="label" translatable="yes">M</property>
+            <property name="width-request">57</property>
+            <property name="height-request">47</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="moveBack_clicked_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">304</property>
-            <property name="y">224</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="stopButton">
-            <property name="width-request">47</property>
-            <property name="height-request">48</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="x">478</property>
+            <property name="x">497</property>
+            <property name="y">215</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="stopActionButton">
-            <property name="label" translatable="yes">Stop</property>
-            <property name="height-request">64</property>
+            <property name="label" translatable="yes">Sto</property>
+            <property name="width-request">54</property>
+            <property name="height-request">53</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">328</property>
-            <property name="y">131</property>
+            <property name="x">498</property>
+            <property name="y">147</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="moveScreen">
-            <property name="label" translatable="yes">Mapping</property>
-            <property name="width-request">76</property>
-            <property name="height-request">54</property>
+          <object class="GtkButton" id="mapStatique">
+            <property name="label" translatable="yes">Sta</property>
+            <property name="name">staticButton</property>
+            <property name="width-request">55</property>
+            <property name="height-request">40</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="cb_moveScreen" swapped="no"/>
           </object>
           <packing>
-            <property name="x">59</property>
-            <property name="y">211</property>
+            <property name="x">31</property>
+            <property name="y">13</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="calibrationButton">
+            <property name="label" translatable="yes">Calibrage</property>
+            <property name="width-request">99</property>
+            <property name="height-request">47</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">473</property>
+            <property name="y">9</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="mapDynamique">
+            <property name="label" translatable="yes">Dyn</property>
+            <property name="width-request">55</property>
+            <property name="height-request">40</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">85</property>
+            <property name="y">13</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box">
+            <property name="width-request">332</property>
+            <property name="height-request">229</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkDrawingArea" id="draw1">
+                <property name="width-request">382</property>
+                <property name="height-request">233</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <signal name="draw" handler="on_draw1_draw" swapped="no"/>
+                <style>
+                  <class name="&lt;button&gt;"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <style>
+              <class name="&lt;box&gt;"/>
+              <class name="&lt;.box&gt;"/>
+            </style>
+          </object>
+          <packing>
+            <property name="x">16</property>
+            <property name="y">66</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="vocaleButton">
+            <property name="label" translatable="yes">Vocale</property>
+            <property name="width-request">91</property>
+            <property name="height-request">54</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">480</property>
+            <property name="y">278</property>
           </packing>
         </child>
       </object>
@@ -160,38 +226,102 @@
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can-focus">False</property>
+    <property name="window-position">center-always</property>
+    <property name="gravity">center</property>
     <child>
       <object class="GtkFixed" id="fixed2">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
-          <object class="GtkDrawingArea" id="draw1">
-            <property name="name">draw1</property>
-            <property name="width-request">496</property>
-            <property name="height-request">224</property>
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="margin-right">166</property>
-            <signal name="draw" handler="on_draw1_draw" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">15</property>
-            <property name="y">12</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="map">
-            <property name="label" translatable="yes">Map</property>
-            <property name="width-request">88</property>
-            <property name="height-request">44</property>
+          <object class="GtkButton" id="calibrationAction">
+            <property name="label" translatable="yes">Calibrer</property>
+            <property name="width-request">149</property>
+            <property name="height-request">60</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <signal name="clicked" handler="cb_map" swapped="no"/>
+            <signal name="clicked" handler="on_calibrationAction_clicked" swapped="no"/>
           </object>
           <packing>
-            <property name="x">37</property>
-            <property name="y">267</property>
+            <property name="x">228</property>
+            <property name="y">223</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="width-request">441</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Placez-vous en (0, 0) et appuyez sur "Calibrer" pour lancer le scan du lidar.</property>
+          </object>
+          <packing>
+            <property name="x">101</property>
+            <property name="y">87</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkApplicationWindow" id="window2">
+    <property name="can-focus">False</property>
+    <property name="window-position">center-always</property>
+    <property name="gravity">center</property>
+    <child>
+      <object class="GtkFixed" id="fixed3">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="powerOnOff">
+            <property name="label" translatable="yes">Se connecter</property>
+            <property name="width-request">149</property>
+            <property name="height-request">59</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_powerOnOff_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">231</property>
+            <property name="y">246</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="width-request">363</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Connectez-vous à ESEO-Bot en appuyant sur "Se connecter".</property>
+          </object>
+          <packing>
+            <property name="x">126</property>
+            <property name="y">96</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkApplicationWindow" id="window3">
+    <property name="can-focus">False</property>
+    <property name="type">popup</property>
+    <property name="window-position">center-always</property>
+    <property name="gravity">center</property>
+    <child>
+      <object class="GtkFixed" id="fixed4">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkImage">
+            <property name="width-request">300</property>
+            <property name="height-request">179</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="pixbuf">Images/ST_Logo.png</property>
+          </object>
+          <packing>
+            <property name="x">161</property>
+            <property name="y">77</property>
           </packing>
         </child>
       </object>

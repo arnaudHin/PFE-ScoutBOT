@@ -51,6 +51,12 @@
 #define I2C5_SCL							GPIOA, GPIO_PIN_11
 
 /*
+ * ADC
+ */
+
+#define ADC1_IN13							GPIOC, GPIO_PIN_3		//A4 PC3
+
+/*
  * MPU6050 I2C
  */
 
@@ -74,8 +80,9 @@
 /*
  * BATTERY
  */
-#define USE_BATTERY								1
+#define USE_BATTERY								0
 #define BAT_ENABLE						GPIOD, GPIO_PIN_1		//D7
+#define BAT_ADC 						ADC1
 
 
 #endif /* INC_CONFIG_H_ */

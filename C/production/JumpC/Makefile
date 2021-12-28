@@ -10,7 +10,7 @@
 # sources organizations
 #
 
-PROG = jump.elf
+PROG = gtk_glade
 
 # Project packages (to be completed if necessary)
 
@@ -23,7 +23,7 @@ SRCS  = $(wildcard */*.c)
 OBJ = $(SRCS:.c=.o)
 
 # Program entry point
-MAIN = gtk_glade.c
+MAIN = main_screen.c
 
 # Automatic management of dependencies
 DEP = $(MAIN:.c=.d)

@@ -15,7 +15,7 @@
 
 /************************ PROTOTYPE DECLARATION **************************************/
 
-/** \fn static void Pilot_start ()
+/** 
  *  \brief Function dedicated to start the dispatcher and postman (Initialize and open the mailbox + create a thread)
  */
 extern void dispatcher_jumpC_start();
@@ -23,12 +23,13 @@ extern void dispatcher_jumpC_start();
 /**
  *  \fn static void new_dispatcher_jumpC_start()
  *
- *  \brief Function dedicated to start the dispatcher  with pilot and without postman.
+ *  \brief Function dedicated to start the dispatcher without postman.
  */
 extern void new_dispatcher_jumpC_start();
 
-/** \fn extern void Pilot_set_direction(Direction dir)
- *  \brief Function dedicated to wait the end of thread to stop the dispatcher
+/**
+ * @brief stop the dispatcher
+ * 
  */
 extern void dispatcher_jumpC_stop();
 
