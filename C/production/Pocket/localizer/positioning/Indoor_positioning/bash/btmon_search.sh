@@ -1,9 +1,9 @@
 #!/bin/bash
 
-rm btsnoop_hci 
-rm btsnoop_hci.txt
+rm Indoor_positioning/bash/btsnoop_hci 
+rm Indoor_positioning/bash/btsnoop_hci.txt
 
-btmon -w btsnoop_hci > btsnoop_hci.txt &
+btmon -w Indoor_positioning/bash/btsnoop_hci > Indoor_positioning/bash/btsnoop_hci.txt &
 PID=$!
 
 hcitool lescan --privacy --passive --whitelist &

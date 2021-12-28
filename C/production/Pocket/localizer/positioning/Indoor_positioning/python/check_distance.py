@@ -11,7 +11,7 @@ def check_distance_median(addrMac, x, size, Pt, Gt, Gr, pertes, synch_buf_start)
     rssi_tab = [[0 for i in range(size)] for i in range(x)]
     distance_tab = [[0 for i in range(size)] for i in range(x)]
     for i in range(size):
-        subprocess.run(["./btmon_search.sh"])
+        subprocess.run(["./Indoor_positioning/bash/btmon_search.sh"])
         temp = check_rssi.check_RSSI(addrMac,x)
         for n in range(x):
             rssi_tab[n][i] = temp[n]

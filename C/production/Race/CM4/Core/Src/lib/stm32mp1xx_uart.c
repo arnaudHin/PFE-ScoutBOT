@@ -37,15 +37,49 @@ static volatile int uart_initialized[UART_ID_NB] = {0};
 
 void UART_init(uart_id_e uart_id, uint32_t baudrate)
 {
+	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+	if(uart_id == UART3_ID){
+		if(IS_ENGINEERING_BOOT_MODE()){
+			PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_UART35;
+			PeriphClkInit.Uart35ClockSelection = RCC_UART35CLKSOURCE_PCLK1;
+			if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+			{
+			  Error_Handler();
+			}
+
+		  }
+		__HAL_RCC_USART3_CLK_ENABLE();
+		__HAL_RCC_GPIOB_CLK_ENABLE();
+		BSP_GPIO_PinCfg(GPIOB, GPIO_PIN_10, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, GPIO_AF7_USART3);
+		BSP_GPIO_PinCfg(GPIOB, GPIO_PIN_12, GPIO_MODE_AF, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, GPIO_AF8_USART3);
+	}
+
+	if(uart_id == UART7_ID){
+		if(IS_ENGINEERING_BOOT_MODE()){
+
+			PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_UART78;
+			PeriphClkInit.Uart78ClockSelection = RCC_UART78CLKSOURCE_PCLK1;
+			if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+			{
+			  Error_Handler();
+			}
+		}
+
+		__HAL_RCC_UART7_CLK_ENABLE();
+		__HAL_RCC_GPIOE_CLK_ENABLE();
+		BSP_GPIO_PinCfg(GPIOE, GPIO_PIN_7, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, GPIO_AF7_UART7);
+		BSP_GPIO_PinCfg(GPIOE, GPIO_PIN_8, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, GPIO_AF7_UART7);
+	}
 
 	UART_HandleStructure[uart_id].Instance = (USART_TypeDef*)instance_array[uart_id];
 	UART_HandleStructure[uart_id].Init.BaudRate = baudrate;
 	UART_HandleStructure[uart_id].Init.WordLength = UART_WORDLENGTH_8B;
 	UART_HandleStructure[uart_id].Init.StopBits = UART_STOPBITS_1;
 	UART_HandleStructure[uart_id].Init.Parity = UART_PARITY_NONE;
-	UART_HandleStructure[uart_id].Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	UART_HandleStructure[uart_id].Init.Mode = UART_MODE_TX_RX;
-	UART_HandleStructure[uart_id].Init.OverSampling = UART_OVERSAMPLING_8;
+	UART_HandleStructure[uart_id].Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	UART_HandleStructure[uart_id].Init.OverSampling = UART_OVERSAMPLING_16;
 	UART_HandleStructure[uart_id].Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
 	UART_HandleStructure[uart_id].Init.ClockPrescaler = UART_PRESCALER_DIV1;
 	UART_HandleStructure[uart_id].AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
@@ -67,10 +101,6 @@ void UART_init(uart_id_e uart_id, uint32_t baudrate)
 	{
 	Error_Handler();
 	}
-	if(uart_id == UART3_ID){
-	  BSP_GPIO_PinCfg(GPIOB, GPIO_PIN_10, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, GPIO_AF7_USART3);
-	  BSP_GPIO_PinCfg(GPIOB, GPIO_PIN_12, GPIO_MODE_AF, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, GPIO_AF8_USART3);
-	}
 	uart_initialized[uart_id] = 1;
 }
 
@@ -83,7 +113,7 @@ void UART_init(uart_id_e uart_id, uint32_t baudrate)
 PUTCHAR_PROTOTYPE
 {
 	/* Write a character to the USART7 and Loop until the end of transmission */
-	HAL_UART_Transmit(&UART_HandleStructure[UART3_ID], (uint8_t *)&ch, 1, 0xFFFF);
+	HAL_UART_Transmit(&UART_HandleStructure[UART7_ID], (uint8_t *)&ch, 1, 0xFFFF);
 
 	return ch;
 }

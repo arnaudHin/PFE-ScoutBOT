@@ -25,7 +25,9 @@ typedef enum{
 	LED4_GREEN=0,
 	LED6_RED,
 	LED7_ORANGE,
-	LED8_BLUE
+	LED8_BLUE,
+	LED1_BLUE,
+	LED2_GREEN
 }LED_e;
 
 //////////////////////////////////////////////////////////////////////////////////

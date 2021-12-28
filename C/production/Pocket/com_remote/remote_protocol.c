@@ -111,7 +111,7 @@ static void remote_protocol_decodeCommandSize(uint8_t *bufferRead ,  Message_fro
     fprintf(stderr, "\n ---DECODE CMD+SIZE --- \n");
     for (size_t i = 0; i < 3; i++)
     {
-        fprintf(stderr, "buffToRead[%ld]=%d\n", i, (uint8_t) *(bufferRead+i) );
+        fprintf(stderr, "buffToRead[%d]=%d\n", i, (uint8_t) *(bufferRead+i) );
     }
     
     uint16_t index = 0;

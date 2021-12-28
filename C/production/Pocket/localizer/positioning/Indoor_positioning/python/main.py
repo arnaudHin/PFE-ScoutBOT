@@ -30,7 +30,7 @@ synch_buf_start = [[], [], [], 0, 0, 0, 0.0, 0.0, 0.0, 0.0]
 
 
 def save_in_file(data_1, data_2,data_3):
-    file = open("./../data_indoor_pos.txt", "w")
+    file = open("Indoor_positioning/results/data_indoor_pos.txt", "w")
     file.write(str(data_1)+" "+str(data_2)+" "+str(data_3))
     return 0
 
