@@ -19,11 +19,12 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <time.h>
+#include <assert.h>
 #include <stdlib.h>
 #include "commun.h"
 #include "util.h"
 #include <pthread.h>
-
+#include "../App/notice_popup.h"
 /************************************** DEFINE ****************************************************************/
 #define IP_ADDRESS "192.168.72.1"
 //#define IP_ADDRESS "127.0.0.1"
@@ -34,7 +35,7 @@
 static int a_socket = -1;
 static pthread_mutex_t mutex_thread = PTHREAD_MUTEX_INITIALIZER;
 
-void postman_jumpC_send_msg(Message_to_pocket_t *msg)
+extern void postman_jumpC_send_msg(Message_to_pocket_t *msg)
 {
 	int mutex_lock = pthread_mutex_lock(&mutex_thread);
 	assert(mutex_lock == 0 && "Error to lock mutex\n");
@@ -131,8 +132,10 @@ void postman_jumpC_start()
 	if (connect(a_socket, (struct sockaddr *)&mon_adresse, sizeof(mon_adresse)) != 0)
 	{
 		perror("Error : cannot give setsockopt value");
+		noticePopup_new(CON_UNSUCCESS);
 		exit(EXIT_FAILURE);
 	}
+	noticePopup_new(CON_SUCCESS);
 }
 
 void postman_jumpC_stop()

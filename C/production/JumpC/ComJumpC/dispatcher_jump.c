@@ -17,17 +17,19 @@
 #include "util.h"
 #include <unistd.h>
 #include <arpa/inet.h>
-
+#include <string.h>
 #include "../Mapping/map_viewer.h"
 #include "protocol_jump.h"
 #include "../../JumpC/ComJumpC/postman_jump.h"
 #include "commun.h"
+#include "map_manager.h"
+
+
 //#include "../../JumpC/.h"
 //#include "../../JumpC/network_pilot.h"
 
 #define SIZE_MSG_CMD (1)
 #define SIZE_MSG_SIZE (2)
-#define SIZE_COORD (2)
 
 static pthread_t pthread;
 
@@ -48,17 +50,11 @@ static void dispatcher_jumpC_dispatch(Message_from_pocket_t network_msg)
     case CHECK_CONNECTION:
 
         break;
-    case SET_ASK_QUIT:
-
-        break;
     case SET_CHECK_CONNECTION:
 
         break;
-    case SET_LIDAR_MAPPING:
-        map_viewer_draw_map_static();
-        break;
-    case SET_POSITION:
-
+    case SET_DATA:
+        MapManager_setMapPositions(network_msg.data);
         break;
     default:
         TRACE("NETWORK MSG ORDER : not recognized \r\n");
