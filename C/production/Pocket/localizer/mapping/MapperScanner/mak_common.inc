@@ -57,6 +57,7 @@ build_sdk:  $(SDK_TARGET)
 clean_sdk:
 	$(RMDIR) $(TARGET_OBJ_ROOT)
 	$(RM) $(SDK_TARGET)
+
 build_app: $(APP_TARGET)
 
 clean_app:
