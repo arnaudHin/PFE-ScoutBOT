@@ -19,7 +19,7 @@
 #include "cartographer.h"
 #include "../../utils/util.h"
 #include "../../utils/Watchdog/watchdog.h"
-#include "../Mapping/mapper.h"
+#include "../mapping/mapper.h"
 #include "../positioning/adminPositioning.h"
 #include "../../com_remote/proxy_mapviewer.h"
 
@@ -93,8 +93,8 @@ static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
 	[S_ASK_4_LIDAR_DATA_C][E_SET_LIDAR_DATA_C] = {S_ASK_4_POSITION_DATA_C, T_ASK_4_POSITION_DATA_C},
 	[S_ASK_4_POSITION_DATA_C][E_SET_POSITION_DATA_C] = {S_RUNNING_C, T_SEND_DATA},
 	
-	[S_RUNNING_C][E_STOP_C] = {S_DEATH_C, T_STOP_CARTO_C},
-	[S_IDLE_C][E_STOP_C] = {S_DEATH_C, T_STOP_CARTO_C},
+	[S_RUNNING_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
+	[S_IDLE_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
 };
 
 
@@ -144,22 +144,9 @@ extern void cartographer_start(){
 
 }
 
-extern void cartographer_stop(){
-	//cartographer_waitTaskTermination();
-
-    cartographer_mq_done();
-    free(myCartographer);
-    
-    //Stop other active classes
-    adminpositioning_signal_stop();
-    mapper_signal_stop();
-}
-
-
-
 
 extern void cartographer_signal_start(){
-    cartographer_mq_send(E_START_C);
+    cartographer_mq_send(E_START_CARTO_C);
 	CARTO_START = 1;
 }
 
@@ -194,7 +181,7 @@ extern void cartographer_setPositionData(Position_data_t * posData){
 }
 
 extern void cartographer_signal_stop(){
-    cartographer_mq_send(E_STOP_C);
+    cartographer_mq_send(E_STOP_CARTO_C);
 }
 
 extern uint8_t cartographer_getStartState(){

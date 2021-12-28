@@ -135,6 +135,7 @@ static void * dispatcher_remote_run(){
 			case ASK_QUIT:
 				ask_quit = 1;
 				cartographer_signal_stop();
+				pilot_signal_exit();
 
 			case ASK_4_DATA:
 

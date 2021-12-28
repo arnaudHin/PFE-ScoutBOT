@@ -37,7 +37,7 @@ typedef enum{
 
 typedef enum{
 	T_NOP_M = 0,
-    T_START_MAPPER_M
+    T_START_MAPPER_M,
 	T_STOP_MAPPER_M,
     T_SCANNING_M,
 	T_SET_LIDAR_DATA_M,
@@ -48,7 +48,7 @@ typedef enum{
 typedef enum{
     E_NOP_M=0,
     E_SCAN_M,
-    E_START_MAPPER_M
+    E_START_MAPPER_M,
 	E_STOP_MAPPER_M,
     E_SET_LIDAR_DATA_M,
 	E_NB_EVENT_M
@@ -118,13 +118,16 @@ static void mapper_mq_init();
 static void mapper_mq_send();
 static Mq_message_t mapper_mq_receive();
 static void mapper_mq_done();
+
 static void *mapper_run();
 static void mapper_waitTaskTermination();
 static void fileAcquisition();
-static void mapper_start();
-static void mapper_stop();
-static void mapper_perform_setLidarData();
+static void mapper_performAction(Mapper_transistion_action_e action);
 
+
+static void mapper_start();
+static void perform_mapper_stop();
+static void mapper_perform_setLidarData();
 
 /**********************************  PUBLIC FUNCTIONS ************************************************/
 
@@ -181,21 +184,22 @@ static void mapper_performAction(Mapper_transistion_action_e action)
                 break;
 
             case T_START_MAPPER_M : 
-				mapper_start();
 				mapper_mq_send(E_SCAN_M);
                 break;
 			
 			case T_SCANNING_M :
-				fileAcquisition();
+				/* BEGIN LIDAR SCANNING */
+				//fileAcquisition();
+				/* END LIDAR SCANNING */
 				mapper_mq_send(E_SCAN_M);				
 
-            case T_ASK_4_LIDAR_DATA_M :
+            case T_SET_LIDAR_DATA_M :
 				mapper_perform_setLidarData();
 				mapper_mq_send(E_SCAN_M);
                 break;
 
             case T_STOP_MAPPER_M :
-				mapper_stop();
+				perform_mapper_stop();
                 break;
 
             default :
@@ -264,10 +268,11 @@ static void mapper_start(){
  *  \brief Function dedicated to stop the mapper thread
  *  \retval NULL
  */
-static void mapper_stop(){
+static void perform_mapper_stop(){
     fprintf(stderr,"pilot stop\n\n");
 
 	mapper_mq_done();
+	free(myMapper);
 
 }
 
@@ -275,9 +280,7 @@ static void mapper_stop(){
 
 static void mapper_perform_setLidarData(){
 	//** BEGIN Call mapper function **
-	cartographer_setLidarData()
-
-
+	cartographer_setLidarData(&myMapper->lidarData);
 	//** END Call mapper function **
 }
 

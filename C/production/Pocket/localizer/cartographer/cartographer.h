@@ -25,12 +25,6 @@
  */
 extern void cartographer_start();
 
-/** \fn extern void cartographer_stop()
- *  \brief Function dedicated to stop the cartographer
- */
-extern void cartographer_stop();
-
-
 /**
  * @brief 
  */

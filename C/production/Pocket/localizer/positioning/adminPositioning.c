@@ -46,7 +46,7 @@ typedef enum{
 
 typedef enum{
 	T_NOP_P = 0,
-    T_START_POSITIONING_P
+    T_START_POSITIONING_P,
 	T_STOP_POSITIONING_P,
     T_POSITIONING_P,
 	T_SET_POSITION_DATA_P,
@@ -57,7 +57,7 @@ typedef enum{
 typedef enum{
     E_NOP_P=0,
     E_POSITIONING_P,
-    E_START_POSITIONING_P
+    E_START_POSITIONING_P,
 	E_STOP_POSITIONING_P,
     E_SET_POSITION_DATA_P,
 	E_NB_EVENT_P
@@ -103,10 +103,10 @@ typedef struct{
 static Transition_t myTransition[NB_STATE_P][E_NB_EVENT_P] = {
 
 	[S_IDLE_P][E_START_POSITIONING_P] = {S_POSITIONING_P, T_START_POSITIONING_P},
-	[S_POSITIONING_P][E_SCAN] = {S_POSITIONING_P, T_POSITIONING_P},
+	[S_POSITIONING_P][E_POSITIONING_P] = {S_POSITIONING_P, T_POSITIONING_P},
 
 	[S_POSITIONING_P][E_SET_POSITION_DATA_P] = {S_SET_POSITION_DATA_P, T_SET_POSITION_DATA_P},
-	[S_SET_POSITION_DATA_P][E_NOP_M] = {S_POSITIONING_P, T_NOP_P},
+	[S_SET_POSITION_DATA_P][E_NOP_P] = {S_POSITIONING_P, T_NOP_P},
 	
 	[S_POSITIONING_P][E_STOP_POSITIONING_P] = {S_DEATH_P, T_STOP_POSITIONING_P},
 	[S_IDLE_P][E_STOP_POSITIONING_P] = {S_DEATH_P, T_STOP_POSITIONING_P},
@@ -129,9 +129,12 @@ static void adminpositioning_mq_init();
 static void adminpositioning_mq_send();
 static Mq_message_t adminpositioning_mq_receive();
 static void adminpositioning_mq_done();
+
 static void *adminpositioning_run();
 static void adminpositioning_waitTaskTermination();
 static void adminpositioning_BLE_positioning();
+static void adminpositioning_performAction(adminpositioning_transistion_action_e action);
+
 static void adminpositioning_start();
 static void adminpositioning_stop();
 static void adminpositioning_perform_setPositionData();
@@ -163,13 +166,13 @@ extern void adminpositioning_signal_stop(){
 static void * adminpositioning_run(){
 
 	Mq_message_t adminpositioning_msg;
-	adminpositioning_transistion_action_e an_action = T_NOP_M;
+	adminpositioning_transistion_action_e an_action = T_NOP_P;
 
-	while (myAdminpositioning->myAdminpositioningState != S_DEATH_M)
+	while (myAdminpositioning->myAdminpositioningState != S_DEATH_P)
 	{
 		adminpositioning_msg = adminpositioning_mq_receive();
 		//TRACE("\n\nState:%s\nEvent:%s\n", state_pilot_name[my_state], event_pilot_name[adminpositioning_msg.evenement]);
-		if (myTransition[myAdminpositioning->myAdminpositioningState ][adminpositioning_msg.event].destinationState != S_DEATH_M)
+		if (myTransition[myAdminpositioning->myAdminpositioningState ][adminpositioning_msg.event].destinationState != S_DEATH_P)
 		{
 			an_action = myTransition[myAdminpositioning->myAdminpositioningState][adminpositioning_msg.event].actionToPerform;
 			adminpositioning_performAction(an_action);
@@ -234,7 +237,7 @@ static void adminpositioning_start(){
     {
         perror("Error calloc");
     }
-    myAdminpositioning->myAdminpositioningeState = S_IDLE_M;
+    myAdminpositioning->myAdminpositioningState = S_IDLE_P;
 
     adminpositioning_mq_init();
 
@@ -261,7 +264,7 @@ static void adminpositioning_stop(){
 
 static void adminpositioning_perform_setPositionData(){
 	//** BEGIN Call adminpositioning function **
-
+	cartographer_setPositionData(&myAdminpositioning->positionData);
 
 	//** END Call adminpositioning function **
 }

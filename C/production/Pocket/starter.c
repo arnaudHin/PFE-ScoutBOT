@@ -35,40 +35,17 @@ int main (int argc, char *argv[])
 	printf("\n                                    Pocket start\n\n");
 	printf("************************************************************************************************\n\n");
 	race_protocol_init();
-	
-	//map_raw_new();
 
-	//display_start();
-	//TRACE("display_start(); OK\n");
-	// geographer_start();
-	// TRACE("geographer_start(); OK\n");
-	// obstacle_sender_start();
-	// TRACE("obstacle_sender_start(); OK\n");
 
-	// network_pilot_start();
-	// TRACE("network_pilot_start(); OK\n");
 	dispatcher_race_start();
 	pilot_start();
-
-	//display_send_txt_lidar_distance("Init en cours...");
-	//display_send_txt_msg("Init en cours...");
-	//display_send_txt_connection("Init en cours...");
-	//display_send_txt_state("Init en cours...");
-
-	dispatcher_remote_start();
 	cartographer_start();
-
+	dispatcher_remote_start();
 
 
 	pilot_stop();
 	dispatcher_remote_stop();
 	dispatcher_race_stop();
-	cartographer_stop();
-
-	// network_pilot_stop();
-	// geographer_stop();
-	// obstacle_sender_stop();
-	// map_raw_free();
 
 
 
