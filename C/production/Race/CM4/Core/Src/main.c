@@ -125,7 +125,11 @@ int main(void)
 
 	#if USE_BATTERY
 	  BSP_GPIO_PinCfg(BAT_ENABLE, GPIO_MODE_OUTPUT_PP, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH, 0);
+	  ADC_Init(BAT_ADC);
 	#endif
+
+
+
 
 
   /* USER CODE BEGIN SysInit */
@@ -163,9 +167,6 @@ int main(void)
 	}
 	else{
 		postman_robot_run();
-		MPU6050_Read_Accel();
-		ON_Led(LED1_BLUE);
-		OFF_Led(LED2_GREEN);
 	}
   }
   /* USER CODE END 3 */
