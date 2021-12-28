@@ -1,0 +1,14 @@
+
+@startuml mapper
+[*] --> Idle
+
+Idle -> Positioning : start_positioning() / \n positioning_run();
+
+Positioning -> Positioning : / adminpositioning_BLE_positioning();
+Positioning -> SetPositionData : E_SET_POSITION_DATA / \n setPositionData();
+SetPositionData --> Positioning 
+Positioning --> Death : E_STOP_POSITION / \n stop_positioning();
+
+Death --> [*]
+
+@enduml

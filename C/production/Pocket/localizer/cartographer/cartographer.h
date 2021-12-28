@@ -19,15 +19,6 @@
 
 /************************ PROTOTYPE DECLARATION **************************************/
 
-/** \fn static void cartographer_new()
- *  \brief Function dedicated to initialize the cartographer
- */
-extern void cartographer_new();
-
-/** \fn static void cartographer_free()
- *  \brief Function dedicated to free the cartographer
- */
-extern void cartographer_free();
 
 /** \fn static void cartographer_start ()
  *  \brief Function dedicated to start the cartographer
@@ -40,14 +31,21 @@ extern void cartographer_start();
 extern void cartographer_stop();
 
 
-
+/**
+ * @brief 
+ */
 extern void cartographer_ask4data();
 
 extern void cartographer_signal_start();
 
-extern void cartographer_signal_ack_init();
-
 extern void cartographer_signal_stop();
+
+extern uint8_t cartographer_getStartState();
+
+extern void cartographer_setLidarData(Lidar_data_t * lidarData);
+
+extern void cartographer_setPositionData(Position_data_t * posData);
+
 
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/

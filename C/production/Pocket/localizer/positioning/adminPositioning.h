@@ -18,31 +18,22 @@
 
 /************************ PROTOTYPE DECLARATION **************************************/
 
-/** \fn extern void adminPositioning_new()
- *  \brief Function dedicated to initialize the adminPositioning
- */
-extern void adminPositioning_new();
 
-/** \fn extern void adminPositioning_free()
- *  \brief Function dedicated to free the adminPositioning
- */
-extern void adminPositioning_free();
-
-/** \fn extern void adminPositioning_start ()
+/** \fn extern void adminpositioning_signal_start ()
  *  \brief Function dedicated to start the adminPositioning
  */
-extern void adminPositioning_start();
+extern void adminpositioning_signal_start();
 
-/** \fn extern void adminPositioning_stop()
+/** \fn extern void adminpositioning_signal_stop()
  *  \brief Function dedicated to stop the adminPositioning
  */
-extern void adminPositioning_stop();
+extern void adminpositioning_signal_stop();
 
-/** \fn extern void adminPositioning_getPosition()
+/** \fn extern void adminpositioning_signal_setPositionData()
  *  \brief Function dedicated to obtain the actual position of the robot
  * \return retourne la position du robot
  */
-extern Position_data_t * adminPositioning_getPosition();
+extern void adminpositioning_signal_setPositionData();
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 

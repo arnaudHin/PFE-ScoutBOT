@@ -16,35 +16,22 @@
 
 
 /************************ PROTOTYPE DECLARATION **************************************/
-/** \fn extern void mapper_new()
- *  \brief Function dedicated to initialize the mapper
- */
-extern void mapper_new();
 
-/** \fn extern void mapper_free()
- *  \brief Function dedicated to free the mapper
- */
-extern void mapper_free();
 
-/** \fn extern void mapper_start ()
- *  \brief Function dedicated to start the mapper
- */
-
-/** \fn static void mapper_start ()
+/** \fn static void mapper_signal_start ()
  *  \brief Function dedicated to start the mapperPosition
  */
-extern void mapper_start();
+extern void mapper_signal_start();
 
-/** \fn extern void mapper_stop()
+/** \fn extern void mapper_signal_stop()
  *  \brief Function dedicated to stop the mapperPosition
  */
-extern void mapper_stop();
+extern void mapper_signal_stop();
 
-/** \fn extern void mapper_getPosition()
+/** \fn extern void mapper_signal_setLidarData()
  *  \brief Function dedicated to obtain the actual lidar data
- * \return return lidarData
  */
-extern Lidar_data_t * mapper_getLidarData();
+extern void mapper_signal_setLidarData();
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 
 #endif /* SRC_POCKET_V1_MAPPER_H_ */

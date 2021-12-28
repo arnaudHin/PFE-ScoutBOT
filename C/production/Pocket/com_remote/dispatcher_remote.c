@@ -19,6 +19,7 @@
 
 #include "postman_remote.h"
 #include "../commun.h"
+#include "../localizer/cartographer/cartographer.h"
 #include "remote_protocol.h"
 #include "../pilot/pilot.h"
 
@@ -129,14 +130,23 @@ static void * dispatcher_remote_run(){
 				pilot_set_direction(myMessageFromJump.data.direction);
 				//fprintf(stderr, "%s:%d:%s(): "__FILE__, __LINE__, __func__);
 				fprintf(stderr, "dispatcher_remote_run\n");
-
 				break;
+
 			case ASK_QUIT:
 				ask_quit = 1;
+				cartographer_signal_stop();
 
-			case ASK_SET_MODE:
+			case ASK_4_DATA:
 
-				break;
+				// if cartographer is not strated, we start it
+				if( cartographer_getStartState() == 0 ){
+					cartographer_signal_start();
+				}
+				// if cartographer active, we ask data
+				else if( cartographer_getStartState() == 1){
+					cartographer_ask4data();
+				}
+
 			default:
 				break;
 		}

@@ -1,0 +1,17 @@
+
+
+@startuml cartographer
+
+[*] --> Idle : cartographer_start() / 
+
+Idle -> Running : E_START_CARTO_C / \n mapper_start() \n adminPositioning_start();
+Running --> Ask4LidarData : E_ASK_4_DATA / \n ask4LidarData();
+
+Ask4LidarData --> Ask4PositionData : E_SET_LIDAR_DATA / \n ask4PositionData();
+Ask4PositionData --> Running : E_SET_POSITION_DATA() / \n proxy_map_viewer_send_data();
+Running -> Death : E_STOP_CARTO / \n cartographer_stop() \n signal_mapper_stop() \n signal_adminPositioning_stop();
+
+Death --> [*]
+
+@enduml
+

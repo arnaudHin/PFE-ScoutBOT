@@ -19,7 +19,8 @@
 #include "cartographer.h"
 #include "../../utils/util.h"
 #include "../../utils/Watchdog/watchdog.h"
-
+#include "../Mapping/mapper.h"
+#include "../positioning/adminPositioning.h"
 #include "../../com_remote/proxy_mapviewer.h"
 
 
@@ -31,7 +32,8 @@ typedef enum{
 
 	S_IDLE_C=0,
 	S_RUNNING_C,
-	S_INIT_C,
+	S_ASK_4_LIDAR_DATA_C,
+	S_ASK_4_POSITION_DATA_C,
 	S_DEATH_C,
 	NB_STATE_C
 }Cartographer_state_e;
@@ -40,17 +42,19 @@ typedef enum{
 	T_NOP_C = 0,
 	T_START_CARTO_C,
 	T_STOP_CARTO_C,
-	T_INIT_CARTO_C,
-	T_ASK_4_DATA_C,
+	T_ASK_4_LIDAR_DATA_C,
+	T_ASK_4_POSITION_DATA_C,
+	T_SEND_DATA,
 	T_NB_TRANS_C
 }Cartographer_transistion_action_e;
 
 
 typedef enum{
-	E_START_C=0,
-	E_ACK_INIT_C,
-	E_STOP_C,
+	E_START_CARTO_C=0,
+	E_STOP_CARTO_C,
     E_ASK_4_DATA_C,
+	E_SET_POSITION_DATA_C,
+	E_SET_LIDAR_DATA_C,
 	E_NB_EVENT_C
 }Cartographer_event_e;
 
@@ -73,6 +77,8 @@ typedef struct
 
 typedef struct{
 	Cartographer_state_e mycartographereState;
+	Lidar_data_t lidarDataToSend;
+	Position_data_t positionDataToSend;
 
 }Cartographer_t;
 
@@ -81,10 +87,11 @@ typedef struct{
 
 
 static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
-	[S_IDLE_C][E_START_C] = {S_INIT_C, T_INIT_CARTO_C},
-	[S_INIT_C][E_ACK_INIT_C] = {S_RUNNING_C, T_START_CARTO_C},
+	[S_IDLE_C][E_START_CARTO_C] = {S_RUNNING_C, T_NOP_C},
 
-	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_RUNNING_C, T_ASK_4_DATA_C},
+	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_LIDAR_DATA_C, T_ASK_4_LIDAR_DATA_C},
+	[S_ASK_4_LIDAR_DATA_C][E_SET_LIDAR_DATA_C] = {S_ASK_4_POSITION_DATA_C, T_ASK_4_POSITION_DATA_C},
+	[S_ASK_4_POSITION_DATA_C][E_SET_POSITION_DATA_C] = {S_RUNNING_C, T_SEND_DATA},
 	
 	[S_RUNNING_C][E_STOP_C] = {S_DEATH_C, T_STOP_CARTO_C},
 	[S_IDLE_C][E_STOP_C] = {S_DEATH_C, T_STOP_CARTO_C},
@@ -96,8 +103,9 @@ static const char queue_name[] = "/cartographer"; //name of mailbox
 static mqd_t id_bal;	
 
 static Cartographer_t * myCartographer;
-
 static DATA_to_jump_t actualData; //Actual data lidar and position
+static uint8_t CARTO_START = 0;
+
 
 /**********************************  STATIC FUNCTIONS DECLARATIONS ************************************************/
 
@@ -105,14 +113,94 @@ static void cartographer_mq_init();
 static void cartographer_mq_send(Cartographer_event_e cartographer_event);
 static Mq_message_t cartographer_mq_receive();
 static void cartographer_mq_done();
+
 static void *cartographer_run();
 static void cartographer_waitTaskTermination();
-
 static void cartographer_performAction(Cartographer_transistion_action_e action);
 
 static void perform_signal_start();
 static void perform_signal_stop();
-static void perform_ask_4_data();
+static void perform_ask_4_lidar_data();
+static void perform_ask_4_position_data();
+static void perform_sendData();
+
+/**********************************  PUBLIC FUNCTIONS ************************************************/
+
+
+
+extern void cartographer_start(){
+
+    myCartographer = NULL;
+    myCartographer = calloc(1, sizeof(Cartographer_t) );
+    if (myCartographer == NULL){
+        perror("Error calloc");
+    }
+    myCartographer->mycartographereState = S_IDLE_C;
+
+    cartographer_mq_init();
+
+	int return_thread = pthread_create(&mythread, NULL, (void *)&cartographer_run, NULL);
+	assert(return_thread == 0 && "Error Pthread_create cartographer\n");
+
+}
+
+extern void cartographer_stop(){
+	//cartographer_waitTaskTermination();
+
+    cartographer_mq_done();
+    free(myCartographer);
+    
+    //Stop other active classes
+    adminpositioning_signal_stop();
+    mapper_signal_stop();
+}
+
+
+
+
+extern void cartographer_signal_start(){
+    cartographer_mq_send(E_START_C);
+	CARTO_START = 1;
+}
+
+/**
+ * @brief Function called by dispatcher
+ * 
+ */
+extern void cartographer_ask4data(){
+    cartographer_mq_send(E_ASK_4_DATA_C);
+}
+
+/**
+ * @brief Function called by mapper
+ * 
+ * @param lidarData 
+ */
+extern void cartographer_setLidarData(Lidar_data_t * lidarData){
+
+	myCartographer->lidarDataToSend = *lidarData;
+	cartographer_mq_send(E_SET_LIDAR_DATA_C);
+}
+
+/**
+ * @brief Function called by adminpositioning
+ * 
+ * @param lidarData 
+ */
+extern void cartographer_setPositionData(Position_data_t * posData){
+
+	myCartographer->positionDataToSend = *posData;
+	cartographer_mq_send(E_SET_POSITION_DATA_C);
+}
+
+extern void cartographer_signal_stop(){
+    cartographer_mq_send(E_STOP_C);
+}
+
+extern uint8_t cartographer_getStartState(){
+	return CARTO_START;
+}
+
 
 
 
@@ -196,8 +284,8 @@ static void cartographer_waitTaskTermination(){
 
 static void perform_signal_start(){
     //Start other active classes
-    adminPositioning_start();
-    mapper_start();
+	adminpositioning_signal_start();
+	mapper_signal_start();
 }
 
 static void perform_signal_stop(){
@@ -207,22 +295,24 @@ static void perform_signal_stop(){
     free(myCartographer);
     
     //Stop other active classes
-    // adminPositioning_stop();
-    mapper_stop();
+    adminpositioning_signal_stop();
+    mapper_signal_stop();
 }
 
-static void perform_ask_4_data(){
+static void perform_ask_4_lidar_data(){
+	mapper_signal_setLidarData();
+}
 
-	actualData.lidarData = *mapper_getLidarData();
+static void perform_ask_4_position_data(){
+	adminpositioning_signal_setPositionData();
+}
+
+static void perform_sendData(){
+	actualData.lidarData = myCartographer->lidarDataToSend;
+	actualData.positionData = myCartographer->positionDataToSend;
+
 	proxy_mapviewer_send_data(&actualData);
-
 }
-
-
-
-
-
-
 
 static void *cartographer_run(){
 	Mq_message_t cartographer_msg;
@@ -231,7 +321,6 @@ static void *cartographer_run(){
 	while (myCartographer->mycartographereState != S_DEATH_C)
 	{
 		cartographer_msg = cartographer_mq_receive();
-		//TRACE("\n\nState:%s\nEvent:%s\n", state_pilot_name[my_state], event_pilot_name[cartographer_msg.evenement]);
 		if (myTransition[myCartographer->mycartographereState ][cartographer_msg.event].destinationState != S_DEATH_C)
 		{
 			an_action = myTransition[myCartographer->mycartographereState][cartographer_msg.event].actionToPerform;
@@ -261,9 +350,15 @@ static void cartographer_performAction(Cartographer_transistion_action_e action)
 				perform_signal_stop();
                 break;
 
-            case T_ASK_4_DATA_C :
-				perform_ask_4_data();
+            case T_ASK_4_LIDAR_DATA_C :
+				perform_ask_4_lidar_data();
                 break;
+            case T_ASK_4_POSITION_DATA_C :
+				perform_ask_4_position_data();
+                break;
+			case T_SEND_DATA :
+				perform_sendData();
+				break;
 
             default :
                 break;
@@ -277,64 +372,6 @@ static void cartographer_performAction(Cartographer_transistion_action_e action)
 /**********************************  EXTERN FUNCTIONS DECLARATIONS ************************************************/
 
 
-
-
-extern void cartographer_new(){
-    adminPositioning_new();
-    mapper_new();
-}
-
-
-extern void cartographer_free(){
-    adminPositioning_free();
-    mapper_free();
-
-}
-
-extern void cartographer_start(){
-
-    myCartographer = NULL;
-    myCartographer = calloc(1, sizeof(Cartographer_t) );
-    if (myCartographer == NULL)
-    {
-        perror("Error calloc");
-    }
-    myCartographer->mycartographereState = S_IDLE_C;
-
-    cartographer_mq_init();
-
-	int return_thread = pthread_create(&mythread, NULL, (void *)&cartographer_run, NULL);
-	assert(return_thread == 0 && "Error Pthread_create cartographer\n");   
-
-
-
-}
-
-extern void cartographer_stop(){
-	//cartographer_waitTaskTermination();
-
-    cartographer_mq_done();
-    free(myCartographer);
-    
-    //Stop other active classes
-    adminPositioning_stop();
-    mapper_stop();
-}
-
-
-
-
-extern void cartographer_signal_start(){
-    cartographer_mq_send(E_START_C);
-}
-
-extern void cartographer_ask4data(){
-    cartographer_mq_send(E_ASK_4_DATA_C);
-}
-
-extern void cartographer_signal_stop(){
-    cartographer_mq_send(E_STOP_C);
-}
 
 
 
