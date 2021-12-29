@@ -428,6 +428,7 @@ int main(int argc, char **argv)
             //gtk_widget_set_events(GTK_WIDGET(gtk_builder_get_object(p_builder, "draw1")), GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK);
             //css_set(cssProvider1, gtk_builder_get_object(p_builder, "stopButton"));
             //gtk_widget_show_all(p_win);
+            //gtk_widget_show_all(p_wins[0]);
             //splashScreen_new();
             connectionScreen_new();
             //switch_block(FALSE);

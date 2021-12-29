@@ -466,6 +466,7 @@ static void setTimeAskPosTime(Watchdog *timer)
 static void timeOutAskPosTime()
 {
     MqMsg msg = {.data.event = E_TIME_OUT};
+    TRACE("[MapManager] Time OutPosTime \n");
     mqSend(&msg);
 }
 
@@ -477,11 +478,13 @@ static void actionNop()
 static void actionEndOfCalibration()
 {
     mapViewer_free();
+    TRACE("[MapManager] Action EndOfCalibration \n");
     proxyCartographer_signal_stop();
 }
 
 static void actionIdleToWfp()
 {
+    TRACE("[MapManager] Action IdleToWfp \n");
     proxyCartographer_signal_start();
 }
 
@@ -489,13 +492,13 @@ static void actionWfpToIsSendMapPositions()
 {
     reset(wat);
     //requestPositionsReceivedSuccessfull();
-        if (flag != true)
+    if (flag != true)
     {
         mapViewer_calibrationSuccessful();
         flag = true;
     }
     mapViewer_setData(dataPos);
-
+    TRACE("[MapManager] Action WfpToIsSendMapPositions \n");
     wat = Watchdog_construct(2 * 1000 * 1000, timeOutAskPosTime);
     setTimeAskPosTime(wat);
 }
