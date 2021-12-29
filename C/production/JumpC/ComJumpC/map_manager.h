@@ -24,7 +24,7 @@ extern void MapManager_start(void);
  * @brief Ask pocket to start the calibration
  * 
  */
-extern void MapManager_startCalibration(void);
+extern void MapManager_startJumpC(void);
 
 /**
  * @brief Set the sending positions

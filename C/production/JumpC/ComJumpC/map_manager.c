@@ -385,9 +385,6 @@ extern void MapManager_free()
     TRACE("Destruction\n");
 }
 
-extern void MapManager_startCalibration()
-{
-}
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                     ////
 ////                                   STATIC FUNCTIONS                                  ////
