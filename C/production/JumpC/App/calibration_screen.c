@@ -62,7 +62,7 @@ extern void calibrationScreen_new()
 static void cb_calibrationAction(GtkWidget *p_wid, gpointer p_data)
 {
     gtk_widget_hide(p_wid_calibration);
-
+    MapManager_new();
     MapManager_start();
     MapManager_startCalibration();
     //noticePopup_new(CAL_SUCCESS);
