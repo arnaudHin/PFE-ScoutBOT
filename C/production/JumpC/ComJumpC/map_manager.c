@@ -435,7 +435,7 @@ static void *run(void *aParam)
 static void mqReceive(MqMsg *aMsg)
 {
     int8_t check;
-    check = mq_receive(myBal, aMsg->mqBuffer, sizeof(MqMsg), NULL);
+    check = mq_receive(myBal, (char *)aMsg, sizeof(*aMsg), NULL);
     if (check == -1)
     {
         PERROR("Error to the return value of mq_receive function\n");
@@ -445,7 +445,7 @@ static void mqReceive(MqMsg *aMsg)
 static void mqSend(MqMsg *aMsg)
 {
     int8_t check;
-    check = mq_send(myBal, aMsg->mqBuffer, sizeof(MqMsg), 0);
+    check = mq_send(myBal, (const char *)aMsg->mqBuffer, sizeof(MqMsg), 0);
     if (check != 0)
     {
         PERROR("Error to the return value of mq_send function\n");
