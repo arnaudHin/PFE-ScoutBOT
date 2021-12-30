@@ -20,18 +20,13 @@
 
 Message_to_pocket_t myMsgToPocket;
 
-
-
 static void proxy_pilot_ask_try_direction();
-
-
 
 extern void proxy_pilot_set_direction(Direction_e dir)
 {
     myMsgToPocket.data.direction = dir;
     proxy_pilot_ask_try_direction();
 }
-
 
 static void proxy_pilot_ask_try_direction()
 {
@@ -40,16 +35,10 @@ static void proxy_pilot_ask_try_direction()
     postman_jumpC_send_msg(&myMsgToPocket);
 }
 
-
-
-extern void proxy_pilot_ask_quit(){
-    
+extern void proxy_pilot_ask_quit()
+{
+    myMsgToPocket.cmd = ASK_QUIT;
+    myMsgToPocket.sizeData = 1;
+    myMsgToPocket.data.direction = DEFAULT;
+    postman_jumpC_send_msg(&myMsgToPocket);
 }
-
-
-
-
-
-
-
-

@@ -496,7 +496,7 @@ static void actionWfpToIsSendMapPositions()
     }
     mapViewer_setData(dataPos);
     TRACE("[MapManager] Action WfpToIsSendMapPositions \n");
-    wat = Watchdog_construct(2 * 1000 * 1000, timeOutAskPosTime);
+    wat = Watchdog_construct(1 * 1000 * 1000, timeOutAskPosTime);
     setTimeAskPosTime(wat);
 }
 

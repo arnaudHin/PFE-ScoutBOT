@@ -65,7 +65,6 @@ static void cb_calibrationAction(GtkWidget *p_wid, gpointer p_data)
     MapManager_new();
     MapManager_start();
     MapManager_startJumpC();
-    noticePopup_new(CAL_SUCCESS);
 }
 
 static void display()

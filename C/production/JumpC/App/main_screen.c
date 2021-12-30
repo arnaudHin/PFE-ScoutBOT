@@ -167,13 +167,15 @@ extern void mainScreen_new()
 extern void mainScreen_draw_static_refresh(DATA_from_pocket_t data)
 {
     dataPos = data;
-    draw_brush(p_wins[0]);
+    if (currentMode == STATIC)
+        draw_brush(p_wins[0]);
 }
 
 extern void mainScreen_draw_dynamic_refresh(Lidar_data_t data)
 {
     dataPos.lidarData = data;
-    draw_brush(p_wins[0]);
+    if (currentMode == DYNAMIC)
+        draw_brush(p_wins[0]);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                     ////
@@ -279,6 +281,8 @@ static void cb_moveback(GtkWidget *p_wid, gpointer p_data)
 
 static void cb_quit(GtkWidget *p_wid, gpointer p_data)
 {
+    proxyCartographer_signal_stop();
+    proxy_pilot_ask_quit();
     gtk_main_quit();
 }
 

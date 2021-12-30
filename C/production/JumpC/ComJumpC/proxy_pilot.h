@@ -26,3 +26,9 @@ extern void proxy_pilot_set_direction(Direction_e dir);
      * Ask Pilot to immediately stop the robot.
      */
 extern void proxy_signal_emergency_stop(void);
+
+/**
+ * @brief proxy pilot ask quit the app to pocket
+ * 
+ */
+extern void proxy_pilot_ask_quit(void);
