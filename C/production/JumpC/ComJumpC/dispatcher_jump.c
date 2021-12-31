@@ -24,7 +24,6 @@
 #include "commun.h"
 #include "map_manager.h"
 
-
 //#include "../../JumpC/.h"
 //#include "../../JumpC/network_pilot.h"
 
@@ -114,14 +113,16 @@ static void dispatcher_decod(uint8_t *myTempBuffer, Message_from_pocket_t *netwo
     ssize_t resultRead = 0;
     ssize_t byteToRead = SIZE_MSG_CMD + SIZE_MSG_SIZE;
     protocol_jump_decode(myTempBuffer, network_msg, byteToRead);
-
+    TRACE("[dispatcher_decod] décoder message->size : %d] \n", network_msg->size);
     if (network_msg->size != 0)
     {
+        TRACE("[dispatcher_decod] size != 0 \n");
         byteToRead = network_msg->size;
         uint8_t myTempBuffer[byteToRead];
         memset(myTempBuffer, 0x00, sizeof(myTempBuffer) * network_msg->size);
 
         resultRead = postman_jumpC_receive_msg(myTempBuffer, byteToRead);
+        TRACE("[dispatcher_decod] après receive msg \n");
         if (resultRead == -1)
         {
             fprintf(stderr, "ERROR POSTMAN RECEIVE DATA : %ld\n", resultRead);
@@ -147,8 +148,8 @@ static void *dispatcher_jumpC_run()
     ssize_t byteToRead = SIZE_MSG_CMD + SIZE_MSG_SIZE + LIDAR_TOTAL_DATA * 2;
     uint8_t myBufferFromJump[BUFF_SIZE_TO_RECEIVE + CMD_SIZE_BYTE + sizeof(uint16_t)];
     Message_from_pocket_t network_msg = {.command = NOP_CMD, .size = 0}; //SET_ASK_QUIT
-    memset(network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t)* LIDAR_TOTAL_DEGREE);
-    memset(network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) *LIDAR_TOTAL_DEGREE);
+    memset(network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
+    memset(network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
 
     do
     {

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
+#include "util.h"
 
 #define SIZE_MSG_CMD (1)
 #define SIZE_MSG_SIZE (2)
@@ -23,17 +24,20 @@
 static void protocol_jump_decodeCommandSize(uint8_t *bufferRead, Message_from_pocket_t *messageToRead);
 static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket_t *messageToRead);
 static uint16_t protocol_jump_convert_two_bytes_into_uint16(uint8_t first, uint8_t second);
-static void protocol_jump_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t value);
+static void protocol_jump_convert_uint16_to_2_bytes(uint8_t *byte, uint16_t value);
 static void protocol_jump_encodeData(uint8_t *bufferWrite, Message_to_pocket_t *messageToWrite);
 
 extern void protocol_jump_decode(uint8_t *bufferRead, Message_from_pocket_t *messageToRead, __ssize_t byteToDecode)
 {
+    TRACE("[protocol_jump_decode] byteToDecode : %ld \n", byteToDecode);
+    TRACE("[protocol_jump_decode] bufferRead[0] : %d \n", bufferRead[0]);
     switch (byteToDecode)
     {
     case 3:
         protocol_jump_decodeCommandSize(bufferRead, messageToRead);
         break;
     case MAX_SIZE_BYTE_DATA_TO_RECEIVE:
+        TRACE("[protocol_jump_decode] MAX_SIZE_BYTE_DATA_TO_RECEIVE \n");
         protocol_jump_dataPositions(bufferRead, messageToRead);
         break;
     default:
@@ -131,8 +135,9 @@ static uint16_t protocol_jump_convert_two_bytes_into_uint16(uint8_t first, uint8
     return res;
 }
 
-static void protocol_jump_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t value){
+static void protocol_jump_convert_uint16_to_2_bytes(uint8_t *byte, uint16_t value)
+{
 
-	byte[0] = (value >> 8) & 0xFF;
-	byte[1] = value & 0xFF;
+    byte[0] = (value >> 8) & 0xFF;
+    byte[1] = value & 0xFF;
 }
