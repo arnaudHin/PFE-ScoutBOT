@@ -73,8 +73,6 @@ extern void postman_robot_run(){
 		return;
 	}
 
-	TOGGLE_Led(LED7_ORANGE);
-
 	postman_robot_read_message();
 	set_RX_msg_0(flag);
 	intercore_protocole_decode_message(buffer_read, pMessageFromPocket);

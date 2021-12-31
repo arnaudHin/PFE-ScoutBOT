@@ -36,9 +36,9 @@ extern void cartographer_signal_stop();
 
 extern uint8_t cartographer_getStartState();
 
-extern void cartographer_setLidarData(Lidar_data_t * lidarData);
+extern void cartographer_signal_setLidarData();
 
-extern void cartographer_setPositionData(Position_data_t * posData);
+extern void cartographer_signal_setPositionData();
 
 
 

@@ -46,20 +46,21 @@ typedef enum{
 
 typedef enum{
 	T_NOP_P = 0,
-    T_START_POSITIONING_P,
 	T_STOP_POSITIONING_P,
     T_POSITIONING_P,
 	T_SET_POSITION_DATA_P,
+	T_ACK_POSITION_DATA_P
 	T_NB_TRANS_P
 }adminpositioning_transistion_action_e;
 
 
 typedef enum{
     E_NOP_P=0,
-    E_POSITIONING_P,
     E_START_POSITIONING_P,
 	E_STOP_POSITIONING_P,
+	E_POSITIONING_P,
     E_SET_POSITION_DATA_P,
+	E_ACK_POSITION_DATA_P
 	E_NB_EVENT_P
 }adminpositioning_event_e;
 
@@ -102,14 +103,17 @@ typedef struct{
 
 static Transition_t myTransition[NB_STATE_P][E_NB_EVENT_P] = {
 
-	[S_IDLE_P][E_START_POSITIONING_P] = {S_POSITIONING_P, T_START_POSITIONING_P},
+	[S_IDLE_P][E_START_POSITIONING_P] = {S_POSITIONING_P, T_POSITIONING_P},
+
 	[S_POSITIONING_P][E_POSITIONING_P] = {S_POSITIONING_P, T_POSITIONING_P},
 
 	[S_POSITIONING_P][E_SET_POSITION_DATA_P] = {S_SET_POSITION_DATA_P, T_SET_POSITION_DATA_P},
-	[S_SET_POSITION_DATA_P][E_NOP_P] = {S_POSITIONING_P, T_NOP_P},
+	[S_SET_POSITION_DATA_P][E_ACK_POSITION_DATA_P] = {S_POSITIONING_P, T_ACK_POSITION_DATA_P},
 	
 	[S_POSITIONING_P][E_STOP_POSITIONING_P] = {S_DEATH_P, T_STOP_POSITIONING_P},
 	[S_IDLE_P][E_STOP_POSITIONING_P] = {S_DEATH_P, T_STOP_POSITIONING_P},
+	[S_SET_POSITION_DATA_P][E_STOP_POSITIONING_P] = {S_DEATH_P, T_STOP_POSITIONING_P},
+
 };
 
 
@@ -141,18 +145,36 @@ static void adminpositioning_perform_setPositionData();
 
 
 /**********************************  PUBLIC FUNCTIONS ************************************************/
-
+/**
+ * @fn : 
+ * @brief : called by cartographer
+ */
 extern void adminpositioning_signal_start(){
 	adminpositioning_start();
 }
 
-extern void adminpositioning_signal_setPositionData(){
-    adminpositioning_mq_send(E_SET_POSITION_DATA_P);
+/**
+ * @fn : 
+ * @brief : called by cartographer
+ */
+extern void adminpositioning_signal_ackPositionData(){
+    adminpositioning_mq_send(E_ACK_POSITION_DATA_P);
 }
 
+/**
+ * @fn : 
+ * @brief : called by cartographer
+ */
 extern void adminpositioning_signal_stop(){
     adminpositioning_mq_send(E_STOP_POSITIONING_P);
 }
+
+//called by cartographer
+extern void adminpositioning_setPositionData(Position_data_t * posData){
+	*posData = myAdminpositioning->positionData;
+	//memcpy(lidarData, &myMapper->lidarData, sizeof(Lidar_data_t) );
+}
+
 
 
 /**********************************  PRIVATE FUNCTIONS ************************************************/
@@ -193,18 +215,18 @@ static void adminpositioning_performAction(adminpositioning_transistion_action_e
     {
             case T_NOP_P :
                 break;
-            
-            case T_START_POSITIONING_P : 
-				adminpositioning_mq_send(E_POSITIONING_P);
                 
 			case T_POSITIONING_P :
 				adminpositioning_BLE_positioning();
-				adminpositioning_mq_send(E_POSITIONING_P);				
+				adminpositioning_mq_send(E_SET_POSITION_DATA_P);				
 
             case T_SET_POSITION_DATA_P :
 				adminpositioning_perform_setPositionData();
-				adminpositioning_mq_send(E_POSITIONING_P);
                 break;
+
+			case T_ACK_POSITION_DATA_P:
+				adminpositioning_mq_send(E_POSITIONING_P);
+				break;
 
             case T_STOP_POSITIONING_P :
 				adminpositioning_stop();
@@ -219,7 +241,9 @@ static void adminpositioning_performAction(adminpositioning_transistion_action_e
 
 static void adminpositioning_BLE_positioning(){
     
-    /* Call python positioning script */
+    /* BEGIN Call python positioning script */
+
+    /* END Call python positioning script */
 
 }
 

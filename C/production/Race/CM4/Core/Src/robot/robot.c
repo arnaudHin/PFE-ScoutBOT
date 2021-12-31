@@ -208,7 +208,7 @@ static void robot_set_state(Robot_state_e state){
 
 
 static void robot_try_direction(Direction_e direction){
-
+	TOGGLE_Led(LED7_ORANGE);
 	switch (direction) {
 		case FORWARD:
 			MOTORS_forward();
