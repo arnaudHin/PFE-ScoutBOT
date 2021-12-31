@@ -32,8 +32,9 @@ typedef enum{
 
 	S_IDLE_C=0,
 	S_RUNNING_C,
-	S_ASK_4_LIDAR_DATA_C,
-	S_ASK_4_POSITION_DATA_C,
+	S_SET_LIDAR_DATA_C,
+	S_SET_POSITION_DATA_C,
+	S_ASK_4_DATA_C,
 	S_DEATH_C,
 	NB_STATE_C
 }Cartographer_state_e;
@@ -42,9 +43,9 @@ typedef enum{
 	T_NOP_C = 0,
 	T_START_CARTO_C,
 	T_STOP_CARTO_C,
-	T_ASK_4_LIDAR_DATA_C,
-	T_ASK_4_POSITION_DATA_C,
-	T_SEND_DATA,
+	T_ASK_4_DATA_C,
+	T_UPDATE_LIDAR_DATA_C,
+	T_UPDATE_POSITION_DATA_C,
 	T_NB_TRANS_C
 }Cartographer_transistion_action_e;
 
@@ -53,8 +54,8 @@ typedef enum{
 	E_START_CARTO_C=0,
 	E_STOP_CARTO_C,
     E_ASK_4_DATA_C,
-	E_SET_POSITION_DATA_C,
-	E_SET_LIDAR_DATA_C,
+	E_UPDATE_LIDAR_DATA_C,
+	E_UPDATE_POSITION_DATA_C,
 	E_NB_EVENT_C
 }Cartographer_event_e;
 
@@ -87,11 +88,12 @@ typedef struct{
 
 
 static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
-	[S_IDLE_C][E_START_CARTO_C] = {S_RUNNING_C, T_NOP_C},
+
+	[S_IDLE_C][E_START_CARTO_C] = {S_RUNNING_C, T_START_CARTO_C},
 
 	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_LIDAR_DATA_C, T_ASK_4_LIDAR_DATA_C},
-	[S_ASK_4_LIDAR_DATA_C][E_SET_LIDAR_DATA_C] = {S_ASK_4_POSITION_DATA_C, T_ASK_4_POSITION_DATA_C},
-	[S_ASK_4_POSITION_DATA_C][E_SET_POSITION_DATA_C] = {S_RUNNING_C, T_SEND_DATA},
+	[S_RUNNING_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_LIDAR_DATA_C, T_UPDATE_LIDAR_DATA_C},
+	[S_RUNNING_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_UPDATE_POSITION_DATA_C},
 	
 	[S_RUNNING_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
 	[S_IDLE_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
@@ -117,15 +119,16 @@ static void cartographer_mq_done();
 static void *cartographer_run();
 static void cartographer_waitTaskTermination();
 static void cartographer_performAction(Cartographer_transistion_action_e action);
+static cartographer_setState(Cartographer_state_e state);
 
 static void perform_signal_start();
 static void perform_signal_stop();
-static void perform_ask_4_lidar_data();
-static void perform_ask_4_position_data();
-static void perform_sendData();
+static void perform_ask_4_data();
+static void perform_updatePositionData();
+static void perform_updateLidarData();
+
 
 /**********************************  PUBLIC FUNCTIONS ************************************************/
-
 
 
 extern void cartographer_start(){
@@ -152,7 +155,6 @@ extern void cartographer_signal_start(){
 
 /**
  * @brief Function called by dispatcher
- * 
  */
 extern void cartographer_ask4data(){
     cartographer_mq_send(E_ASK_4_DATA_C);
@@ -160,25 +162,18 @@ extern void cartographer_ask4data(){
 
 /**
  * @brief Function called by mapper
- * 
- * @param lidarData 
  */
-extern void cartographer_setLidarData(Lidar_data_t * lidarData){
-
-	myCartographer->lidarDataToSend = *lidarData;
-	cartographer_mq_send(E_SET_LIDAR_DATA_C);
+extern void cartographer_signal_setLidarData(){
+    cartographer_mq_send(E_UPDATE_LIDAR_DATA_C);
 }
 
 /**
  * @brief Function called by adminpositioning
- * 
- * @param lidarData 
  */
-extern void cartographer_setPositionData(Position_data_t * posData){
-
-	myCartographer->positionDataToSend = *posData;
-	cartographer_mq_send(E_SET_POSITION_DATA_C);
+extern void cartographer_signal_setPositionData(){
+    cartographer_mq_send(E_UPDATE_POSITION_DATA_C);
 }
+
 
 extern void cartographer_signal_stop(){
     cartographer_mq_send(E_STOP_CARTO_C);
@@ -262,6 +257,10 @@ static void cartographer_mq_done()
 
 /********************************* END OF MAILBOX FUNCTION ********************************************************/
 
+static cartographer_setState(Cartographer_state_e state){
+	myCartographer->mycartographereState = state;
+}
+
 static void cartographer_waitTaskTermination(){
 	int error_code = pthread_join(mythread, NULL);
 	assert(error_code != -1 && "ERROR Joining current thread\n"); // Halt the execution of the thread until it achieves his execution
@@ -278,23 +277,23 @@ static void perform_signal_start(){
 static void perform_signal_stop(){
 	//cartographer_waitTaskTermination();
 
-    cartographer_mq_done();
-    free(myCartographer);
-    
     //Stop other active classes
     adminpositioning_signal_stop();
     mapper_signal_stop();
+
+	cartographer_mq_done();
+    free(myCartographer);
 }
 
-static void perform_ask_4_lidar_data(){
-	mapper_signal_setLidarData();
+static void perform_updateLidarData(){
+	mapper_setLidaraData(&myCartographer->lidarDataToSend);
 }
 
-static void perform_ask_4_position_data(){
-	adminpositioning_signal_setPositionData();
+static void perform_updatePositionData(){
+	adminpositioning_setPositionData(&myCartographer->positionDataToSend);
 }
 
-static void perform_sendData(){
+static void perform_ask_4_data(){
 	actualData.lidarData = myCartographer->lidarDataToSend;
 	actualData.positionData = myCartographer->positionDataToSend;
 
@@ -337,14 +336,20 @@ static void cartographer_performAction(Cartographer_transistion_action_e action)
 				perform_signal_stop();
                 break;
 
-            case T_ASK_4_LIDAR_DATA_C :
-				perform_ask_4_lidar_data();
+            case T_UPDATE_LIDAR_DATA_C :
+				perform_updatePositionData();
+
+				cartographer_setState(S_RUNNING_C);
                 break;
-            case T_ASK_4_POSITION_DATA_C :
-				perform_ask_4_position_data();
+            case T_UPDATE_LIDAR_DATA_C :
+				perform_updatePositionData();
+
+				cartographer_setState(S_RUNNING_C);
                 break;
-			case T_SEND_DATA :
-				perform_sendData();
+			case T_ASK_4_DATA_C :
+				perform_ask_4_data();
+
+				cartographer_setState(S_RUNNING_C);
 				break;
 
             default :

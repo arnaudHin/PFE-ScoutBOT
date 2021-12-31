@@ -1,13 +1,14 @@
 
 
 @startuml mapper
-[*] --> Idle
 
-Idle -> Scanning : start_mapper() / \n mapper_run();
+[*] --> Idle : / start_mapper();
 
-Scanning -> Scanning : /mapper_file_acquisition();
+Idle -> Scanning : E_START_MAPPER / \n mapper_run();
+
+Scanning -> Scanning : E_SCANNING / \n file_acquisition() \n sendEvent_SetLIDARData();
 Scanning -> SetLidarData : E_SET_LIDAR_DATA / \n setLidarData();
-SetLidarData --> Scanning 
+SetLidarData --> Scanning : E_ACK_LIDAR_DATA / \n sendEvent_Scanning();
 Scanning --> Death : E_STOP_MAPPER / \n stop_mapper();
 
 Death --> [*]

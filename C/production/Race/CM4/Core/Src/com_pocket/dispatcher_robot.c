@@ -43,7 +43,6 @@ static void dispatcher_robot_dispatch_msg(Message_with_race_t msg){
 		case TRY_DIR:
 			messageToRobot.directionToPerform = msg.data.direction;
 			messageToRobot.event = E_TRY_DIR;
-			TOGGLE_Led(LED4_GREEN);
 			robot_run(messageToRobot);
 			break;
 

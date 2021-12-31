@@ -29,11 +29,20 @@ extern void adminpositioning_signal_start();
  */
 extern void adminpositioning_signal_stop();
 
-/** \fn extern void adminpositioning_signal_setPositionData()
+/** \fn extern void adminpositioning_signal_ackPositionData()
  *  \brief Function dedicated to obtain the actual position of the robot
  * \return retourne la position du robot
  */
-extern void adminpositioning_signal_setPositionData();
+extern void adminpositioning_signal_ackPositionData();
+
+/**
+ * @brief 
+ * 
+ * @param posData 
+ */
+extern void adminpositioning_setPositionData(Position_data_t * posData);
+
+
 
 /************************ END OF PROTOTYPE DECLARATION **************************************/
 

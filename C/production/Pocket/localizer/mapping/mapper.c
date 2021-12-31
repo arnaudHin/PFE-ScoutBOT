@@ -37,10 +37,10 @@ typedef enum{
 
 typedef enum{
 	T_NOP_M = 0,
-    T_START_MAPPER_M,
 	T_STOP_MAPPER_M,
     T_SCANNING_M,
 	T_SET_LIDAR_DATA_M,
+	T_ACK_LIDAR_DATA_M,
 	T_NB_TRANS_M
 }Mapper_transistion_action_e;
 
@@ -51,6 +51,7 @@ typedef enum{
     E_START_MAPPER_M,
 	E_STOP_MAPPER_M,
     E_SET_LIDAR_DATA_M,
+	E_ACK_LIDAR_DATA_M,
 	E_NB_EVENT_M
 }Mapper_event_e;
 
@@ -91,13 +92,14 @@ typedef struct{
 
 static Transition_t myTransition[NB_STATE_M][E_NB_EVENT_M] = {
 
-	[S_IDLE_M][E_START_MAPPER_M] = {S_SCANNING_M, T_START_MAPPER_M},
+	[S_IDLE_M][E_START_MAPPER_M] = {S_SCANNING_M, T_SCANNING_M},
 	[S_SCANNING_M][E_SCAN_M] = {S_SCANNING_M, T_SCANNING_M},
 
 	[S_SCANNING_M][E_SET_LIDAR_DATA_M] = {S_SET_LIDAR_DATA_M, T_SET_LIDAR_DATA_M},
-	[S_SET_LIDAR_DATA_M][E_NOP_M] = {S_SCANNING_M, T_NOP_M},
+	[S_SET_LIDAR_DATA_M][E_ACK_LIDAR_DATA_M] = {S_SCANNING_M, T_ACK_LIDAR_DATA_M},
 	
 	[S_SCANNING_M][E_STOP_MAPPER_M] = {S_DEATH_M, T_STOP_MAPPER_M},
+	[S_SET_LIDAR_DATA_M][E_STOP_MAPPER_M] = {S_DEATH_M, T_STOP_MAPPER_M},
 	[S_IDLE_M][E_STOP_MAPPER_M] = {S_DEATH_M, T_STOP_MAPPER_M},
 };
 
@@ -119,9 +121,9 @@ static void mapper_mq_send();
 static Mq_message_t mapper_mq_receive();
 static void mapper_mq_done();
 
-static void *mapper_run();
+static void * mapper_run();
 static void mapper_waitTaskTermination();
-static void fileAcquisition();
+static void mapper_getLidarValues();
 static void mapper_performAction(Mapper_transistion_action_e action);
 
 
@@ -135,14 +137,19 @@ extern void mapper_signal_start(){
 	mapper_start();
 }
 
-extern void mapper_signal_setLidarData(){
-    mapper_mq_send(E_SET_LIDAR_DATA_M);
+extern void mapper_signal_ackLidarData(){
+    mapper_mq_send(E_ACK_LIDAR_DATA_M);
 }
 
 extern void mapper_signal_stop(){
     mapper_mq_send(E_STOP_MAPPER_M);
 }
 
+//called by cartographer
+extern void mapper_setLidaraData(Lidar_data_t * lidarData){
+	*lidarData = myMapper->lidarData;
+	//memcpy(lidarData, &myMapper->lidarData, sizeof(Lidar_data_t) );
+}
 
 /**********************************  PRIVATE FUNCTIONS ************************************************/
 
@@ -160,7 +167,6 @@ static void * mapper_run(){
 	while (myMapper->myMappereState != S_DEATH_M)
 	{
 		mapper_msg = mapper_mq_receive();
-		//TRACE("\n\nState:%s\nEvent:%s\n", state_pilot_name[my_state], event_pilot_name[mapper_msg.evenement]);
 		if (myTransition[myMapper->myMappereState ][mapper_msg.event].destinationState != S_DEATH_M)
 		{
 			an_action = myTransition[myMapper->myMappereState][mapper_msg.event].actionToPerform;
@@ -182,21 +188,18 @@ static void mapper_performAction(Mapper_transistion_action_e action)
     {
             case T_NOP_M :
                 break;
-
-            case T_START_MAPPER_M : 
-				mapper_mq_send(E_SCAN_M);
-                break;
-			
+		
 			case T_SCANNING_M :
 				/* BEGIN LIDAR SCANNING */
-				//fileAcquisition();
+				//mapper_getLidarValues();
 				/* END LIDAR SCANNING */
-				mapper_mq_send(E_SCAN_M);				
+				mapper_mq_send(E_SET_LIDAR_DATA_M);				
 
             case T_SET_LIDAR_DATA_M :
 				mapper_perform_setLidarData();
-				mapper_mq_send(E_SCAN_M);
                 break;
+			case T_ACK_LIDAR_DATA_M : 
+				mapper_mq_send(E_SCAN_M);
 
             case T_STOP_MAPPER_M :
 				perform_mapper_stop();
@@ -211,7 +214,7 @@ static void mapper_performAction(Mapper_transistion_action_e action)
 
 
 
-static void fileAcquisition(){
+static void mapper_getLidarValues(){
     FILE* fichier = NULL;
     uint32_t buf_index = 0;
     int16_t x;
@@ -279,9 +282,11 @@ static void perform_mapper_stop(){
 
 
 static void mapper_perform_setLidarData(){
+
 	//** BEGIN Call mapper function **
-	cartographer_setLidarData(&myMapper->lidarData);
+	cartographer_signal_setLidarData();
 	//** END Call mapper function **
+	
 }
 
 
