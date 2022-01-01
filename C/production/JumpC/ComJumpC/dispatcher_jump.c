@@ -118,10 +118,10 @@ static void dispatcher_decod(uint8_t *myTempBuffer, Message_from_pocket_t *netwo
     {
         TRACE("[dispatcher_decod] size != 0 \n");
         byteToRead = network_msg->size;
-        uint8_t myTempBuffer[byteToRead];
-        memset(myTempBuffer, 0x00, sizeof(myTempBuffer) * network_msg->size);
+        uint8_t myTempBuffer1[byteToRead];
+        memset(myTempBuffer1, 0x00, sizeof(myTempBuffer1) * network_msg->size);
 
-        resultRead = postman_jumpC_receive_msg(myTempBuffer, byteToRead);
+        resultRead = postman_jumpC_receive_msg(myTempBuffer1, byteToRead);
         TRACE("[dispatcher_decod] après receive msg \n");
         if (resultRead == -1)
         {
@@ -129,7 +129,7 @@ static void dispatcher_decod(uint8_t *myTempBuffer, Message_from_pocket_t *netwo
         }
 
         //DECODE myTempBuffer -> myMessageFromJump (DATA)
-        protocol_jump_decode(myTempBuffer, network_msg, byteToRead);
+        protocol_jump_decode(myTempBuffer1, network_msg, byteToRead);
     }
 
     fprintf(stderr, "\nCMD : %d | ", network_msg->command);
