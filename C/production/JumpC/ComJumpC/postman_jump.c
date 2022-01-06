@@ -47,6 +47,11 @@ extern void postman_jumpC_send_msg(Message_to_pocket_t *msg)
 	buffToSend[2] = msg->sizeData & 0xFF;
 	buffToSend[3] = msg->data.direction;
 
+	for (size_t i = 0; i < 4; i++)
+	{
+		printf("Envoie Buffer[%ld] : %d \n", i, buffToSend[i]);
+	}
+
 	ssize_t s = write(a_socket, buffToSend, sizeof(buffToSend));
 
 	if (s == -1)
