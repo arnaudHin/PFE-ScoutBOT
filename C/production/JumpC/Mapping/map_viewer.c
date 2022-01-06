@@ -14,6 +14,7 @@
 #include "commun.h"
 #include "../App/main_screen.h"
 #include "../App/notice_popup.h"
+#include "stdio.h"
 
 static DATA_from_pocket_t dataPos;
 static uint8_t mapStatic = 0;
@@ -69,6 +70,9 @@ static void heapSort(int16_t arr[], int16_t n);
 extern void mapViewer_setData(DATA_from_pocket_t data)
 {
     dataPos = data;
+
+    fprintf(stderr, "\n coucou 0 \n");
+
     heapSort(data.lidarData.X_buffer, LIDAR_TOTAL_DEGREE);
     heapSort(data.lidarData.Y_buffer, LIDAR_TOTAL_DEGREE);
     uint8_t max_x = 0;
@@ -89,6 +93,9 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     {
         max_y = 140;
     }
+
+    fprintf(stderr, "\n coucou 1 \n");
+
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
         dataPos.lidarData.X_buffer[i] += abs(data.lidarData.X_buffer[0]);
@@ -131,6 +138,8 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     //         dataPos.lidarData.Y_buffer[i] = 140;
     //     }
     // }
+    fprintf(stderr, "\n coucou 2 \n");
+
     switch (mapStatic)
     {
     case 1:
@@ -143,8 +152,16 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     default:
         break;
     }
+    fprintf(stderr, "\n coucou 3 \n");
+
     mapViewer_draw_map_static();
+
+    fprintf(stderr, "\n coucou 4 \n");
+
     mapViewer_draw_map_dynamic();
+
+    fprintf(stderr, "\n coucou 5 \n");
+
 }
 
 extern void mapViewer_calibrationSuccessful()

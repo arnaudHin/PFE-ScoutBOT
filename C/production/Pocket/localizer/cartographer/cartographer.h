@@ -28,7 +28,7 @@ extern void cartographer_start();
 /**
  * @brief 
  */
-extern void cartographer_ask4data();
+extern void cartographer_signal_ask4data();
 
 extern void cartographer_signal_start();
 

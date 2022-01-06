@@ -14,6 +14,7 @@
 #include <stddef.h>
 
 static Message_to_pocket_t messageToPocket;
+
 extern void proxyCartographer_ask4data()
 {
     messageToPocket.cmd = ASK_4_DATA;
@@ -36,7 +37,7 @@ extern void proxyCartographer_signal_start()
     messageToPocket.data.direction = DEFAULT;
 
     uint16_t bytesToSend = 1 + 2 + messageToPocket.sizeData;
-    uint8_t bufferToSend[bytesToSend]; //1+2+(720*2)
+    uint8_t bufferToSend[bytesToSend]; //1+2+(720*2) + = 1443 
     //memset(bufferToSend, 0x01, sizeof(bufferToSend) );
 
     protocol_jump_encode(bufferToSend, &messageToPocket, bytesToSend);

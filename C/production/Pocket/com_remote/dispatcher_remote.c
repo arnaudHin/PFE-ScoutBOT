@@ -126,10 +126,9 @@ static void * dispatcher_remote_run(){
 		switch (commandMsg)
 		{
 			case ASK_TRY_DIR:
-				
+				fprintf(stderr, "dispatcher_remote_run receive ASK_TRY_DIR\n");
 				pilot_set_direction(myMessageFromJump.data.direction);
 				//fprintf(stderr, "%s:%d:%s(): "__FILE__, __LINE__, __func__);
-				fprintf(stderr, "dispatcher_remote_run\n");
 				break;
 
 			case ASK_QUIT:
@@ -139,14 +138,16 @@ static void * dispatcher_remote_run(){
 
 			case ASK_4_DATA:
 
+				fprintf(stderr, "dispatcher_remote_run receive ASK_4_DATA\n");
+
 				// if cartographer is not strated, we start it
 				if( cartographer_getStartState() == 0 ){
 					cartographer_signal_start();
 				}
 				// if cartographer active, we ask data
-				else if( cartographer_getStartState() == 1){
-					cartographer_ask4data();
-				}
+				
+				cartographer_signal_ask4data();
+				
 
 			default:
 				break;
@@ -162,8 +163,10 @@ static void dispatcher_remote_check_for_message(){
     ssize_t byteToRead = CMD_SIZE_BYTE + 2;
 
 	resultRead = postman_remote_receive(myBufferFromJump, byteToRead);
+
 	if(resultRead == -1 || resultRead == 0){
 		fprintf(stderr, "ERROR POSTMAN RECEIVE 0 : %d\n", resultRead);
+		return NULL;
 	}
 
 	//DECODE myBufferFromJump -> myMessageFromJump (CMD + SIZEdata)
@@ -186,7 +189,6 @@ static void dispatcher_remote_check_for_message(){
 
 	fprintf(stderr, "\nCMD : %d | ", myMessageFromJump.command);
 	fprintf(stderr, "Size : %d | ", myMessageFromJump.sizeData);
-	fprintf(stderr, "Data dir : %d \n", myMessageFromJump.data.direction);
 }
 
 

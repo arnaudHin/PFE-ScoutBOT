@@ -168,6 +168,7 @@ static mqd_t myBal;
 static const char queueName[] = "/Balou";
 static Watchdog *wat;
 static bool flag = false;
+static uint8_t flag_wat = 0;
 
 typedef struct
 {
@@ -487,17 +488,28 @@ static void actionIdleToWfp()
 
 static void actionWfpToIsSendMapPositions()
 {
-    reset(wat);
+
+    if( flag_wat == 1){
+        reset(wat);
+    }
+
     //requestPositionsReceivedSuccessfull();
+
     if (flag != true)
     {
         mapViewer_calibrationSuccessful();
         flag = true;
+        flag_wat = 1;
     }
+
     mapViewer_setData(dataPos);
+    
+    
     TRACE("[MapManager] Action WfpToIsSendMapPositions \n");
     wat = Watchdog_construct(1 * 1000 * 1000, timeOutAskPosTime);
     setTimeAskPosTime(wat);
+
+
 }
 
 static void actionEnterActive()

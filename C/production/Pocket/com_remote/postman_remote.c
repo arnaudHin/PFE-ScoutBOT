@@ -54,7 +54,7 @@ extern ssize_t postman_remote_write(uint8_t * bufferToWrite , ssize_t nbBytes)
   	resultWrite = write (mySocket, bufferToWrite, nbBytes);
 
   	if (resultWrite == -1){
-    perror("ERROR POSTMAN MONITOR APP WRITE\n");
+    perror("ERROR POSTMAN POCKET WRITE\n");
   	}
 
 	//---- UNLOCK SECTION ---
@@ -71,7 +71,7 @@ extern ssize_t postman_remote_receive(uint8_t * bufferToReceive , ssize_t nbByte
 	int resultRead = 0;
 	resultRead  = recv(mySocket, bufferToReceive, nbBytes, MSG_WAITALL);
 	if (resultRead == -1){
-		perror("ERROR POSTMAN MONITOR APP READ\n");
+		perror("ERROR POSTMAN POCKET READ\n");
 	}
 
 	return resultRead;

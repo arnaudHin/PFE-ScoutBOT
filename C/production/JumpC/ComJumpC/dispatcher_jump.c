@@ -113,15 +113,18 @@ static void dispatcher_decod(uint8_t *myTempBuffer, Message_from_pocket_t *netwo
     ssize_t resultRead = 0;
     ssize_t byteToRead = SIZE_MSG_CMD + SIZE_MSG_SIZE;
     protocol_jump_decode(myTempBuffer, network_msg, byteToRead);
+
     TRACE("[dispatcher_decod] décoder message->size : %d] \n", network_msg->size);
+
     if (network_msg->size != 0)
     {
         TRACE("[dispatcher_decod] size != 0 \n");
         byteToRead = network_msg->size;
         uint8_t myTempBuffer1[byteToRead];
-        memset(myTempBuffer1, 0x00, sizeof(myTempBuffer1) * network_msg->size);
+        memset(myTempBuffer1, 0x00, sizeof(myTempBuffer1) );
 
         resultRead = postman_jumpC_receive_msg(myTempBuffer1, byteToRead);
+
         TRACE("[dispatcher_decod] après receive msg \n");
         if (resultRead == -1)
         {
@@ -132,30 +135,32 @@ static void dispatcher_decod(uint8_t *myTempBuffer, Message_from_pocket_t *netwo
         protocol_jump_decode(myTempBuffer1, network_msg, byteToRead);
     }
 
-    fprintf(stderr, "\nCMD : %d | ", network_msg->command);
-    fprintf(stderr, "Size : %d | ", network_msg->size);
+    //fprintf(stderr, "\nCMD : %d | ", network_msg->command);
+    //fprintf(stderr, "Size : %d | ", network_msg->size);
     //fprintf(stderr, "Data dir : %d \n", network_msg->data.lidarData);
 }
 
 /**
  *  \fn static void dispatcher_jumpC_run()
- *
  *  \brief Function dedicated to constantly read the socket
  *             Once the message is received, it decodes it and requests a dispatch
  */
 static void *dispatcher_jumpC_run()
 {
-    ssize_t byteToRead = SIZE_MSG_CMD + SIZE_MSG_SIZE + LIDAR_TOTAL_DATA * 2;
-    uint8_t myBufferFromJump[BUFF_SIZE_TO_RECEIVE + CMD_SIZE_BYTE + sizeof(uint16_t)];
+    ssize_t byteToRead = SIZE_MSG_CMD + SIZE_MSG_SIZE;
+    uint8_t myBufferFromJump[ 3 ];
+
     Message_from_pocket_t network_msg = {.command = NOP_CMD, .size = 0}; //SET_ASK_QUIT
-    memset(network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
-    memset(network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
+    memset(&network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
+    memset(&network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
 
     do
     {
         TRACE("DISPATCHER RUN \r\n");
         network_msg.command = SET_ASK_QUIT;
+        
         postman_jumpC_receive_msg(myBufferFromJump, byteToRead);
+
         dispatcher_decod(myBufferFromJump, &network_msg);
 
         dispatcher_jumpC_dispatch(network_msg);
@@ -172,8 +177,8 @@ static void *dispatcher_jumpC_run()
 static void *new_dispatcher_jumpC_run()
 {
     Message_from_pocket_t network_msg = {.command = NOP_CMD, .size = 0}; //SET_ASK_QUIT
-    memset(network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
-    memset(network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
+    memset(&network_msg.data.lidarData.X_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
+    memset(&network_msg.data.lidarData.Y_buffer, 0, sizeof(int16_t) * LIDAR_TOTAL_DEGREE);
     uint16_t size_msg = SIZE_MSG_CMD + SIZE_MSG_SIZE;
     unsigned char buffer[size_msg];
     do
