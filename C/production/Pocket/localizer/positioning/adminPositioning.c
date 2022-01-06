@@ -257,6 +257,8 @@ static void adminpositioning_BLE_positioning(){
  */
 static void adminpositioning_start(){
 
+	fprintf(stderr, "adminpositioning_start\n");
+
     myAdminpositioning = NULL;
     myAdminpositioning = calloc(1, sizeof(adminpositioning_t) );
     if (myAdminpositioning == NULL)
@@ -271,8 +273,6 @@ static void adminpositioning_start(){
 	assert(return_thread == 0 && "Error Pthread_create adminPositioning\n");
 
 	adminpositioning_mq_send(E_START_POSITIONING_P);
-
-	fprintf(stderr, "adminpositioning_start\n");
 }
 
 /** \fn static void adminpositioning_stop()
@@ -290,11 +290,10 @@ static void adminpositioning_stop(){
 
 
 static void adminpositioning_perform_setPositionData(){
+	fprintf(stderr, "adminpositioning_perform_setPositionData\n");
 	//** BEGIN Call adminpositioning function **
 	cartographer_signal_setPositionData();
 	//** END Call adminpositioning function **
-	fprintf(stderr, "adminpositioning_perform_setPositionData\n");
-
 }
 
 
@@ -339,11 +338,15 @@ static void adminpositioning_mq_init()
 
 static void adminpositioning_mq_send(adminpositioning_event_e adminpositioning_event)
 {
+	pthread_mutex_lock(&myMutex);
+	//***** RACE CONDITION *****//
 	Mq_message_t adminpositioning_msg;
 	adminpositioning_msg.event = adminpositioning_event;
 	
 	mqd_t bal_send = mq_send(id_bal, (const char *)&adminpositioning_msg, sizeof(Mq_message_t), 0); //Priority 0 to 31 (highest priority first)
 	assert(id_bal != -1 && "Error mq_send adminpositioning\n");
+	//***** END RACE CONDITION *****//
+	pthread_mutex_unlock(&myMutex);
 }
 
 /** \fn static Mq_message_t adminpositioning_mq_receive()

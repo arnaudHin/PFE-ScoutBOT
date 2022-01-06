@@ -39,7 +39,9 @@ typedef enum{
 	NB_STATE_C
 }Cartographer_state_e;
 
-static char * stateC[6] = {"S_IDLE_C",
+static char * stateC[6] = 
+	{
+	"S_IDLE_C",
 	"S_RUNNING_C",
 	"S_SET_LIDAR_DATA_C",
 	"S_SET_POSITION_DATA_C",
@@ -58,7 +60,8 @@ typedef enum{
 
 
 typedef enum{
-	E_START_CARTO_C=0,
+	E_NOP=0,
+	E_START_CARTO_C,
 	E_STOP_CARTO_C,
     E_ASK_4_DATA_C,
 	E_UPDATE_LIDAR_DATA_C,
@@ -66,8 +69,9 @@ typedef enum{
 	E_NB_EVENT_C
 }Cartographer_event_e;
 
-static char * eventC[5] = 
-	{"E_START_CARTO_C",
+static char * eventC[6] = 
+	{"E_NOP",
+	"E_START_CARTO_C",
 	"E_STOP_CARTO_C",
 	"E_ASK_4_DATA_C",
 	"E_UPDATE_LIDAR_DATA_C",
@@ -105,9 +109,19 @@ static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
 	[S_IDLE_C][E_START_CARTO_C] = {S_RUNNING_C, T_START_CARTO_C},
 
 	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_DATA_C, T_ASK_4_DATA_C},
-	[S_RUNNING_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_LIDAR_DATA_C, T_UPDATE_LIDAR_DATA_C},
-	[S_RUNNING_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_UPDATE_POSITION_DATA_C},
+	[S_ASK_4_DATA_C][E_NOP] = {S_RUNNING_C, T_NOP_C},
+	[S_ASK_4_DATA_C][E_UPDATE_POSITION_DATA_C] = {S_ASK_4_DATA_C, T_NOP_C},
+	[S_ASK_4_DATA_C][E_UPDATE_LIDAR_DATA_C] = {S_ASK_4_DATA_C, T_NOP_C},
 
+	[S_RUNNING_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_LIDAR_DATA_C, T_UPDATE_LIDAR_DATA_C},
+	[S_SET_LIDAR_DATA_C][E_NOP] = {S_RUNNING_C, T_NOP_C},
+	[S_SET_LIDAR_DATA_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
+	[S_SET_LIDAR_DATA_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
+
+	[S_RUNNING_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_UPDATE_POSITION_DATA_C},
+	[S_SET_POSITION_DATA_C][E_NOP] = {S_RUNNING_C, T_NOP_C},
+	[S_SET_POSITION_DATA_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
+	[S_SET_POSITION_DATA_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
 
 	[S_RUNNING_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
 	[S_IDLE_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
@@ -116,6 +130,7 @@ static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
 
 static pthread_t mythread;						   //ID thread
 static const char queue_name[] = "/cartographer"; //name of mailbox
+static pthread_mutex_t myMutex=PTHREAD_MUTEX_INITIALIZER;
 static mqd_t id_bal;	
 
 static Cartographer_t * myCartographer;
@@ -134,6 +149,7 @@ static void *cartographer_run();
 static void cartographer_waitTaskTermination();
 static void cartographer_performAction(Cartographer_transistion_action_e action);
 static void cartographer_setState(Cartographer_state_e state);
+static Cartographer_state_e cartographer_getState();
 
 static void perform_signal_start();
 static void perform_signal_stop();
@@ -152,7 +168,7 @@ extern void cartographer_start(){
     if (myCartographer == NULL){
         perror("Error calloc");
     }
-    myCartographer->mycartographereState = S_IDLE_C;
+	cartographer_setState(S_IDLE_C);
 
     cartographer_mq_init();
 
@@ -235,11 +251,17 @@ static void cartographer_mq_init()
 
 static void cartographer_mq_send(Cartographer_event_e cartographer_event)
 {
+
+	pthread_mutex_lock(&myMutex);
+	//***** RACE CONDITION *****//
 	Mq_message_t cartographer_msg;
 	cartographer_msg.event = cartographer_event;
 	
 	mqd_t bal_send = mq_send(id_bal, (const char *)&cartographer_msg, sizeof(Mq_message_t), 0); //Priority 0 to 31 (highest priority first)
 	assert(id_bal != -1 && "Error mq_send cartographer\n");
+	//***** END RACE CONDITION *****//
+	pthread_mutex_unlock(&myMutex);
+
 }
 
 /** \fn static Mq_message_t cartographer_mq_receive()
@@ -276,6 +298,10 @@ static void cartographer_mq_done()
 
 static void cartographer_setState(Cartographer_state_e state){
 	myCartographer->mycartographereState = state;
+}
+
+static Cartographer_state_e cartographer_getState(){
+	return myCartographer->mycartographereState;
 }
 
 static void cartographer_waitTaskTermination(){
@@ -328,12 +354,12 @@ static void *cartographer_run(){
 	while (myCartographer->mycartographereState != S_DEATH_C)
 	{
 		cartographer_msg = cartographer_mq_receive();
-		fprintf(stderr, "cartographer_run() : state : %s \n", stateC[myCartographer->mycartographereState]);
+		fprintf(stderr, "cartographer_run() : state : %s \n", stateC[cartographer_getState()]);
 		fprintf(stderr, "cartographer_run() : event : %s \n", eventC[cartographer_msg.event]);
 
-		if (myTransition[myCartographer->mycartographereState ][cartographer_msg.event].destinationState != S_DEATH_C)
+		if (myTransition[ cartographer_getState() ][cartographer_msg.event].destinationState != S_DEATH_C)
 		{
-			an_action = myTransition[myCartographer->mycartographereState][cartographer_msg.event].actionToPerform;
+			an_action = myTransition[ cartographer_getState() ][cartographer_msg.event].actionToPerform;
 			cartographer_performAction(an_action);
 
 			myCartographer->mycartographereState = myTransition[myCartographer->mycartographereState][cartographer_msg.event].destinationState;
@@ -362,17 +388,15 @@ static void cartographer_performAction(Cartographer_transistion_action_e action)
 
             case T_UPDATE_LIDAR_DATA_C :
 				perform_updatePositionData();
-
-				cartographer_setState(S_RUNNING_C);
+				cartographer_mq_send(E_NOP);
                 break;
             case T_UPDATE_POSITION_DATA_C :
 				perform_updatePositionData();
-
-				cartographer_setState(S_RUNNING_C);
+				cartographer_mq_send(E_NOP);
                 break;
 			case T_ASK_4_DATA_C :
 				perform_ask_4_data();
-				cartographer_setState(S_RUNNING_C);
+				cartographer_mq_send(E_NOP);
 				break;
 
             default :

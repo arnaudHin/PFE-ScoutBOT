@@ -30,7 +30,7 @@
 
 static pthread_t pthread;
 static Message_from_jump_t myMessageFromJump;
-static uint8_t myBufferFromJump[BUFF_SIZE_TO_RECEIVE];
+static uint8_t myBufferFromJump[3];
 static uint8_t ask_quit = 0;
 
 
@@ -132,9 +132,11 @@ static void * dispatcher_remote_run(){
 				break;
 
 			case ASK_QUIT:
+				fprintf(stderr, "dispatcher_remote_run receive ASK_QUIT\n");
 				ask_quit = 1;
 				cartographer_signal_stop();
 				pilot_signal_exit();
+				break;
 
 			case ASK_4_DATA:
 
@@ -147,6 +149,8 @@ static void * dispatcher_remote_run(){
 				// if cartographer active, we ask data
 				
 				cartographer_signal_ask4data();
+
+				break;
 				
 
 			default:
@@ -162,6 +166,8 @@ static void dispatcher_remote_check_for_message(){
 	ssize_t resultRead = 0;
     ssize_t byteToRead = CMD_SIZE_BYTE + 2;
 
+	memset(myBufferFromJump, 0x0, sizeof(myBufferFromJump));
+
 	resultRead = postman_remote_receive(myBufferFromJump, byteToRead);
 
 	if(resultRead == -1 || resultRead == 0){
@@ -172,8 +178,11 @@ static void dispatcher_remote_check_for_message(){
 	//DECODE myBufferFromJump -> myMessageFromJump (CMD + SIZEdata)
 	remote_protocol_decode(myBufferFromJump, &myMessageFromJump, byteToRead);
 
+	fprintf(stderr, "\nCMD : %d | ", myMessageFromJump.command);
+	fprintf(stderr, "Size : %d | \n", myMessageFromJump.sizeData);
+
 	if(myMessageFromJump.sizeData != 0){
-		byteToRead = myMessageFromJump.sizeData;
+		byteToRead = 1;
 		uint8_t myTempBuffer[byteToRead];
 		memset(myTempBuffer, 0x00, sizeof(myTempBuffer) );
 
@@ -187,8 +196,7 @@ static void dispatcher_remote_check_for_message(){
 
 	}
 
-	fprintf(stderr, "\nCMD : %d | ", myMessageFromJump.command);
-	fprintf(stderr, "Size : %d | ", myMessageFromJump.sizeData);
+
 }
 
 

@@ -345,11 +345,15 @@ static void mapper_mq_init()
 
 static void mapper_mq_send(Mapper_event_e mapper_event)
 {
+	pthread_mutex_lock(&myMutex);
+	//***** RACE CONDITION *****//
 	Mq_message_t mapper_msg;
 	mapper_msg.event = mapper_event;
 	
 	mqd_t bal_send = mq_send(id_bal, (const char *)&mapper_msg, sizeof(Mq_message_t), 0); //Priority 0 to 31 (highest priority first)
 	assert(id_bal != -1 && "Error mq_send mapper\n");
+	//***** END RACE CONDITION *****//
+	pthread_mutex_unlock(&myMutex);
 }
 
 /** \fn static Mq_message_t mapper_mq_receive()

@@ -32,7 +32,6 @@ extern void remote_protocol_decode(uint8_t *bufferRead ,  Message_from_jump_t *m
     case 1:
         remote_protocol_dataOne(bufferRead, messageToRead);
 
-    
     default:
         break;
     }
@@ -112,6 +111,8 @@ static void remote_protocol_decodeCommandSize(uint8_t *bufferRead ,  Message_fro
     
     memcpy( (CMD_from_jump_e*) &messageToRead->command, (uint8_t*) bufferRead, sizeof(uint8_t));
     index++;
+    fprintf(stderr, "postman_decode() tabSize 0 : %d\n", *(bufferRead+1));
+    fprintf(stderr, "postman_decode() tabSize 1 : %d\n", *(bufferRead+2));
 
     messageToRead->sizeData = remote_protocol_convert_two_bytes_into_uint16( *(bufferRead+1), *(bufferRead+2) );
 
