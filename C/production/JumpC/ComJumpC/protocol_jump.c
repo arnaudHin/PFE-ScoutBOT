@@ -75,6 +75,8 @@ static void protocol_jump_encodeData(uint8_t *bufferWrite, Message_to_pocket_t *
     memcpy((bufferWrite + index), &buf2, sizeof(uint16_t));
     index += 2;
 }
+
+
 static void protocol_jump_decodeCommandSize(uint8_t *bufferRead, Message_from_pocket_t *messageToRead)
 {
     fprintf(stderr, "\n ---DECODE CMD+SIZE --- \n");
@@ -94,6 +96,8 @@ static void protocol_jump_decodeCommandSize(uint8_t *bufferRead, Message_from_po
 
     fprintf(stderr, "\n ---END DECODE CMD+SIZE --- \n");
 }
+
+
 
 static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket_t *messageToRead)
 {
@@ -125,6 +129,8 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
     }
     fprintf(stderr, "\n ---END DECODE DATA --- \n");
 }
+
+
 
 static uint16_t protocol_jump_convert_two_bytes_into_uint16(uint8_t first, uint8_t second)
 {

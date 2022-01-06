@@ -39,6 +39,13 @@ typedef enum{
 	NB_STATE_C
 }Cartographer_state_e;
 
+static char * stateC[6] = {"S_IDLE_C",
+	"S_RUNNING_C",
+	"S_SET_LIDAR_DATA_C",
+	"S_SET_POSITION_DATA_C",
+	"S_ASK_4_DATA_C",
+	"S_DEATH_C"};
+
 typedef enum{
 	T_NOP_C = 0,
 	T_START_CARTO_C,
@@ -59,7 +66,13 @@ typedef enum{
 	E_NB_EVENT_C
 }Cartographer_event_e;
 
-
+static char * eventC[5] = 
+	{"E_START_CARTO_C",
+	"E_STOP_CARTO_C",
+	"E_ASK_4_DATA_C",
+	"E_UPDATE_LIDAR_DATA_C",
+	"E_UPDATE_POSITION_DATA_C"
+	};
 
 
 typedef struct{
@@ -91,10 +104,11 @@ static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
 
 	[S_IDLE_C][E_START_CARTO_C] = {S_RUNNING_C, T_START_CARTO_C},
 
-	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_LIDAR_DATA_C, T_ASK_4_LIDAR_DATA_C},
+	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_DATA_C, T_ASK_4_DATA_C},
 	[S_RUNNING_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_LIDAR_DATA_C, T_UPDATE_LIDAR_DATA_C},
 	[S_RUNNING_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_UPDATE_POSITION_DATA_C},
-	
+
+
 	[S_RUNNING_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
 	[S_IDLE_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
 };
@@ -119,7 +133,7 @@ static void cartographer_mq_done();
 static void *cartographer_run();
 static void cartographer_waitTaskTermination();
 static void cartographer_performAction(Cartographer_transistion_action_e action);
-static cartographer_setState(Cartographer_state_e state);
+static void cartographer_setState(Cartographer_state_e state);
 
 static void perform_signal_start();
 static void perform_signal_stop();
@@ -145,10 +159,13 @@ extern void cartographer_start(){
 	int return_thread = pthread_create(&mythread, NULL, (void *)&cartographer_run, NULL);
 	assert(return_thread == 0 && "Error Pthread_create cartographer\n");
 
+	fprintf(stderr, "cartographer_start\n");
+
 }
 
 
 extern void cartographer_signal_start(){
+	
     cartographer_mq_send(E_START_CARTO_C);
 	CARTO_START = 1;
 }
@@ -156,7 +173,7 @@ extern void cartographer_signal_start(){
 /**
  * @brief Function called by dispatcher
  */
-extern void cartographer_ask4data(){
+extern void cartographer_signal_ask4data(){
     cartographer_mq_send(E_ASK_4_DATA_C);
 }
 
@@ -257,7 +274,7 @@ static void cartographer_mq_done()
 
 /********************************* END OF MAILBOX FUNCTION ********************************************************/
 
-static cartographer_setState(Cartographer_state_e state){
+static void cartographer_setState(Cartographer_state_e state){
 	myCartographer->mycartographereState = state;
 }
 
@@ -266,12 +283,13 @@ static void cartographer_waitTaskTermination(){
 	assert(error_code != -1 && "ERROR Joining current thread\n"); // Halt the execution of the thread until it achieves his execution
 }
 
-
-
 static void perform_signal_start(){
     //Start other active classes
+	fprintf(stderr, "perform_signal_start\n");
+
 	adminpositioning_signal_start();
 	mapper_signal_start();
+
 }
 
 static void perform_signal_stop(){
@@ -287,10 +305,12 @@ static void perform_signal_stop(){
 
 static void perform_updateLidarData(){
 	mapper_setLidaraData(&myCartographer->lidarDataToSend);
+	mapper_signal_ackLidarData();
 }
 
 static void perform_updatePositionData(){
 	adminpositioning_setPositionData(&myCartographer->positionDataToSend);
+	adminpositioning_signal_ackPositionData();
 }
 
 static void perform_ask_4_data(){
@@ -300,6 +320,7 @@ static void perform_ask_4_data(){
 	proxy_mapviewer_send_data(&actualData);
 }
 
+
 static void *cartographer_run(){
 	Mq_message_t cartographer_msg;
 	Cartographer_transistion_action_e an_action = T_NOP_C;
@@ -307,6 +328,9 @@ static void *cartographer_run(){
 	while (myCartographer->mycartographereState != S_DEATH_C)
 	{
 		cartographer_msg = cartographer_mq_receive();
+		fprintf(stderr, "cartographer_run() : state : %s \n", stateC[myCartographer->mycartographereState]);
+		fprintf(stderr, "cartographer_run() : event : %s \n", eventC[cartographer_msg.event]);
+
 		if (myTransition[myCartographer->mycartographereState ][cartographer_msg.event].destinationState != S_DEATH_C)
 		{
 			an_action = myTransition[myCartographer->mycartographereState][cartographer_msg.event].actionToPerform;
@@ -341,14 +365,13 @@ static void cartographer_performAction(Cartographer_transistion_action_e action)
 
 				cartographer_setState(S_RUNNING_C);
                 break;
-            case T_UPDATE_LIDAR_DATA_C :
+            case T_UPDATE_POSITION_DATA_C :
 				perform_updatePositionData();
 
 				cartographer_setState(S_RUNNING_C);
                 break;
 			case T_ASK_4_DATA_C :
 				perform_ask_4_data();
-
 				cartographer_setState(S_RUNNING_C);
 				break;
 

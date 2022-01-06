@@ -18,6 +18,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include "adminPositioning.h"
 #include "../../utils/util.h"
 #include "../../utils/Watchdog/watchdog.h"
@@ -49,7 +50,7 @@ typedef enum{
 	T_STOP_POSITIONING_P,
     T_POSITIONING_P,
 	T_SET_POSITION_DATA_P,
-	T_ACK_POSITION_DATA_P
+	T_ACK_POSITION_DATA_P,
 	T_NB_TRANS_P
 }adminpositioning_transistion_action_e;
 
@@ -60,7 +61,7 @@ typedef enum{
 	E_STOP_POSITIONING_P,
 	E_POSITIONING_P,
     E_SET_POSITION_DATA_P,
-	E_ACK_POSITION_DATA_P
+	E_ACK_POSITION_DATA_P,
 	E_NB_EVENT_P
 }adminpositioning_event_e;
 
@@ -244,6 +245,7 @@ static void adminpositioning_BLE_positioning(){
     /* BEGIN Call python positioning script */
 
     /* END Call python positioning script */
+	sleep(5);
 
 }
 
@@ -266,10 +268,11 @@ static void adminpositioning_start(){
     adminpositioning_mq_init();
 
     int return_thread = pthread_create(&mythread, NULL, &adminpositioning_run, NULL);
-	fprintf(stderr,"adminpositioningstart is starting");
 	assert(return_thread == 0 && "Error Pthread_create adminPositioning\n");
 
 	adminpositioning_mq_send(E_START_POSITIONING_P);
+
+	fprintf(stderr, "adminpositioning_start\n");
 }
 
 /** \fn static void adminpositioning_stop()
@@ -277,7 +280,7 @@ static void adminpositioning_start(){
  *  \retval NULL
  */
 static void adminpositioning_stop(){
-    fprintf(stderr,"pilot stop\n\n");
+    fprintf(stderr,"adminpositioning stop\n\n");
 
 	adminpositioning_mq_done();
 
@@ -288,9 +291,10 @@ static void adminpositioning_stop(){
 
 static void adminpositioning_perform_setPositionData(){
 	//** BEGIN Call adminpositioning function **
-	cartographer_setPositionData(&myAdminpositioning->positionData);
-
+	cartographer_signal_setPositionData();
 	//** END Call adminpositioning function **
+	fprintf(stderr, "adminpositioning_perform_setPositionData\n");
+
 }
 
 

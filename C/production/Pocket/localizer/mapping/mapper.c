@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <pthread.h>
 #include <errno.h>
+#include <unistd.h>
 #include <stdbool.h>
 #include "mapper.h"
 #include "../../utils/util.h"
@@ -125,11 +126,12 @@ static void * mapper_run();
 static void mapper_waitTaskTermination();
 static void mapper_getLidarValues();
 static void mapper_performAction(Mapper_transistion_action_e action);
-
+static void mapper_getLidarValues_test();
 
 static void mapper_start();
 static void perform_mapper_stop();
 static void mapper_perform_setLidarData();
+
 
 /**********************************  PUBLIC FUNCTIONS ************************************************/
 
@@ -192,6 +194,7 @@ static void mapper_performAction(Mapper_transistion_action_e action)
 			case T_SCANNING_M :
 				/* BEGIN LIDAR SCANNING */
 				//mapper_getLidarValues();
+				mapper_getLidarValues_test();
 				/* END LIDAR SCANNING */
 				mapper_mq_send(E_SET_LIDAR_DATA_M);				
 
@@ -209,6 +212,17 @@ static void mapper_performAction(Mapper_transistion_action_e action)
                 break;
         
     }
+}
+
+
+
+
+static void mapper_getLidarValues_test(){
+
+	for (size_t i = 0; i < sizeof(Lidar_data_t) ; i++){
+		myMapper->lidarData.Y_buffer[i] = 3 ;
+	}
+	sleep(3);
 }
 
 
@@ -261,10 +275,12 @@ static void mapper_start(){
     mapper_mq_init();
 
     int return_thread = pthread_create(&mythread, NULL, &mapper_run, NULL);
-	fprintf(stderr,"mapperstart is starting");
 	assert(return_thread == 0 && "Error Pthread_create adminPositioning\n");
 
 	mapper_mq_send(E_START_MAPPER_M);
+	
+	fprintf(stderr, "mapper_start\n");
+
 }
 
 /** \fn static void mapper_stop()
@@ -272,8 +288,6 @@ static void mapper_start(){
  *  \retval NULL
  */
 static void perform_mapper_stop(){
-    fprintf(stderr,"pilot stop\n\n");
-
 	mapper_mq_done();
 	free(myMapper);
 
@@ -286,7 +300,7 @@ static void mapper_perform_setLidarData(){
 	//** BEGIN Call mapper function **
 	cartographer_signal_setLidarData();
 	//** END Call mapper function **
-	
+	fprintf(stderr, "mapper_perform_setLidarData\n");
 }
 
 
