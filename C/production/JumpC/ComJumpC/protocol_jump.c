@@ -122,11 +122,14 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
         index += sizeof(int16_t);
     }
 
-    for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
-    {
-        fprintf(stderr, "Data lidar x[%ld] : %hn \n", i, messageToRead->data.lidarData.X_buffer);
-        fprintf(stderr, "Data lidar y[%ld] : %hn \n", i, messageToRead->data.lidarData.Y_buffer);
-    }
+    // for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+    // {
+    //     fprintf(stderr, "Data lidar x[%ld] : %hn \n", i, messageToRead->data.lidarData.X_buffer);
+    //     fprintf(stderr, "Data lidar y[%ld] : %hn \n", i, messageToRead->data.lidarData.Y_buffer);
+    // }
+   TRACE("Data lidar x[%d] : %d \n", 359, messageToRead->data.lidarData.X_buffer[359]);     
+   TRACE("Data lidar y[%d] : %d \n", 359, messageToRead->data.lidarData.Y_buffer[359]);
+    
     fprintf(stderr, "\n ---END DECODE DATA --- \n");
 }
 
