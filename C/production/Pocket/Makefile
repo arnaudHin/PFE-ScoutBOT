@@ -1,75 +1,82 @@
 #
 # @file  Makefile
 # @author ESEOBOT (inspired by Matthias Brun's work)
-# @version 0.1
-# @date 29/04/2020
+# @version 1.0
+# @date 15/05/2020
 # @brief Defined set of tasks to be executed
 #
 
-## ------------- PACKAGES -------------  
-# Project packages (to be completed if necessary)
-PACKAGES = pilot
-PACKAGES += com_remote
-PACKAGES += com_race
-PACKAGES += localizer
-PACKAGES += utils
+# TO MODIFY : Keep the line below ONLY if you are doing tests
+#export CCFLAGS += -DNTEST
 
-#PACKAGES += localizer
-
-## ------------- SRC files -------------  
-# A package level is accessible
-SRC  = $(wildcard */*.c)
-# To add a second level :		
-SRC  += $(wildcard */*/*.c)
-
-OBJ = $(SRC:.c=.o)
+# TO MODIFY : DEBUG to have traces / NDEBUG without TRACE
+# Please, use NDEBUG with CMocka tests
+export CCFLAGS += -g -DDEBUG # avec debuggage : -g -DDEBUG # without debugging : -DNDEBUG
 
 
-## ------------- MAIN file -------------  
-# Program entry point
-MAIN = starter.c
-MAIN_OBJ = $(MAIN:.c=.o)
-# Automatic management of dependencies
-DEP = $(MAIN:.c=.d)
+# CMocka installation directory
+#export CMOCKA =CMocka
+export CMOCKA = $(realpath ./CMocka/)
+
+#
+# sources organization.
+#
+
+export SRCDIR = src
+export TESTDIR = test
+export BINDIR = bin
 
 
-## ------------- EXEC file -------------  
-# Executable to generate
-EXEC = bin/Pocket_new.elf
+# Pour regler le probleme de Cmocka a la compilation, nous enlevons les tests
+SUBDIRS = $(SRCDIR) #$(TESTDIR)  
+#
+# Definitions of tools.
+#
 
-## ------------- FLAGS -------------  
-# Inclusion from the package level.
-# Inclusion depuis le niveau du package.
-export CCFLAGS  = -O0 
+
+export CCFLAGS += -O0 
 export CCFLAGS += -DNDEBUG
-export CCFLAGS += -MMD -MP # Gestion automatique des dépendances.
+export CCFLAGS += -g -lm
+export CCFLAGS += -MMD -MP # Automatic management of dependencies.
 export CCFLAGS += -D_BSD_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -D_GNU_SOURCE
+# remove  -pedantic
 export CCFLAGS += -std=c99 -Wall -pedantic
 export CCFLAGS += -Wno-unused-function -Wno-unused-variable
-export LDFLAGS  = -lpthread -lrt
-
-export CCFLAGS += -I.
-
-
-## ------------- Rules of Makefile -------------  
-# Compilation
-all:
-	for p in $(PACKAGES); do (cd $$p; $(MAKE) $@); done
-	$(MAKE) CCFLAGS="$(CCFLAGS)" LDFLAGS="$(LDFLAGS)" $(EXEC)
+export LDFLAGS  = -lrt -lpthread
+#export LDFLAGS = -ftest-coverage -fprofile-arcs
+export CCFLAGS += -D_REENTRANT -D_POSIX_C_SOURCE=199309L
 
 
-$(EXEC): $(OBJ) $(MAIN)
-	$(CC) $(CCFLAGS) $(OBJ) $(MAIN) -MF $(DEP) -o $(EXEC) $(LDFLAGS)
+#
+# Definitions of binaries to generate.
 
-$(MAIN_OBJ) : $(MAIN)
-	@$(CC) $(CCFLAGS) -c $(MAIN) -o $(MAIN_OBJ)
+export PROG = $(BINDIR)/pocket
+export TEST = $(BINDIR)/pocket_test
+
+#
+# Rules of Makefile.
+#
+
+# Compilation.
+all: 
+	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) $@); done
+
+
+.PHONY: clean 
 
 # Clean.
-.PHONY: clean
-
 clean:
-	@for p in $(PACKAGES); do (cd $$p; $(MAKE) $@); done
-	@rm -f $(DEP) $(MAIN_OBJ)
-	@rm -f $(EXEC)
+	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) $@); done
+	@rm -f $(PROG) $(TEST) core* $(BINDIR)/core*
 
--include $(DEP)
+
+#all: 
+#	$(MAKE) clean
+#	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) $@); done
+
+# Nettoyage.
+#.PHONY: clean
+
+#clean:
+#	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) $@); done
+#   @rm -f $(PROG) $(TEST) core* $(BINDIR)/core*

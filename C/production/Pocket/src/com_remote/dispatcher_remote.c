@@ -196,7 +196,6 @@ static void dispatcher_remote_check_for_message(){
 
 	}
 
-
 }
 
 

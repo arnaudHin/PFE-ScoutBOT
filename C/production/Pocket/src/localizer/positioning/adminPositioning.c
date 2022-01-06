@@ -273,6 +273,8 @@ static void adminpositioning_start(){
 	assert(return_thread == 0 && "Error Pthread_create adminPositioning\n");
 
 	adminpositioning_mq_send(E_START_POSITIONING_P);
+
+	fprintf(stderr, "adminpositioning_start\n");
 }
 
 /** \fn static void adminpositioning_stop()
@@ -294,6 +296,8 @@ static void adminpositioning_perform_setPositionData(){
 	//** BEGIN Call adminpositioning function **
 	cartographer_signal_setPositionData();
 	//** END Call adminpositioning function **
+	fprintf(stderr, "adminpositioning_perform_setPositionData\n");
+
 }
 
 
