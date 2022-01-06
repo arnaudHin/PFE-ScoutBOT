@@ -80,11 +80,11 @@ static void protocol_jump_encodeData(uint8_t *bufferWrite, Message_to_pocket_t *
 static void protocol_jump_decodeCommandSize(uint8_t *bufferRead, Message_from_pocket_t *messageToRead)
 {
     fprintf(stderr, "\n ---DECODE CMD+SIZE --- \n");
-    for (size_t i = 0; i < SIZE_MSG_CMD + SIZE_MSG_SIZE + LIDAR_TOTAL_DATA * 2; i++)
-    {
-        //fprintf(stderr, "buffToRead[%d]=%d\n", i, (uint8_t) * (bufferRead + i));
-        fprintf(stderr, "buffToRead[%ld]=%d\n", i, (uint8_t)(bufferRead[i]));
-    }
+    // for (size_t i = 0; i < SIZE_MSG_CMD + SIZE_MSG_SIZE + LIDAR_TOTAL_DATA * 2; i++)
+    // {
+    //     //fprintf(stderr, "buffToRead[%d]=%d\n", i, (uint8_t) * (bufferRead + i));
+    //     fprintf(stderr, "buffToRead[%ld]=%d\n", i, (uint8_t)(bufferRead[i]));
+    // }
 
     uint16_t index = 0;
 
