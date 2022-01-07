@@ -24,6 +24,7 @@
 static void protocol_jump_decodeCommandSize(uint8_t *bufferRead, Message_from_pocket_t *messageToRead);
 static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket_t *messageToRead);
 static uint16_t protocol_jump_convert_two_bytes_into_uint16(uint8_t first, uint8_t second);
+static int16_t protocol_jump_convert_two_bytes_into_int16(uint8_t first, uint8_t second);
 static void protocol_jump_convert_uint16_to_2_bytes(uint8_t *byte, uint16_t value);
 static void protocol_jump_encodeData(uint8_t *bufferWrite, Message_to_pocket_t *messageToWrite);
 
@@ -110,19 +111,19 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
     index++;
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
-        messageToRead->data.lidarData.X_buffer[i] = protocol_jump_convert_two_bytes_into_uint16(bufferRead[index], bufferRead[index +1]);
+        messageToRead->data.lidarData.X_buffer[i] = protocol_jump_convert_two_bytes_into_int16(bufferRead[index], bufferRead[index +1]);
         index += sizeof(int16_t);
     }
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
-        messageToRead->data.lidarData.Y_buffer[i] = protocol_jump_convert_two_bytes_into_uint16(bufferRead[index], bufferRead[index +1]);
+        messageToRead->data.lidarData.Y_buffer[i] = protocol_jump_convert_two_bytes_into_int16(bufferRead[index], bufferRead[index +1]);
         index += sizeof(int16_t);
     }
 
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE / 8; i++)
     {
-        fprintf(stderr, "Data lidar x[%ld] : %hn \n", i, messageToRead->data.lidarData.X_buffer);
-        fprintf(stderr, "Data lidar y[%ld] : %hn \n", i, messageToRead->data.lidarData.Y_buffer);
+        fprintf(stderr, "Data lidar x[%ld] : %d \n", i, messageToRead->data.lidarData.X_buffer[i]);
+        fprintf(stderr, "Data lidar y[%ld] : %d \n", i, messageToRead->data.lidarData.Y_buffer[i]);
     }
 
     fprintf(stderr, "\n ---END DECODE DATA --- \n");
@@ -131,6 +132,15 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
 static uint16_t protocol_jump_convert_two_bytes_into_uint16(uint8_t first, uint8_t second)
 {
     uint16_t res = 0x0000;
+    res = first;
+    res = res << 8;
+    res |= second;
+    return res;
+}
+
+static int16_t protocol_jump_convert_two_bytes_into_int16(uint8_t first, uint8_t second)
+{
+    int16_t res = 0x0000;
     res = first;
     res = res << 8;
     res |= second;
