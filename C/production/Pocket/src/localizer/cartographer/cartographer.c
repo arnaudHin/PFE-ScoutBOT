@@ -60,7 +60,8 @@ typedef enum{
 
 
 typedef enum{
-	E_NOP=0,
+	E_NOP_C=0,
+	E_ACK_C,
 	E_START_CARTO_C,
 	E_STOP_CARTO_C,
     E_ASK_4_DATA_C,
@@ -69,8 +70,9 @@ typedef enum{
 	E_NB_EVENT_C
 }Cartographer_event_e;
 
-static char * eventC[6] = 
-	{"E_NOP",
+static char * eventC[7] = 
+	{"E_NOP_C",
+	"E_ACK_C",
 	"E_START_CARTO_C",
 	"E_STOP_CARTO_C",
 	"E_ASK_4_DATA_C",
@@ -109,19 +111,24 @@ static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
 	[S_IDLE_C][E_START_CARTO_C] = {S_RUNNING_C, T_START_CARTO_C},
 
 	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_DATA_C, T_ASK_4_DATA_C},
-	[S_ASK_4_DATA_C][E_NOP] = {S_RUNNING_C, T_NOP_C},
+	[S_RUNNING_C][E_NOP_C] = {S_RUNNING_C, T_NOP_C},
+
+	[S_ASK_4_DATA_C][E_ACK_C] = {S_RUNNING_C, T_NOP_C},
+	[S_ASK_4_DATA_C][E_ASK_4_DATA_C] = {S_RUNNING_C, T_NOP_C},
 	[S_ASK_4_DATA_C][E_UPDATE_POSITION_DATA_C] = {S_ASK_4_DATA_C, T_NOP_C},
 	[S_ASK_4_DATA_C][E_UPDATE_LIDAR_DATA_C] = {S_ASK_4_DATA_C, T_NOP_C},
 
 	[S_RUNNING_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_LIDAR_DATA_C, T_UPDATE_LIDAR_DATA_C},
-	[S_SET_LIDAR_DATA_C][E_NOP] = {S_RUNNING_C, T_NOP_C},
-	[S_SET_LIDAR_DATA_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
-	[S_SET_LIDAR_DATA_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
+	[S_SET_LIDAR_DATA_C][E_ACK_C] = {S_RUNNING_C, T_NOP_C},
+	[S_SET_LIDAR_DATA_C][E_UPDATE_POSITION_DATA_C] = {S_SET_LIDAR_DATA_C, T_NOP_C},
+	[S_SET_LIDAR_DATA_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_LIDAR_DATA_C, T_NOP_C},
+	[S_SET_LIDAR_DATA_C][E_ASK_4_DATA_C] = {S_SET_LIDAR_DATA_C, T_NOP_C},
 
 	[S_RUNNING_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_UPDATE_POSITION_DATA_C},
-	[S_SET_POSITION_DATA_C][E_NOP] = {S_RUNNING_C, T_NOP_C},
+	[S_SET_POSITION_DATA_C][E_ACK_C] = {S_RUNNING_C, T_NOP_C},
 	[S_SET_POSITION_DATA_C][E_UPDATE_POSITION_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
 	[S_SET_POSITION_DATA_C][E_UPDATE_LIDAR_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
+	[S_SET_POSITION_DATA_C][E_ASK_4_DATA_C] = {S_SET_POSITION_DATA_C, T_NOP_C},
 
 	[S_RUNNING_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
 	[S_IDLE_C][E_STOP_CARTO_C] = {S_DEATH_C, T_STOP_CARTO_C},
@@ -197,6 +204,7 @@ extern void cartographer_signal_ask4data(){
  * @brief Function called by mapper
  */
 extern void cartographer_signal_setLidarData(){
+	fprintf(stderr, "cartographer_signal_setLidarData()\n");
     cartographer_mq_send(E_UPDATE_LIDAR_DATA_C);
 }
 
@@ -204,6 +212,7 @@ extern void cartographer_signal_setLidarData(){
  * @brief Function called by adminpositioning
  */
 extern void cartographer_signal_setPositionData(){
+	fprintf(stderr, "cartographer_signal_setPositionData()\n");
     cartographer_mq_send(E_UPDATE_POSITION_DATA_C);
 }
 
@@ -342,7 +351,6 @@ static void perform_updatePositionData(){
 static void perform_ask_4_data(){
 	actualData.lidarData = myCartographer->lidarDataToSend;
 	actualData.positionData = myCartographer->positionDataToSend;
-
 	proxy_mapviewer_send_data(&actualData);
 }
 
@@ -354,8 +362,11 @@ static void *cartographer_run(){
 	while (myCartographer->mycartographereState != S_DEATH_C)
 	{
 		cartographer_msg = cartographer_mq_receive();
+
+		/*
 		fprintf(stderr, "cartographer_run() : state : %s \n", stateC[cartographer_getState()]);
 		fprintf(stderr, "cartographer_run() : event : %s \n", eventC[cartographer_msg.event]);
+		*/
 
 		if (myTransition[ cartographer_getState() ][cartographer_msg.event].destinationState != S_DEATH_C)
 		{
@@ -387,16 +398,16 @@ static void cartographer_performAction(Cartographer_transistion_action_e action)
                 break;
 
             case T_UPDATE_LIDAR_DATA_C :
-				perform_updatePositionData();
-				cartographer_mq_send(E_NOP);
+				perform_updateLidarData();
+				cartographer_mq_send(E_ACK_C);
                 break;
             case T_UPDATE_POSITION_DATA_C :
 				perform_updatePositionData();
-				cartographer_mq_send(E_NOP);
+				cartographer_mq_send(E_ACK_C);
                 break;
 			case T_ASK_4_DATA_C :
 				perform_ask_4_data();
-				cartographer_mq_send(E_NOP);
+				cartographer_mq_send(E_ACK_C);
 				break;
 
             default :

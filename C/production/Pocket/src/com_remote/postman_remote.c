@@ -40,7 +40,6 @@ static int mySocket = -1;
 static pthread_mutex_t mutex_thread = PTHREAD_MUTEX_INITIALIZER;
 
 
-
 extern ssize_t postman_remote_write(uint8_t * bufferToWrite , ssize_t nbBytes)
 {
 
@@ -74,6 +73,11 @@ extern ssize_t postman_remote_receive(uint8_t * bufferToReceive , ssize_t nbByte
 		perror("ERROR POSTMAN POCKET READ\n");
 	}
 
+/*
+	fprintf(stderr, "   0 : %d\n", bufferToReceive[0]);
+	fprintf(stderr, "   1 : %d\n", bufferToReceive[1]);
+    fprintf(stderr, "   2 : %d\n", bufferToReceive[2]);
+*/
 	return resultRead;
 }
 

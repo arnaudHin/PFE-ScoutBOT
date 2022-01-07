@@ -107,9 +107,11 @@ static Transition_t myTransition[NB_STATE_P][E_NB_EVENT_P] = {
 	[S_IDLE_P][E_START_POSITIONING_P] = {S_POSITIONING_P, T_POSITIONING_P},
 
 	[S_POSITIONING_P][E_POSITIONING_P] = {S_POSITIONING_P, T_POSITIONING_P},
-
 	[S_POSITIONING_P][E_SET_POSITION_DATA_P] = {S_SET_POSITION_DATA_P, T_SET_POSITION_DATA_P},
+
 	[S_SET_POSITION_DATA_P][E_ACK_POSITION_DATA_P] = {S_POSITIONING_P, T_ACK_POSITION_DATA_P},
+	[S_SET_POSITION_DATA_P][E_POSITIONING_P] = {S_SET_POSITION_DATA_P, T_NOP_P},
+	[S_SET_POSITION_DATA_P][E_SET_POSITION_DATA_P] = {S_SET_POSITION_DATA_P, T_NOP_P},
 	
 	[S_POSITIONING_P][E_STOP_POSITIONING_P] = {S_DEATH_P, T_STOP_POSITIONING_P},
 	[S_IDLE_P][E_STOP_POSITIONING_P] = {S_DEATH_P, T_STOP_POSITIONING_P},
@@ -159,6 +161,7 @@ extern void adminpositioning_signal_start(){
  * @brief : called by cartographer
  */
 extern void adminpositioning_signal_ackPositionData(){
+	fprintf(stderr, "adminpositioning_signal_ackPositionData() \n");
     adminpositioning_mq_send(E_ACK_POSITION_DATA_P);
 }
 
@@ -194,7 +197,6 @@ static void * adminpositioning_run(){
 	while (myAdminpositioning->myAdminpositioningState != S_DEATH_P)
 	{
 		adminpositioning_msg = adminpositioning_mq_receive();
-		//TRACE("\n\nState:%s\nEvent:%s\n", state_pilot_name[my_state], event_pilot_name[adminpositioning_msg.evenement]);
 		if (myTransition[myAdminpositioning->myAdminpositioningState ][adminpositioning_msg.event].destinationState != S_DEATH_P)
 		{
 			an_action = myTransition[myAdminpositioning->myAdminpositioningState][adminpositioning_msg.event].actionToPerform;
@@ -219,7 +221,8 @@ static void adminpositioning_performAction(adminpositioning_transistion_action_e
                 
 			case T_POSITIONING_P :
 				adminpositioning_BLE_positioning();
-				adminpositioning_mq_send(E_SET_POSITION_DATA_P);				
+				adminpositioning_mq_send(E_SET_POSITION_DATA_P);	
+				break;			
 
             case T_SET_POSITION_DATA_P :
 				adminpositioning_perform_setPositionData();

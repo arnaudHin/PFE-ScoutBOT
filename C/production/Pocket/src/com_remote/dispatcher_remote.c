@@ -81,8 +81,6 @@ extern void dispatcher_remote_stop()
 
 		postman_remote_stop();
 
-		pilot_signal_exit();
-
 }
 
 
@@ -118,7 +116,7 @@ static int interpret_24_bit_as_int32(unsigned char * byte_array) {
 static void * dispatcher_remote_run(){
 
 	while (ask_quit != 1){
-		fprintf(stderr, "Attente msg from jump...\n");
+		//fprintf(stderr, "Attente msg from jump...\n");
 		dispatcher_remote_check_for_message(); //function block !! 
 
 		CMD_from_jump_e commandMsg = myMessageFromJump.command;
@@ -128,7 +126,6 @@ static void * dispatcher_remote_run(){
 			case ASK_TRY_DIR:
 				fprintf(stderr, "dispatcher_remote_run receive ASK_TRY_DIR\n");
 				pilot_set_direction(myMessageFromJump.data.direction);
-				//fprintf(stderr, "%s:%d:%s(): "__FILE__, __LINE__, __func__);
 				break;
 
 			case ASK_QUIT:
@@ -136,6 +133,7 @@ static void * dispatcher_remote_run(){
 				ask_quit = 1;
 				cartographer_signal_stop();
 				pilot_signal_exit();
+				dispatcher_remote_stop();
 				break;
 
 			case ASK_4_DATA:
@@ -166,23 +164,34 @@ static void dispatcher_remote_check_for_message(){
 	ssize_t resultRead = 0;
     ssize_t byteToRead = CMD_SIZE_BYTE + 2;
 
-	memset(myBufferFromJump, 0x0, sizeof(myBufferFromJump));
+	memset(myBufferFromJump, 0, sizeof(myBufferFromJump));
 
 	resultRead = postman_remote_receive(myBufferFromJump, byteToRead);
 
 	if(resultRead == -1 || resultRead == 0){
 		fprintf(stderr, "ERROR POSTMAN RECEIVE 0 : %d\n", resultRead);
+		fprintf(stderr, "\n****************** Application Closing... *******************\n");
+		myMessageFromJump.sizeData = 0;
+		myMessageFromJump.command = ASK_QUIT;
 		return NULL;
 	}
 
 	//DECODE myBufferFromJump -> myMessageFromJump (CMD + SIZEdata)
 	remote_protocol_decode(myBufferFromJump, &myMessageFromJump, byteToRead);
 
-	fprintf(stderr, "\nCMD : %d | ", myMessageFromJump.command);
-	fprintf(stderr, "Size : %d | \n", myMessageFromJump.sizeData);
+	if(myMessageFromJump.sizeData == 1280){
+		myMessageFromJump.sizeData = 0;
+		myMessageFromJump.command = ASK_4_DATA;
+	}
+	if(myMessageFromJump.sizeData == 5){
+		myMessageFromJump.sizeData = 0;
+		myMessageFromJump.command = ASK_4_DATA;
+	}
+
+	//fprintf(stderr, "\nCMD : %d | Size : %d | \n", myMessageFromJump.command, myMessageFromJump.sizeData);
 
 	if(myMessageFromJump.sizeData != 0){
-		byteToRead = 1;
+		byteToRead = myMessageFromJump.sizeData;
 		uint8_t myTempBuffer[byteToRead];
 		memset(myTempBuffer, 0x00, sizeof(myTempBuffer) );
 

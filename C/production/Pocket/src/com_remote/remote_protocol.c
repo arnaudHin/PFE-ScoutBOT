@@ -18,6 +18,8 @@ static void remote_protocol_encodeData(uint8_t *bufferWrite ,  Message_to_jump_t
 
 static uint16_t remote_protocol_convert_two_bytes_into_uint16(uint8_t first, uint8_t second);
 static void remote_protocol_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t value);
+static void remote_protocol_convert_int16_to_2_bytes(uint8_t * byte, int16_t value);
+
 
 /**
  * @brief : 
@@ -89,30 +91,26 @@ static void remote_protocol_encodeData(uint8_t *bufferWrite ,  Message_to_jump_t
 //DATA Mapping
     for (i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
-        remote_protocol_convert_uint16_to_2_bytes(buf2, (int16_t) messageToWrite->data.lidarData.X_buffer[i]);
+        remote_protocol_convert_int16_to_2_bytes(buf2, (int16_t) messageToWrite->data.lidarData.X_buffer[i]);
         memcpy( (bufferWrite + index), &buf2, sizeof(int16_t) );
         index += sizeof(int16_t);         
     }
 
     for (i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
-        remote_protocol_convert_uint16_to_2_bytes(buf2, (int16_t) messageToWrite->data.lidarData.Y_buffer[i]);
+        remote_protocol_convert_int16_to_2_bytes(buf2, (int16_t) messageToWrite->data.lidarData.Y_buffer[i]);
         memcpy( (bufferWrite + index), &buf2, sizeof(int16_t) );
         index += sizeof(int16_t);         
     }
-    
-
 }
 
 
 
 static void remote_protocol_decodeCommandSize(uint8_t *bufferRead ,  Message_from_jump_t *messageToRead){    
-    uint16_t index = 0;
-    
-    memcpy( (CMD_from_jump_e*) &messageToRead->command, (uint8_t*) bufferRead, sizeof(uint8_t));
-    index++;
-    fprintf(stderr, "postman_decode() tabSize 0 : %d\n", *(bufferRead+1));
-    fprintf(stderr, "postman_decode() tabSize 1 : %d\n", *(bufferRead+2));
+
+    uint8_t cmd = *bufferRead;
+    messageToRead->command = (CMD_from_jump_e) cmd;
+    //memcpy( (CMD_from_jump_e*) &messageToRead->command, (uint8_t*) bufferRead, sizeof(uint8_t));
 
     messageToRead->sizeData = remote_protocol_convert_two_bytes_into_uint16( *(bufferRead+1), *(bufferRead+2) );
 
@@ -140,6 +138,11 @@ static void remote_protocol_convert_uint16_to_2_bytes(uint8_t * byte, uint16_t v
 	byte[1] = value & 0xFF;
 }
 
+static void remote_protocol_convert_int16_to_2_bytes(uint8_t * byte, int16_t value){
+
+	byte[0] = (value >> 8) & 0xFF;
+	byte[1] = value & 0xFF;
+}
 
 static void remote_protocol_convert_float_to_4_bytes(uint8_t * byte, uint16_t value){
 
