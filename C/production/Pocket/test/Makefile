@@ -16,44 +16,9 @@ PACKAGES+= pilot
 #Inclure les fonctions WRAP ici
 # LDWRAP = -Wl,--wrap=proxy_pocket_send_position
 
-# # TODO : comment if run test of display
-# LDWRAP+= -Wl,--wrap=display_send_txt_state
-# LDWRAP+= -Wl,--wrap=display_send_txt_msg
-# LDWRAP+= -Wl,--wrap=display_send_txt_connection
+# # TODO : comment if run race_protocol
+LDWRAP+= -Wl,--wrap=convert_uint16_to_2_bytes
 
-# # TODO : comment if run test of proxy_robot
-# LDWRAP+= -Wl,--wrap=robot_try_mvmt
-# LDWRAP+= -Wl,--wrap=robot_start_scanning
-# LDWRAP+= -Wl,--wrap=robot_stop_scanning
-# LDWRAP+= -Wl,--wrap=robot_urgent_break
-# LDWRAP+= -Wl,--wrap=robot_reset_odometry
-
-# # TODO : comment if run test of robot_state
-# #LDWRAP+= -Wl,--wrap=robot_state_mutex_init
-# #LDWRAP+= -Wl,--wrap=robot_state_mutex_destroy
-
-# # TODO : comment if run test of pilot
-# LDWRAP+= -Wl,--wrap=pilot_signal_connection_success
- 					
-# # TODO : comment if run test of proxy_pocket
-# LDWRAP+= -Wl,--wrap=proxy_indicate_connection
-# LDWRAP+= -Wl,--wrap=proxy_indicate_manual
-# LDWRAP+= -Wl,--wrap=proxy_indicate_auto
-
-# LDWRAP+= -Wl,--wrap=proxy_pocket_send_error
-# LDWRAP+= -Wl,--wrap=proxy_pocket_send_map
-# LDWRAP+= -Wl,--wrap=proxy_pocket_send_position
-
-# # TODO : comment if run test of postman_pocket
-# LDWRAP+= -Wl,--wrap=postman_pocket_receive_msg
-
-# # TODO : comment if run test of display
-# LDWRAP+= -Wl,--wrap=display_send_txt_state
-# LDWRAP+= -Wl,--wrap=display_send_txt_msg
-# LDWRAP+= -Wl,--wrap=display_send_txt_connection
-
-# #LDWRAP+= -Wl,--wrap=robot_try_path
-# #LDWRAP+= -Wl,--wrap=gtk_label_set_label
 
 # LDWRAP+= -Wl,--wrap=read
 
@@ -82,7 +47,7 @@ CCFLAGS += -I. -I$(CMOCKA)/include
 CCFLAGS += -DNDEBUG # avec debuggage : -DDEBUG | sans debuggage : -DNDEBUG
 
 # Liens pour les tests.
-LDFLAGS += -L$(CMOCKA)/lib
+LDFLAGS += -L$(CMOCKA)/lib 
 
 
 CCFLAGS += -ftest-coverage -fprofile-arcs

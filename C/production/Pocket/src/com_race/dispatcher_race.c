@@ -206,11 +206,6 @@ static void dispatcher_race_check_for_message(){
 
 	myMessageMq = dispatcher_race_mq_receive();
 
-	
-
-
-	
-
 }
 
 

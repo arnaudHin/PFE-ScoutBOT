@@ -35,6 +35,8 @@ typedef struct{
 }Message_with_race_t;
 
 
+//1012 pour right 486806756
+//1011 pour LEFT
 
 extern void race_protocol_init();
 extern void race_protocol_encode(Message_with_race_t * messageToEncode, uint8_t * bufferToEncode);

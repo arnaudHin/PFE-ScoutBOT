@@ -37,7 +37,7 @@ extern void race_protocol_init(){
 	}
 }
 
-
+//encode messageToEncode et le met dans bufferToEncode
 extern void race_protocol_encode(Message_with_race_t * messageToEncode, uint8_t * bufferToEncode){
 
 	pthread_mutex_lock(&mutexEncode);
@@ -45,7 +45,7 @@ extern void race_protocol_encode(Message_with_race_t * messageToEncode, uint8_t 
     uint16_t index = 0;
 
     uint8_t cmd = (uint8_t) messageToEncode->command;
-    memcpy( bufferToEncode, &cmd, sizeof(uint8_t) );
+    memcpy( bufferToEncode, &cmd, sizeof(uint8_t) ); //dans le premier octet on met la commande
     index++;
 
 
@@ -55,8 +55,8 @@ extern void race_protocol_encode(Message_with_race_t * messageToEncode, uint8_t 
     // free(size);
     // index += sizeof(uint16_t);
     uint8_t buf[2];
-    convert_uint16_to_2_bytes(buf, messageToEncode->sizeData);
-    memcpy( (bufferToEncode + index), &buf, sizeof(uint16_t) );
+    convert_uint16_to_2_bytes(buf, messageToEncode->sizeData); //On converti la taille de la data de uint16 a 2bit 
+    memcpy( (bufferToEncode + index), &buf, sizeof(uint16_t) ); //on met la taille dans les 2 eme et 3 eme bit
     index +=2;
 
     switch (messageToEncode->command)

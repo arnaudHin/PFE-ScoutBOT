@@ -26,14 +26,9 @@
 /** Number of test suites to run.. */
 #define NB_SUITE_TESTS 1
 
-// extern int network_pilot_run_tests(void); // long test (7s+)
-// extern int display_run_tests(void);
-// extern int pilot_run_tests(void);
-// extern int geographer_run_tests(void);
-// extern int robot_state_run_tests(void);
-// extern int copilot_run_tests(void);
-// extern int com_pocket_dispatcher_pocket_run_tests(void);
+
 extern int com_race_postman_run_tests(void);
+extern int com_race_protocol_run_tests(void);
 
 /** List of test suites to run. */
 int (* suite_tests[])(void) =
@@ -46,6 +41,7 @@ int (* suite_tests[])(void) =
 	geographer_run_tests,
 	copilot_run_tests,*/
 	// com_pocket_dispatcher_pocket_run_tests,
+	com_race_protocol_run_tests,
 	com_race_postman_run_tests
 
 	/*network_pilot_run_tests // put this one in last (one of the tests takes time)

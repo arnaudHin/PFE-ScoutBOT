@@ -1,9 +1,9 @@
 /**
- * @file  postman_test.c
- * @author Debus Alexy
+ * @file  postman_race_test.c
+ * @author BRIENT Nathan
  * @version 1.0
- * @date 14/06/2020
- * @brief test postman.c
+ * @date 
+ * @brief test postman_race.c
  */
 
 #include "../../src/com_race/postman_race.c"
@@ -28,20 +28,14 @@ static int tear_down(void **state) {
 
 //Negative 16 bit values are forbidden
 
-static void test_function_1(){ //Litle Endian format
+static void test_postman_race_send_message(){ //Litle Endian format
 
 
-
-	uint16_t result = 0;
-	uint16_t result2 = 0;
-
-
-	assert_int_equal(result,result2);
 }
 
 static const struct CMUnitTest tests[] =
 {
-   cmocka_unit_test(test_function_1),
+   cmocka_unit_test(test_postman_race_send_message),
 
 };
 
