@@ -73,57 +73,36 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
 
     fprintf(stderr, "\n coucou 0 \n");
 
-    heapSort(data.lidarData.X_buffer, LIDAR_TOTAL_DEGREE);
-    heapSort(data.lidarData.Y_buffer, LIDAR_TOTAL_DEGREE);
-    uint8_t max_x = 0;
-    uint8_t max_y = 0;
-    if (dataPos.lidarData.X_buffer[0] != 0)
-    {
-        max_x = abs(data.lidarData.X_buffer[0]) / 380;
-    }
-    else
-    {
-        max_x = 190;
-    }
-    if (dataPos.lidarData.Y_buffer[0] != 0)
-    {
-        max_y = abs(data.lidarData.Y_buffer[0]) / 280;
-    }
-    else
-    {
-        max_y = 140;
-    }
+    // heapSort(data.lidarData.X_buffer, LIDAR_TOTAL_DEGREE);
+    // heapSort(data.lidarData.Y_buffer, LIDAR_TOTAL_DEGREE);
+    // uint8_t max_x = 0;
+    // uint8_t max_y = 0;
+    // if (dataPos.lidarData.X_buffer[0] != 0)
+    // {
+    //     max_x = abs(data.lidarData.X_buffer[0]) / 380;
+    // }
+    // else
+    // {
+    //     max_x = 190;
+    // }
+    // if (dataPos.lidarData.Y_buffer[0] != 0)
+    // {
+    //     max_y = abs(data.lidarData.Y_buffer[0]) / 280;
+    // }
+    // else
+    // {
+    //     max_y = 140;
+    // }
 
     fprintf(stderr, "\n coucou 1 \n");
 
-    for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
-    {
-        dataPos.lidarData.X_buffer[i] += abs(data.lidarData.X_buffer[0]);
-        dataPos.lidarData.Y_buffer[i] += abs(data.lidarData.Y_buffer[0]);
-        if (dataPos.lidarData.X_buffer[i] != 0)
-        {
-            dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / max_x);
-        }
-        else
-        {
-            dataPos.lidarData.X_buffer[i] = 190;
-        }
-        if (dataPos.lidarData.Y_buffer[i] != 0)
-        {
-            dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / max_y);
-        }
-        else
-        {
-            dataPos.lidarData.Y_buffer[i] = 140;
-        }
-    }
     // for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     // {
-    //     dataPos.lidarData.X_buffer[i] += 6000;
-    //     dataPos.lidarData.Y_buffer[i] += 6000;
+    //     dataPos.lidarData.X_buffer[i] += abs(data.lidarData.X_buffer[0]);
+    //     dataPos.lidarData.Y_buffer[i] += abs(data.lidarData.Y_buffer[0]);
     //     if (dataPos.lidarData.X_buffer[i] != 0)
     //     {
-    //         dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / 31.57);
+    //         dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / max_x);
     //     }
     //     else
     //     {
@@ -131,13 +110,34 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     //     }
     //     if (dataPos.lidarData.Y_buffer[i] != 0)
     //     {
-    //         dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / 42.85);
+    //         dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / max_y);
     //     }
     //     else
     //     {
     //         dataPos.lidarData.Y_buffer[i] = 140;
     //     }
     // }
+    for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+    {
+        dataPos.lidarData.X_buffer[i] += 6000;
+        dataPos.lidarData.Y_buffer[i] += 6000;
+        if (dataPos.lidarData.X_buffer[i] != 0)
+        {
+            dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / 31.57);
+        }
+        else
+        {
+            dataPos.lidarData.X_buffer[i] = 190;
+        }
+        if (dataPos.lidarData.Y_buffer[i] != 0)
+        {
+            dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / 42.85);
+        }
+        else
+        {
+            dataPos.lidarData.Y_buffer[i] = 140;
+        }
+    }
     fprintf(stderr, "\n coucou 2 \n");
 
     switch (mapStatic)

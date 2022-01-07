@@ -24,7 +24,7 @@ button {
   /*min-height: 122px;*/
   /* height of button */
   /*  xxx min-height: 22px; */
-
+  /*background-color: rgb(180, 156, 89);*/
   /*min-width: 20px;*/
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
@@ -38,7 +38,7 @@ button {
 
   /*padding: 115px 8px;*/
 
-  color: #fdfdfd;
+  color: #ffffff;
   /* green text */
   /* xxx  color: #303030; */
 
@@ -51,8 +51,6 @@ button {
   /* xxx added line */
   /*background-image: radial-gradient(ellipse at center, yellow 20%, blue 80%); */
   /* see button active */
-
-  background-color: rgb(180, 156, 89);
 }
 
 

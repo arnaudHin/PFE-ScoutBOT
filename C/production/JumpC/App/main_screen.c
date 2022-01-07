@@ -206,7 +206,7 @@ static void draw_brush(GtkWidget *p_wid)
 
 static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
 {
-    cairo_set_line_width(cr, 1.0);
+    cairo_set_line_width(cr, 2.0);
     cairo_set_source_rgb(cr, 1.0, 1.0, 0.0);
     if (STATIC == currentMode)
     {
@@ -227,6 +227,7 @@ static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
             cairo_rectangle(cr, dataPos.lidarData.X_buffer[i], dataPos.lidarData.Y_buffer[i], 2.5, 2.5);
         }
         cairo_stroke(cr);
+        cairo_set_line_width(cr, 1.0);
         cairo_set_source_rgb(cr, 1.0, 0.32, 0.4);
         cairo_rectangle(cr, 380 / 2 - 5, 230 / 2 - 5, 10.0, 10.0); //Middle point - car in the center
     }
