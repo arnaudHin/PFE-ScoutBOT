@@ -41,11 +41,10 @@ u_result displayValue(RPlidarDriver * drv)
     
     rplidar_response_measurement_node_hq_t nodes[8192];
     size_t   count = _countof(nodes);
-    
+
     float valueA;
     float valueD;
     float valueQ;
-    float valueAR;
     float x = 0;
     float y = 0;
 
@@ -54,11 +53,23 @@ u_result displayValue(RPlidarDriver * drv)
     if (IS_OK(ans) || ans == RESULT_OPERATION_TIMEOUT) {
         drv->ascendScanData(nodes, count);
 
-        int xBuffer[(int)count];
-        int yBuffer[(int)count];
+        int xBuffer[360];
+        int yBuffer[360];
+
+
+        float compt = count/360.0;
+        float compt2 = 0.0;
+        int compBuffer[360];
+
+        for(int i = 0; i<360; i++){
+            compt2 += compt;
+            compBuffer[i] = (int) compt2;
+        }
+
+        int nb = 0;
 
         for (int posi = 0; posi < (int)count ; ++posi) {
-
+            nb +=1;
             valueA = (nodes[posi].angle_z_q14* 90.f / (1 << 14));
             valueD = nodes[posi].dist_mm_q2/4.0f;
             valueQ = (nodes[posi].quality);
@@ -70,17 +81,19 @@ u_result displayValue(RPlidarDriver * drv)
             x = (valueD * cos(valueA));
             y = (valueD * sin(valueA));
 
-            xBuffer[posi] = x;
-            yBuffer[posi] = y;
-        }     
-        
-        //display data on file.txt
-
-        for (int posi = 0; posi < (int)count ; ++posi) {
-            myfile << xBuffer[posi] << "," << yBuffer[posi] << ",";
+            //one data to one degree
+            for (int i = 0;i<360;i++){
+                if(nb == compBuffer[i]){
+                    xBuffer[i] = x;
+                    yBuffer[i] = y;
+                }
+            }
         }
 
-        fprintf(stderr, "\nFichier 'position_gtk.txt' cree\n");
+        //display data on file.txt
+        for (int posi = 0; posi < 360 ; ++posi) {
+            myfile << xBuffer[posi] << "," << yBuffer[posi] << ",";
+        }
     } 
     else 
     {

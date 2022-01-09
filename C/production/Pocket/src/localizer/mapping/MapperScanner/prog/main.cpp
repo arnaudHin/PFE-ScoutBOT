@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "lidar.hpp"
 
-#define displayInformation 1
+#define displayInformation 0
 
 using namespace rp::standalone::rplidar;
 
@@ -121,13 +121,13 @@ int main(int argc, const char * argv[]) {
             break;
         }
 
-        for (int pos = 0; pos < 10 ; ++pos) {
-            if(pos == 9){
+        // for (int pos = 0; pos < 10 ; ++pos) {
+        //     if(pos == 9){
                 if (IS_FAIL(displayValue(drv))) {
                     fprintf(stderr, "Error, cannot grab scan data.\n");
                     break;
-                }
-            }
+            //     }
+            // }
         }
 
     } while(0);

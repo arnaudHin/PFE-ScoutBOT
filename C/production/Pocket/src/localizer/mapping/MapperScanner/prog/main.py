@@ -50,8 +50,9 @@ data = lire_file("../output/position_gtk.txt", 'utf_8')
 x = data[0::2]
 x.pop()
 y = data[1::2]
-
 affichage(x,y)
+
+
 
 
 

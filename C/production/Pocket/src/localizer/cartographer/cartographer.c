@@ -221,6 +221,7 @@ extern void cartographer_signal_stop(){
     cartographer_mq_send(E_STOP_CARTO_C);
 }
 
+
 extern uint8_t cartographer_getStartState(){
 	return CARTO_START;
 }

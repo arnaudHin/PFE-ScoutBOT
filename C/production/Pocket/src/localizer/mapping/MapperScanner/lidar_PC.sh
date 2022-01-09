@@ -1,6 +1,9 @@
 #!/bin/bash
 
 echo -e "Lancement du programme LIDAR MAPPING"
+
+make clean
+make
 cd output
 rm -f position_gtk.txt
 echo -e "\nExecution de prog.elf\n"

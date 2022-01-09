@@ -26,7 +26,7 @@
 
 
 #define MQ_MAX_MESSAGES (10)
-#define TAILLE_MAX 2013
+#define TAILLE_MAX 720
 
 
 typedef enum{
@@ -146,7 +146,6 @@ static void * mapper_run();
 static void mapper_waitTaskTermination();
 static void mapper_getLidarValues();
 static void mapper_performAction(Mapper_transistion_action_e action);
-static void mapper_getLidarValues_test();
 
 static void mapper_start();
 static void perform_mapper_stop();
@@ -221,7 +220,7 @@ static void mapper_performAction(Mapper_transistion_action_e action)
 				mapper_mq_send(E_SCAN_M);
 			case T_SCANNING_M :
 				/* BEGIN LIDAR SCANNING */
-				//mapper_getLidarValues();
+				// mapper_getLidarValues();
 				mapper_getLidarValues();
 				/* END LIDAR SCANNING */
 				mapper_mq_send(E_SET_LIDAR_DATA_M);
@@ -245,109 +244,41 @@ static void mapper_performAction(Mapper_transistion_action_e action)
 }
 
 
-
-
-static void mapper_getLidarValues_test(){
-
-	int16_t timData = -5000;
-
-	for (size_t i = 0; i < 360 ; i++){
-		myMapper->lidarData.X_buffer[i] = (int16_t) (timData+(int16_t) i*20) ;
-		myMapper->lidarData.Y_buffer[i] = (int16_t) (timData +(int16_t) i*20);
-	}
-	//timData++;
-
-	sleep(3);
-}
-
-
-
-
 static void mapper_getLidarValues(){
     FILE* fichier = NULL;
     uint32_t buf_index = 0;
     int16_t x;
     int16_t y;
-    //fprintf(stderr, "Ouverture du fichier lidar.sh\n");
-    //system("./lidar.sh");
+	int16_t bufX[360];
+	int16_t bufY[360];
+
+    // fprintf(stderr, "Ouverture du fichier lidar.sh\n");
+	system("chmod +x ./lidar.sh");
+    system("./lidar.sh");
     fichier = fopen("position_gtk.txt","r");
 
-
-    int16_t num;
-    uint16_t ind0 = 0;
-    uint16_t ind1 = 0;
-
-	//int16_t buffer0[TAILLE_MAX/2];
-	//int16_t buffer1[TAILLE_MAX/2];
-	int16_t bufferAll[TAILLE_MAX];
-    
-
-    if (fichier != NULL)
+	if (fichier != NULL)
     {
         do{
-            int a = fscanf(fichier, "%hd,", &num);  
-            bufferAll[buf_index] = (int16_t) num;
+            int a = fscanf(fichier, "%hd,%hd,", &x, &y);
+			bufX[buf_index] = x;
+			bufY[buf_index] = y;
             buf_index++;
-        }while( !feof(fichier) );
+        }while( !feof(fichier));
 
         fclose(fichier);
     }
 
-   for (size_t i = 0; i < TAILLE_MAX; i++)
-    {
-
-		if(i > 720){
-			return NULL;
-			
-			for (size_t i = 0; i < 100; i++)
-			{
-				fprintf(stderr, "%hd,%hd", myMapper->lidarData.X_buffer[i], myMapper->lidarData.Y_buffer[i]);
-			}
-
-	
-		}
-
-        if(i%2 == 0){
-            myMapper->lidarData.X_buffer[ind0] = bufferAll[i];
-            ind0++;
-        }
-        else{
-            myMapper->lidarData.X_buffer[ind1] = bufferAll[i];
-            ind1++;
-        }
-
-		sleep(2);
-
+    else{
+        fprintf(stderr,"Error! opening file 'position_gtk.txt'\n");
     }
 
-
-    // if (fichier != NULL)
-    // {
-    //     do{
-    //         int a = fscanf(fichier, "%hd,%hd,", &x, &y);
-    //         myMapper->lidarData.X_buffer[buf_index] = x;
-    //         myMapper->lidarData.Y_buffer[buf_index] = y;  
-    //         buf_index++;
-    //     }while( !feof(fichier) );
-    //     fclose(fichier);
-    // }
-
-    // else{
-    //     fprintf(stderr,"Error! opening file 'position_gtk.txt'\n");
-    // }
-	// 		for (size_t i = 0; i < 100; i++)
-	// 		{
-	// 			fprintf(stderr,"%d,%d\n", myMapper->lidarData.X_buffer[i], myMapper->lidarData.Y_buffer[i]);
-	// 		}
-
-
-
-
-
+	for (size_t i = 0; i < 360 ; i++){
+		myMapper->lidarData.X_buffer[i] = (int16_t) bufX[i] ;
+		myMapper->lidarData.Y_buffer[i] = (int16_t) bufY[i];
+	}
+	sleep(3);
 }
-
-
-
 
 
 

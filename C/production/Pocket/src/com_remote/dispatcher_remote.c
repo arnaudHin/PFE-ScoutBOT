@@ -131,9 +131,10 @@ static void * dispatcher_remote_run(){
 			case ASK_QUIT:
 				fprintf(stderr, "dispatcher_remote_run receive ASK_QUIT\n");
 				ask_quit = 1;
-				cartographer_signal_stop();
+				pilot_set_direction(STOP);
 				pilot_signal_exit();
 				dispatcher_remote_stop();
+				cartographer_signal_stop();
 				break;
 
 			case ASK_4_DATA:
