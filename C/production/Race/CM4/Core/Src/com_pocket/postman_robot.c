@@ -91,7 +91,6 @@ static void postman_robot_read_message(){
 	printf("Postman read \n");
 
 	memcpy(buffer_read, VIRT_UART_read_message_0(), MAX_RECEPTION_VUART_SIZE);
-
 }
 
 

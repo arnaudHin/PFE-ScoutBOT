@@ -24,7 +24,6 @@ static void dispatcher_robot_dispatch_msg(Message_with_race_t msg);
 /*********************************************************************************/
 
 extern void dispatcher_robot_set_msg(Message_with_race_t msg){
-	printf("je suis dans le set message\n");
 	dispatcher_robot_dispatch_msg(msg);
 }
 
@@ -45,7 +44,6 @@ static void dispatcher_robot_dispatch_msg(Message_with_race_t msg){
 			messageToRobot.event = E_TRY_DIR;
 			robot_run(messageToRobot);
 			break;
-
 
 		default:
 			break;

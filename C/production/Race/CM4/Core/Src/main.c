@@ -116,8 +116,9 @@ int main(void)
 
 	#if USE_MOTORS
 	  TIMER_INIT();
-	  TIMER4_RUN();
+	  TIMER4_STOP();
 	#endif
+
 
     #if USE_MPU6050
 	  MPU6050_Init();
@@ -166,6 +167,7 @@ int main(void)
 		ON_Led(LED4_GREEN);
 	}
 	else{
+		ON_Led(LED7_ORANGE);
 		postman_robot_run();
 	}
   }

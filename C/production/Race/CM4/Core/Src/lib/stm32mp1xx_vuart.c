@@ -90,22 +90,18 @@ extern void VIRT_UART_send_message_1(unsigned char buffer[BUFFER_SEND_MESSAGE],i
 }
 
 extern __IO FlagStatus get_RX_msg_0(){
-	ON_Led(LED7_ORANGE);
 	return VirtUart0RxMsg;
 }
 
 extern __IO FlagStatus get_RX_msg_1(){
-	ON_Led(LED6_RED);
 	return VirtUart1RxMsg;
 }
 
 extern void set_RX_msg_0(__IO FlagStatus flag){
-	OFF_Led(LED7_ORANGE);
 	VirtUart0RxMsg = flag;
 }
 
 extern void set_RX_msg_1(__IO FlagStatus flag){
-	OFF_Led(LED6_RED);
 	VirtUart1RxMsg = flag;
 }
 
