@@ -127,6 +127,8 @@ static const char queue_name[] = "/adminpositioning"; //name of mailbox
 static mqd_t id_bal;	
 static pthread_t mythread;
 static pthread_mutex_t myMutex=PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t myMutexRefreshData=PTHREAD_MUTEX_INITIALIZER;
+
 static adminpositioning_t * myAdminpositioning;
 
 
@@ -145,6 +147,7 @@ static void adminpositioning_performAction(adminpositioning_transistion_action_e
 static void adminpositioning_start();
 static void adminpositioning_stop();
 static void adminpositioning_perform_setPositionData();
+static void adminPositioning_setPosition(Position_data_t * position);
 
 
 /**********************************  PUBLIC FUNCTIONS ************************************************/
@@ -246,13 +249,37 @@ static void adminpositioning_performAction(adminpositioning_transistion_action_e
 static void adminpositioning_BLE_positioning(){
     
     /* BEGIN Call python positioning script */
-
+	FILE* fichier = NULL;
+    Position_data_t actualPosition;
+    system("./Indoor_poisioning/bash/RSSI_scan.sh");
+    printf("on ouvre le fichier \n");
+    fichier = fopen("Indoor_poisioning/results/position.txt", "r");
+    if (fichier != NULL){
+        fscanf(fichier, "%f %f", &(actualPosition.x), &(actualPosition.y));  
+        adminPositioning_setPosition(&actualPosition);
+        printf("la position est x = %f y = %f room = %f",myAdminpositioning->positionData.x,myAdminpositioning->positionData.y,myAdminpositioning->positionData.room);          
+        fclose(fichier);
+    }else{
+            // On affiche un message d'erreur si on veut
+        printf("Impossible d'ouvrir le fichier position.txt \n");
+    }
     /* END Call python positioning script */
-	sleep(5);
+	//sleep(5);
 
 }
 
 
+/** \fn static adminPositioning_setPosition(Position_data_t * position)
+ *  \brief set position
+ */
+static void adminPositioning_setPosition(Position_data_t * position)
+{
+    pthread_mutex_lock(&myMutexRefreshData);
+    myAdminpositioning->positionData.x = position->x;
+    myAdminpositioning->positionData.y  = position->y;
+    myAdminpositioning->positionData.room = position->room;
+    pthread_mutex_unlock(&myMutexRefreshData);
+}
 
 /** @fn extern void adminpositioning_start()
  *  @brief Function dedicated to execute the adminpositioning thread
