@@ -68,16 +68,16 @@ extern ssize_t postman_remote_write(uint8_t * bufferToWrite , ssize_t nbBytes)
 extern ssize_t postman_remote_receive(uint8_t * bufferToReceive , ssize_t nbBytes){
 
 	int resultRead = 0;
-	resultRead  = recv(mySocket, bufferToReceive, nbBytes, MSG_WAITALL);
+	resultRead  = recv(mySocket, bufferToReceive, nbBytes, 0);
 	if (resultRead == -1){
 		perror("ERROR POSTMAN POCKET READ\n");
 	}
 
-/*
+
 	fprintf(stderr, "   0 : %d\n", bufferToReceive[0]);
 	fprintf(stderr, "   1 : %d\n", bufferToReceive[1]);
     fprintf(stderr, "   2 : %d\n", bufferToReceive[2]);
-*/
+
 	return resultRead;
 }
 
@@ -99,7 +99,7 @@ void postman_remote_start()
 	mon_adresse.sin_port = htons (PORT_DU_SERVEUR); /* Port TCP or the service is accessible */
 	mon_adresse.sin_addr.s_addr = htonl (INADDR_ANY); /* attach to all interfaces */
 
-	/*
+	/*	
 	 *  We may reuse this address (if connection problem), that is why we use :setsockopt with SO_REUSEADDR
 	 * int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
 	 * SOL_SOCKET : Use this constant as the level argument to getsockopt or setsockopt to manipulate

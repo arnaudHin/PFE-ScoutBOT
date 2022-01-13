@@ -9,4 +9,13 @@ cd src/localizer/mapping/MapperScanner
 pwd
 ./send_MP1.sh
 
+cd ../../positioning
+./send_MP1.sh
+cd Indoor_positioning/bash
+chmod +x btmon_search.sh
+chmod +x btsnoop_hci
+chmod +x btsnoop_hci.txt
+chmod +x init.sh
+chmod +x RSSI_scan.sh
+
 echo -e "\nFin des envoies\n"

@@ -30,7 +30,7 @@
 
 static pthread_t pthread;
 static Message_from_jump_t myMessageFromJump;
-static uint8_t myBufferFromJump[3];
+// static uint8_t myBufferFromJump[3];
 static uint8_t ask_quit = 0;
 
 
@@ -161,7 +161,7 @@ static void * dispatcher_remote_run(){
 
 
 static void dispatcher_remote_check_for_message(){
-
+	uint8_t myBufferFromJump[3];
 	ssize_t resultRead = 0;
     ssize_t byteToRead = CMD_SIZE_BYTE + 2;
 
@@ -180,16 +180,16 @@ static void dispatcher_remote_check_for_message(){
 	//DECODE myBufferFromJump -> myMessageFromJump (CMD + SIZEdata)
 	remote_protocol_decode(myBufferFromJump, &myMessageFromJump, byteToRead);
 
-	if(myMessageFromJump.sizeData == 1280){
-		myMessageFromJump.sizeData = 0;
-		myMessageFromJump.command = ASK_4_DATA;
-	}
-	if(myMessageFromJump.sizeData == 5){
-		myMessageFromJump.sizeData = 0;
-		myMessageFromJump.command = ASK_4_DATA;
-	}
+	// if(myMessageFromJump.sizeData == 1280){
+	// 	myMessageFromJump.sizeData = 0;
+	// 	myMessageFromJump.command = ASK_4_DATA;
+	// }
+	// if(myMessageFromJump.sizeData == 5){
+	// 	myMessageFromJump.sizeData = 0;
+	// 	myMessageFromJump.command = ASK_4_DATA;
+	// }
 
-	//fprintf(stderr, "\nCMD : %d | Size : %d | \n", myMessageFromJump.command, myMessageFromJump.sizeData);
+	fprintf(stderr, "\nCMD : %d | Size : %d | \n", myMessageFromJump.command, myMessageFromJump.sizeData);
 
 	if(myMessageFromJump.sizeData != 0){
 		byteToRead = myMessageFromJump.sizeData;
