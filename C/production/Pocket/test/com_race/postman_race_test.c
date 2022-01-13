@@ -30,7 +30,22 @@ static int tear_down(void **state) {
 
 static void test_postman_race_send_message(){ //Litle Endian format
 
+    uint8_t writeReturn = 4;
+    uint8_t bufferToSend[4];
+	memset(bufferToSend, 0x00, sizeof(bufferToSend ));
+    uint16_t bytesToSend = sizeof(bufferToSend );
+    //spy write
+	expect_function_call(__wrap_write);
+	expect_value(__wrap_write, __fd, serial_port);
+	expect_value(__wrap_write, __buf, bufferToSend);
+	expect_value(__wrap_write, __n, bytesToSend);
 
+	//stub write
+	will_return(__wrap_write, writeReturn);
+
+
+
+	postman_race_send_message(bufferToSend,bytesToSend );
 }
 
 static const struct CMUnitTest tests[] =

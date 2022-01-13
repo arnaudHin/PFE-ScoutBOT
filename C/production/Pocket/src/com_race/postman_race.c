@@ -210,12 +210,6 @@ extern void postman_race_send_message(uint8_t * bufferToWrite, uint16_t bytesToS
 
 
 
-
-
-
-
-
-
 // static void postman_race_dispatch (char * buffer_read, Pilot_message_r * pilot_message){
 
 // 	pilot_message->start_flag = 0;

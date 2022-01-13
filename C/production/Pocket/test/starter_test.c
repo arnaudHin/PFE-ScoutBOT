@@ -24,11 +24,12 @@
 // define #define NDEBUG (1) in src/util.h
 
 /** Number of test suites to run.. */
-#define NB_SUITE_TESTS 1
+#define NB_SUITE_TESTS 3
 
 
 extern int com_race_postman_run_tests(void);
 extern int com_race_protocol_run_tests(void);
+extern int proxy_robot_run_tests(void);
 
 /** List of test suites to run. */
 int (* suite_tests[])(void) =
@@ -42,7 +43,8 @@ int (* suite_tests[])(void) =
 	copilot_run_tests,*/
 	// com_pocket_dispatcher_pocket_run_tests,
 	com_race_protocol_run_tests,
-	com_race_postman_run_tests
+	com_race_postman_run_tests,
+	proxy_robot_run_tests
 
 	/*network_pilot_run_tests // put this one in last (one of the tests takes time)
 	*/

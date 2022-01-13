@@ -17,9 +17,11 @@ PACKAGES+= pilot
 # LDWRAP = -Wl,--wrap=proxy_pocket_send_position
 
 # # TODO : comment if run race_protocol
-LDWRAP+= -Wl,--wrap=convert_uint16_to_2_bytes
+LDWRAP+= -Wl,--wrap=write
 
-
+# # TODO : comment if run race_protocol
+LDWRAP+= -Wl,--wrap=race_protocol_encode
+LDWRAP+= -Wl,--wrap=postman_race_send_message
 # LDWRAP+= -Wl,--wrap=read
 
 
@@ -28,16 +30,20 @@ LDWRAP+= -Wl,--wrap=convert_uint16_to_2_bytes
 #
 
 # Un niveau de package est accessible.
+SRC = $(wildcard *.c)	
 SRC = $(wildcard */*.c)		
 SRC += $(wildcard */*/*.c)		
-SRC += $(wildcard */*/*/*.c)		
-
+SRC += $(wildcard */*/*/*.c)
+SOURCE = $(wildcard *.c)	
+GCDA = $(SOURCE:.c=.gcda)
+GCNO = $(SOURCE:.c=.gcno)
 OBJ = $(SRC:.c=.o)
 # Point d'entrée du programme.
 MAIN = starter_test.c
 
 # Gestion automatique des dépendances.
 DEP = $(MAIN:.c=.d)
+
 
 # Executable à générer
 EXEC = ../$(TEST)
@@ -72,7 +78,7 @@ $(EXEC): $(OBJ) $(MAIN)
 
 clean:
 	@for p in $(PACKAGES); do (cd $$p && $(MAKE) $@); done
-	@rm -f $(DEP)
+	@rm -f $(OBJ) $(DEP)  $(GCNO)
 
 -include $(DEP)
 

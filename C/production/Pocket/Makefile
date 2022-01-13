@@ -6,6 +6,7 @@
 # @brief Defined set of tasks to be executed
 #
 
+
 # TO MODIFY : Keep the line below ONLY if you are doing tests
 #export CCFLAGS += -DNTEST
 
@@ -28,7 +29,7 @@ export BINDIR = bin
 
 
 # Pour regler le probleme de Cmocka a la compilation, nous enlevons les tests
-SUBDIRS = $(SRCDIR) #$(TESTDIR)  
+SUBDIRS = $(TESTDIR) $(SRCDIR) 
 #
 # Definitions of tools.
 #
@@ -61,13 +62,15 @@ export TEST = $(BINDIR)/pocket_test
 all: 
 	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) $@); done
 
-
 .PHONY: clean 
 
 # Clean.
 clean:
 	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) $@); done
 	@rm -f $(PROG) $(TEST) core* $(BINDIR)/core*
+
+
+
 
 
 #all: 

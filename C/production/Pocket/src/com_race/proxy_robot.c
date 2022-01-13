@@ -20,8 +20,6 @@
 static Message_with_race_t myMessageToRace;
 
 
-
-
 extern void proxy_robot_try_dir(DATA_to_race_t * dataToRace){
 
 	myMessageToRace.command = TRY_DIR;

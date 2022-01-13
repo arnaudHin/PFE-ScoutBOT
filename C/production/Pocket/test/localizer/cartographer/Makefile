@@ -8,6 +8,8 @@
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 DEP = $(SRC:.c=.d)
+GCDA = $(SRC:.c=.gcda)
+GCNO = $(SRC:.c=.gcno)
 
 # Inclusion depuis le niveau du package.
 CCFLAGS += -I.. -I../.. -I../../.. -I../../../../$(SRCDIR)
@@ -26,6 +28,6 @@ all: $(OBJ)
 .PHONY: clean
 
 clean:
-	@rm -f $(OBJ) $(DEP)
+	@rm -f $(OBJ) $(DEP) $(GCDA) $(GCNO)
 
 -include $(DEP)

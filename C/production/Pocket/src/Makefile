@@ -5,6 +5,8 @@
 # @date 29/04/2020
 # @brief Defined set of tasks to be executed
 #
+SDK_REPO=/home/nathan/SDK
+STLINUX_GCC= $(SDK_REPO)/sysroots/x86_64-openstlinux_weston_sdk-linux/usr/bin/arm-openstlinux_weston-linux-gnueabi/arm-openstlinux_weston-linux-gnueabi-gcc
 
 ## ------------- PACKAGES -------------  
 # Project packages (to be completed if necessary)
@@ -36,6 +38,9 @@ DEP = $(MAIN:.c=.d)
 ## ------------- EXEC file -------------  
 # Executable to generate
 EXEC = ../$(PROG)
+
+
+#export CC = $(STLINUX_GCC)
 
 ## ------------- FLAGS -------------  
 # Inclusion from the package level.

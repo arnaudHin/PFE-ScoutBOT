@@ -26,7 +26,7 @@ all: $(OBJ)
 # Nettoyage.
 .PHONY: clean
 clean:
-	@rm -f $(OBJ) $(DEP)
+	@rm -f $(OBJ) $(DEP) $(GCDA) $(GCNO)
 
 -include $(DEP)
 
