@@ -104,10 +104,10 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
     memcpy(&messageToRead->data.positionData.x, (uint8_t *)bufferRead, sizeof(float));
     index += sizeof(float);
 
-    memcpy(&messageToRead->data.positionData.y, (uint8_t *)bufferRead, sizeof(float));
+    memcpy(&messageToRead->data.positionData.y, (uint8_t *)bufferRead+index, sizeof(float));
     index += sizeof(float);
 
-    memcpy(&messageToRead->data.positionData.room, (uint8_t *)bufferRead, sizeof(uint8_t));
+    memcpy(&messageToRead->data.positionData.room, (uint8_t *)bufferRead+index, sizeof(uint8_t));
     index++;
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
@@ -120,11 +120,6 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
         index += sizeof(int16_t);
     }
 
-    for (size_t i = 0; i < LIDAR_TOTAL_DEGREE / 8; i++)
-    {
-        fprintf(stderr, "Data lidar x[%ld] : %d \n", i, messageToRead->data.lidarData.X_buffer[i]);
-        fprintf(stderr, "Data lidar y[%ld] : %d \n", i, messageToRead->data.lidarData.Y_buffer[i]);
-    }
 
     fprintf(stderr, "\n ---END DECODE DATA --- \n");
 }

@@ -15,7 +15,7 @@ cp gtk_glade ./JumpCMP1
 cp projetUI.glade ./JumpCMP1
 cp ./Images/ST_Logo.png ./JumpCMP1/Images
 cp ./Jump_CSS/gtk.css ./JumpCMP1/Jump_CSS
-scp -r JumpCMP1 root@192.168.0.13:/usr/local/testMartin
+scp -r JumpCMP1 root@192.168.7.1:/usr/local/testMartin
 rm -r JumpCMP1
 make clean
 echo -e "\n\n Dossier JumpCMP1 envoyé !"

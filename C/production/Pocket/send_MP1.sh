@@ -18,4 +18,12 @@ chmod +x btsnoop_hci.txt
 chmod +x init.sh
 chmod +x RSSI_scan.sh
 
+cd ..
+cd ..
+cd ..
+cd ..
+cd ..
+
+make clean
+
 echo -e "\nFin des envoies\n"

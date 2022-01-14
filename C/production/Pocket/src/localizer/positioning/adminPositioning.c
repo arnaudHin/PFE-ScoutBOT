@@ -178,7 +178,9 @@ extern void adminpositioning_signal_stop(){
 
 //called by cartographer
 extern void adminpositioning_setPositionData(Position_data_t * posData){
+	fprintf(stderr, "\n adminpositioning_setPositionData \n");
 	*posData = myAdminpositioning->positionData;
+	fprintf(stderr,"%f %f    vs   %f %f\n", posData->x, posData->y, myAdminpositioning->positionData.x, myAdminpositioning->positionData.y);
 	//memcpy(lidarData, &myMapper->lidarData, sizeof(Lidar_data_t) );
 }
 
@@ -251,13 +253,13 @@ static void adminpositioning_BLE_positioning(){
     /* BEGIN Call python positioning script */
 	FILE* fichier = NULL;
     Position_data_t actualPosition;
-    system("./Indoor_poisioning/bash/RSSI_scan.sh");
-    printf("on ouvre le fichier \n");
-    fichier = fopen("Indoor_poisioning/results/position.txt", "r");
+    system("./Indoor_positioning/bash/RSSI_scan.sh");
+    //printf("on ouvre le fichier \n");
+    fichier = fopen("Indoor_positioning/results/data_indoor_pos.txt", "r");
     if (fichier != NULL){
-        fscanf(fichier, "%f %f", &(actualPosition.x), &(actualPosition.y));  
-        adminPositioning_setPosition(&actualPosition);
-        printf("la position est x = %f y = %f room = %f",myAdminpositioning->positionData.x,myAdminpositioning->positionData.y,myAdminpositioning->positionData.room);          
+        fscanf(fichier, "%f %f %d", &(myAdminpositioning->positionData.x), &(myAdminpositioning->positionData.y), &(myAdminpositioning->positionData.room));  
+		adminPositioning_setPosition(&(myAdminpositioning->positionData));
+        //printf("la position est x = %f y = %f room = %d",myAdminpositioning->positionData.x,myAdminpositioning->positionData.y,(uint8_t)myAdminpositioning->positionData.room);          
         fclose(fichier);
     }else{
             // On affiche un message d'erreur si on veut
@@ -275,8 +277,8 @@ static void adminpositioning_BLE_positioning(){
 static void adminPositioning_setPosition(Position_data_t * position)
 {
     pthread_mutex_lock(&myMutexRefreshData);
-    myAdminpositioning->positionData.x = position->x;
-    myAdminpositioning->positionData.y  = position->y;
+    myAdminpositioning->positionData.x = position->x * 1000;
+    myAdminpositioning->positionData.y  = position->y * 1000;
     myAdminpositioning->positionData.room = position->room;
     pthread_mutex_unlock(&myMutexRefreshData);
 }
