@@ -127,6 +127,13 @@ static void * dispatcher_remote_run(){
 				fprintf(stderr, "dispatcher_remote_run receive ASK_TRY_DIR\n");
 				pilot_set_direction(myMessageFromJump.data.direction);
 				break;
+			
+			case ASK_STOP_CALIBRATION:
+				fprintf(stderr, "dispatcher_remote_run receive ASK_STOP_CALIBRATION\n");
+				pilot_set_direction(STOP);
+				cartographer_signal_stop();
+
+				break;
 
 			case ASK_QUIT:
 				fprintf(stderr, "dispatcher_remote_run receive ASK_QUIT\n");
