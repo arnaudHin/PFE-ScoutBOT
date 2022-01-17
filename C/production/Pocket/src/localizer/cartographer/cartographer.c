@@ -35,6 +35,7 @@ typedef enum{
 	S_SET_LIDAR_DATA_C,
 	S_SET_POSITION_DATA_C,
 	S_ASK_4_DATA_C,
+	S_STANDBY_C,
 	S_DEATH_C,
 	NB_STATE_C
 }Cartographer_state_e;
@@ -46,6 +47,7 @@ static char * stateC[6] =
 	"S_SET_LIDAR_DATA_C",
 	"S_SET_POSITION_DATA_C",
 	"S_ASK_4_DATA_C",
+	"S_STANDBY_C",
 	"S_DEATH_C"};
 
 typedef enum{
@@ -67,6 +69,7 @@ typedef enum{
     E_ASK_4_DATA_C,
 	E_UPDATE_LIDAR_DATA_C,
 	E_UPDATE_POSITION_DATA_C,
+	E_STANDBY_C,
 	E_NB_EVENT_C
 }Cartographer_event_e;
 
@@ -77,7 +80,8 @@ static char * eventC[7] =
 	"E_STOP_CARTO_C",
 	"E_ASK_4_DATA_C",
 	"E_UPDATE_LIDAR_DATA_C",
-	"E_UPDATE_POSITION_DATA_C"
+	"E_UPDATE_POSITION_DATA_C",
+	"E_STANDBY_C"
 	};
 
 
@@ -104,14 +108,20 @@ typedef struct{
 
 
 
-
-
 static Transition_t myTransition[NB_STATE_C][E_NB_EVENT_C] = {
 
 	[S_IDLE_C][E_START_CARTO_C] = {S_RUNNING_C, T_START_CARTO_C},
 
 	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_DATA_C, T_ASK_4_DATA_C},
-	[S_RUNNING_C][E_NOP_C] = {S_RUNNING_C, T_NOP_C},
+	[S_RUNNING_C][E_ASK_4_DATA_C] = {S_ASK_4_DATA_C, T_ASK_4_DATA_C},
+	[S_RUNNING_C][E_STANDBY_C] = {S_STANDBY_C, T_NOP_C},
+
+	[S_STANDBY_C][E_NOP_C] = {S_STANDBY_C, T_NOP_C},
+	[S_STANDBY_C][E_ASK_4_DATA_C] = {S_RUNNING_C, T_ASK_4_DATA_C},
+	[S_STANDBY_C][E_ACK_C] = {S_STANDBY_C, T_NOP_C},
+	[S_STANDBY_C][E_UPDATE_POSITION_DATA_C] = {S_STANDBY_C, T_NOP_C},
+	[S_STANDBY_C][E_UPDATE_LIDAR_DATA_C] = {S_STANDBY_C, T_NOP_C},
+	[S_STANDBY_C][E_STANDBY_C] = {S_STANDBY_C, T_NOP_C},
 
 	[S_ASK_4_DATA_C][E_ACK_C] = {S_RUNNING_C, T_NOP_C},
 	[S_ASK_4_DATA_C][E_ASK_4_DATA_C] = {S_RUNNING_C, T_NOP_C},
@@ -221,6 +231,9 @@ extern void cartographer_signal_stop(){
     cartographer_mq_send(E_STOP_CARTO_C);
 }
 
+extern void cartographer_signal_stopCartographie(){
+    cartographer_mq_send(E_STANDBY_C);
+}
 
 extern uint8_t cartographer_getStartState(){
 	return CARTO_START;
