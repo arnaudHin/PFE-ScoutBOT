@@ -12,12 +12,14 @@
 #include <stdlib.h>
 #include "map_viewer.h"
 #include "commun.h"
+#include "util.h"
 #include "../App/main_screen.h"
 #include "../App/notice_popup.h"
 #include "stdio.h"
 
 static DATA_from_pocket_t dataPos;
 static uint8_t mapStatic = 0;
+static uint16_t count = 0;
 /////////////////////////////////////////////////
 ///                                           ///
 ///                PROTOTYPES                 ///
@@ -70,9 +72,8 @@ static void heapSort(int16_t arr[], int16_t n);
 extern void mapViewer_setData(DATA_from_pocket_t data)
 {
     dataPos = data;
-
-    fprintf(stderr, "\n coucou 0 \n");
-
+    count = 0;
+    // ZOOM Mode
     // heapSort(data.lidarData.X_buffer, LIDAR_TOTAL_DEGREE);
     // heapSort(data.lidarData.Y_buffer, LIDAR_TOTAL_DEGREE);
     // uint8_t max_x = 0;
@@ -93,9 +94,6 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     // {
     //     max_y = 140;
     // }
-
-    fprintf(stderr, "\n coucou 1 \n");
-
     // for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     // {
     //     dataPos.lidarData.X_buffer[i] += abs(data.lidarData.X_buffer[0]);
@@ -121,25 +119,40 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     {
         dataPos.lidarData.X_buffer[i] += 6000;
         dataPos.lidarData.Y_buffer[i] += 6000;
-        if (dataPos.lidarData.X_buffer[i] != 0)
+        if (dataPos.lidarData.X_buffer[i] != 6000)
         {
             dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / 31.57);
         }
         else
         {
-            dataPos.lidarData.X_buffer[i] = 190;
+            dataPos.lidarData.X_buffer[i] = 240;
+            count += 1;
         }
-        if (dataPos.lidarData.Y_buffer[i] != 0)
+        if (dataPos.lidarData.Y_buffer[i] != 6000)
         {
             dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / 42.85);
         }
         else
         {
-            dataPos.lidarData.Y_buffer[i] = 140;
+            dataPos.lidarData.Y_buffer[i] = 143;
+            count += 1;
         }
     }
-    fprintf(stderr, "\n coucou 2 \n");
 
+    dataPos.positionData.x = (uint16_t)(dataPos.positionData.x / 31.57);
+    dataPos.positionData.y = (uint16_t)(dataPos.positionData.y / 42.85);
+    // switch(dataPos.positionData.room){
+    //     case ROOM_A :
+    //     dataPos.positionData.x =
+    //     break;
+    //     case ROOM_B :
+
+    //     break;
+
+    //     default :
+    //     break;
+    // }
+    // dataPos.positionData.x
     switch (mapStatic)
     {
     case 1:
@@ -152,16 +165,9 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     default:
         break;
     }
-    fprintf(stderr, "\n coucou 3 \n");
 
     mapViewer_draw_map_static();
-
-    fprintf(stderr, "\n coucou 4 \n");
-
     mapViewer_draw_map_dynamic();
-
-    fprintf(stderr, "\n coucou 5 \n");
-
 }
 
 extern void mapViewer_calibrationSuccessful()
@@ -182,6 +188,12 @@ extern void mapViewer_free()
 
 static void mapViewer_draw_map_static()
 {
+    if (NONE == getStaticStarted() && 500 > count)
+    {
+        TRACE("TA race \n");
+        setStaticStarted(STARTED_IN_PROGRESS);
+    }
+    TRACE("TA race martin \n");
     mainScreen_draw_static_refresh(dataPos);
 }
 

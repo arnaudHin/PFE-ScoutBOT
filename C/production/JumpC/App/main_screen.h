@@ -26,6 +26,13 @@ typedef enum
     DYNAMIC
 } Mode_A;
 
+typedef enum
+{
+    NONE = 0,
+    STARTED_IN_PROGRESS,
+    STARTED
+} Static_Status;
+
 /**
  * @brief 
  * 
@@ -59,3 +66,17 @@ extern void mainScreen_draw_static_refresh(DATA_from_pocket_t data);
  * @param data 
  */
 extern void mainScreen_draw_dynamic_refresh(Lidar_data_t data);
+
+/**
+ * @brief Set the Static Started object
+ * 
+ * @param started 
+ */
+extern void setStaticStarted(Static_Status started);
+
+/**
+ * @brief Get the Static Started object
+ * 
+ * @return Static_Status 
+ */
+extern Static_Status getStaticStarted();

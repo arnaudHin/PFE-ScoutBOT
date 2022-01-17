@@ -14,16 +14,16 @@
         <child>
           <object class="GtkButton" id="acquitteButton">
             <property name="label" translatable="yes">Ok</property>
-            <property name="width-request">127</property>
-            <property name="height-request">49</property>
+            <property name="width-request">204</property>
+            <property name="height-request">102</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="on_acquitteButton_clicked" swapped="no"/>
           </object>
           <packing>
-            <property name="x">191</property>
-            <property name="y">139</property>
+            <property name="x">286</property>
+            <property name="y">198</property>
           </packing>
         </child>
         <child>
@@ -35,14 +35,14 @@
             <property name="label" translatable="yes">Une erreur est apparu lors de la tentative de connexion. 
 Veuillez à réessayer s'l vous plait.</property>
             <attributes>
-              <attribute name="font-desc" value="Lohit Gujarati 8"/>
+              <attribute name="font-desc" value="Sans 14"/>
               <attribute name="style" value="normal"/>
               <attribute name="gravity" value="north"/>
             </attributes>
           </object>
           <packing>
-            <property name="x">65</property>
-            <property name="y">38</property>
+            <property name="x">165</property>
+            <property name="y">65</property>
           </packing>
         </child>
       </object>
@@ -59,131 +59,131 @@ Veuillez à réessayer s'l vous plait.</property>
         <child>
           <object class="GtkButton" id="leftButton">
             <property name="label" translatable="yes">L</property>
-            <property name="width-request">57</property>
-            <property name="height-request">50</property>
+            <property name="width-request">68</property>
+            <property name="height-request">75</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">428</property>
-            <property name="y">151</property>
+            <property name="x">551</property>
+            <property name="y">148</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="forwardButton">
             <property name="label" translatable="yes">F</property>
-            <property name="width-request">57</property>
-            <property name="height-request">47</property>
+            <property name="width-request">85</property>
+            <property name="height-request">59</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="forwardButton_clicked_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">496</property>
-            <property name="y">87</property>
+            <property name="x">625</property>
+            <property name="y">85</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="rightButton">
             <property name="label" translatable="yes">R</property>
-            <property name="width-request">58</property>
-            <property name="height-request">52</property>
+            <property name="width-request">68</property>
+            <property name="height-request">75</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="right_clicked_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">564</property>
-            <property name="y">149</property>
+            <property name="x">715</property>
+            <property name="y">148</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="movebackButton">
             <property name="label" translatable="yes">M</property>
-            <property name="width-request">57</property>
-            <property name="height-request">47</property>
+            <property name="width-request">85</property>
+            <property name="height-request">69</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="moveBack_clicked_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">497</property>
-            <property name="y">215</property>
+            <property name="x">625</property>
+            <property name="y">226</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="stopActionButton">
             <property name="label" translatable="yes">Sto</property>
-            <property name="width-request">54</property>
-            <property name="height-request">53</property>
+            <property name="width-request">70</property>
+            <property name="height-request">62</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">498</property>
-            <property name="y">147</property>
+            <property name="x">632</property>
+            <property name="y">154</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="mapStatique">
             <property name="label" translatable="yes">Sta</property>
             <property name="name">staticButton</property>
-            <property name="width-request">55</property>
-            <property name="height-request">40</property>
+            <property name="width-request">57</property>
+            <property name="height-request">44</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="cb_moveScreen" swapped="no"/>
           </object>
           <packing>
-            <property name="x">31</property>
-            <property name="y">13</property>
+            <property name="x">45</property>
+            <property name="y">18</property>
           </packing>
         </child>
         <child>
           <object class="GtkToggleButton" id="calibrationButton">
             <property name="label" translatable="yes">Calibrage</property>
-            <property name="width-request">99</property>
-            <property name="height-request">47</property>
+            <property name="width-request">111</property>
+            <property name="height-request">59</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">473</property>
-            <property name="y">9</property>
+            <property name="x">611</property>
+            <property name="y">18</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="mapDynamique">
             <property name="label" translatable="yes">Dyn</property>
-            <property name="width-request">55</property>
-            <property name="height-request">40</property>
+            <property name="width-request">57</property>
+            <property name="height-request">44</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">85</property>
-            <property name="y">13</property>
+            <property name="x">100</property>
+            <property name="y">18</property>
           </packing>
         </child>
         <child>
           <object class="GtkBox" id="box">
-            <property name="width-request">332</property>
-            <property name="height-request">229</property>
+            <property name="width-request">481</property>
+            <property name="height-request">286</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkDrawingArea" id="draw1">
-                <property name="width-request">382</property>
-                <property name="height-request">233</property>
+                <property name="width-request">481</property>
+                <property name="height-request">286</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <signal name="draw" handler="on_draw1_draw" swapped="no"/>
@@ -203,22 +203,38 @@ Veuillez à réessayer s'l vous plait.</property>
             </style>
           </object>
           <packing>
-            <property name="x">16</property>
-            <property name="y">66</property>
+            <property name="x">36</property>
+            <property name="y">84</property>
           </packing>
         </child>
         <child>
           <object class="GtkToggleButton" id="vocaleButton">
             <property name="label" translatable="yes">Vocale</property>
-            <property name="width-request">91</property>
-            <property name="height-request">54</property>
+            <property name="width-request">130</property>
+            <property name="height-request">66</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">480</property>
-            <property name="y">278</property>
+            <property name="x">602</property>
+            <property name="y">311</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelRoom">
+            <property name="width-request">87</property>
+            <property name="height-request">42</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">...</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 11"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="x">431</property>
+            <property name="y">44</property>
           </packing>
         </child>
       </object>
@@ -235,29 +251,33 @@ Veuillez à réessayer s'l vous plait.</property>
         <child>
           <object class="GtkButton" id="calibrationAction">
             <property name="label" translatable="yes">Calibrer</property>
-            <property name="width-request">149</property>
-            <property name="height-request">60</property>
+            <property name="width-request">204</property>
+            <property name="height-request">102</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="on_calibrationAction_clicked" swapped="no"/>
           </object>
           <packing>
-            <property name="x">228</property>
-            <property name="y">223</property>
+            <property name="x">298</property>
+            <property name="y">246</property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">441</property>
+            <property name="width-request">698</property>
             <property name="height-request">80</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Placez-vous en (0, 0) et appuyez sur "Calibrer" pour lancer le scan du lidar.</property>
+            <property name="label" translatable="yes">Placez-vous en (0, 0) et appuyez sur "Calibrer" 
+pour lancer le scan du lidar.</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 14"/>
+            </attributes>
           </object>
           <packing>
-            <property name="x">101</property>
-            <property name="y">87</property>
+            <property name="x">40</property>
+            <property name="y">72</property>
           </packing>
         </child>
       </object>
@@ -274,29 +294,39 @@ Veuillez à réessayer s'l vous plait.</property>
         <child>
           <object class="GtkButton" id="powerOnOff">
             <property name="label" translatable="yes">Se connecter</property>
-            <property name="width-request">149</property>
-            <property name="height-request">59</property>
+            <property name="width-request">204</property>
+            <property name="height-request">102</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="on_powerOnOff_clicked" swapped="no"/>
+            <style>
+              <class name="&lt;.button&gt;"/>
+              <class name="&lt;button&gt;"/>
+            </style>
           </object>
           <packing>
-            <property name="x">231</property>
+            <property name="x">298</property>
             <property name="y">246</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
-            <property name="width-request">363</property>
+          <object class="GtkLabel" id="label5">
+            <property name="width-request">568</property>
             <property name="height-request">80</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
             <property name="label" translatable="yes">Connectez-vous à ESEO-Bot en appuyant sur "Se connecter".</property>
+            <property name="justify">center</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 14"/>
+            </attributes>
           </object>
           <packing>
-            <property name="x">126</property>
-            <property name="y">96</property>
+            <property name="x">120</property>
+            <property name="y">70</property>
           </packing>
         </child>
       </object>

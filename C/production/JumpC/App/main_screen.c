@@ -13,13 +13,14 @@
 #include <pthread.h>
 #include "../ComJumpC/proxy_pilot.h"
 #include "../ComJumpC/postman_jump.h"
+#include "../ComJumpC/map_manager.h"
 #include "main_screen.h"
 #include "../ComJumpC/util.h"
 #include "splash_screen.h"
 #include "connection_screen.h"
 #include "calibration_screen.h"
 #include "../ComJumpC/proxy_cartographer.h"
-
+#include "../Vocal/admin_voice.h"
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                     ////
 ////                                  TYPEDEF & VARIABLES                                ////
@@ -31,8 +32,8 @@ static GtkBuilder *p_builder = NULL;
 static DATA_from_pocket_t dataPos;
 static GtkWidget **p_wins;
 static Mode_A currentMode = STATIC;
-static bool startedStatic = false;
-
+static Static_Status startedStatic = NONE;
+static Lidar_data_t dataPosStatic;
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                     ////
 ////                                  FUNCTIONS PROTOTYPES                               ////
@@ -167,8 +168,13 @@ extern void mainScreen_new()
 extern void mainScreen_draw_static_refresh(DATA_from_pocket_t data)
 {
     dataPos = data;
+    // for(int i = 0; i < LIDAR_TOTAL_DEGREE; i++){
+    //     if(0 == dataPos.lidarData.X_buffer[i])
+    // }
     if (currentMode == STATIC)
+    {
         draw_brush(p_wins[0]);
+    }
 }
 
 extern void mainScreen_draw_dynamic_refresh(Lidar_data_t data)
@@ -177,6 +183,17 @@ extern void mainScreen_draw_dynamic_refresh(Lidar_data_t data)
     if (currentMode == DYNAMIC)
         draw_brush(p_wins[0]);
 }
+
+extern void setStaticStarted(Static_Status started)
+{
+    startedStatic = started;
+}
+
+extern Static_Status getStaticStarted()
+{
+    return startedStatic;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                     ////
 ////                                   STATIC FUNCTIONS                                  ////
@@ -195,12 +212,11 @@ static void switch_block(bool state)
 
 static void draw_brush(GtkWidget *p_wid)
 {
-    GtkStyleContext *context;
     g_signal_connect(
         gtk_builder_get_object(p_builder, "draw1"),
         "draw", G_CALLBACK(on_draw1_draw), NULL);
-    context = gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(p_builder, "box")));
-    gtk_style_context_add_class(context, "box");
+    // context = gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(p_builder, "box")));
+    // gtk_style_context_add_class(context, "box");
     gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(p_builder, "draw1")));
 }
 
@@ -210,15 +226,33 @@ static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
     cairo_set_source_rgb(cr, 1.0, 1.0, 0.0);
     if (STATIC == currentMode)
     {
-        if (startedStatic == false)
+        //TRACE(" STARTEDVariable %d \n", currentMode);
+        if (getStaticStarted() == STARTED_IN_PROGRESS)
         {
-            for (int i = 0; i < LIDAR_TOTAL_DEGREE; i++)
-            {
-                cairo_rectangle(cr, dataPos.lidarData.X_buffer[i], dataPos.lidarData.Y_buffer[i], 2.5, 2.5);
-            }
-            startedStatic = true;
+            dataPosStatic = dataPos.lidarData;
+            setStaticStarted(STARTED);
         }
-        cairo_rectangle(cr, dataPos.positionData.x, dataPos.positionData.y, 2.5, 2.5);
+        for (int i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+        {
+            cairo_rectangle(cr, dataPosStatic.X_buffer[i], dataPosStatic.Y_buffer[i], 2.5, 2.5);
+        }
+
+        cairo_stroke(cr);
+        cairo_set_line_width(cr, 1.0);
+        cairo_set_source_rgb(cr, 1.0, 0.32, 0.4);
+        cairo_rectangle(cr, dataPos.positionData.x, dataPos.positionData.y, 4.5, 4.5);
+        switch (dataPos.positionData.room)
+        {
+        case ROOM_A:
+            gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(p_builder, "labelRoom")), "ROOM 1");
+            break;
+        case ROOM_B:
+            gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(p_builder, "labelRoom")), "ROOM 2");
+            break;
+        default:
+            gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(p_builder, "labelRoom")), "...");
+            break;
+        }
     }
     else
     {
@@ -229,7 +263,7 @@ static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
         cairo_stroke(cr);
         cairo_set_line_width(cr, 1.0);
         cairo_set_source_rgb(cr, 1.0, 0.32, 0.4);
-        cairo_rectangle(cr, 380 / 2 - 5, 230 / 2 - 5, 10.0, 10.0); //Middle point - car in the center
+        cairo_rectangle(cr, 480 / 2 - 5, 246 / 2 - 5, 10.0, 10.0); //Middle point - car in the center
     }
     cairo_stroke(cr);
 
@@ -268,6 +302,7 @@ static void output_vocal(GtkToggleButton *source, gpointer user_data)
     if (gtk_toggle_button_get_active(source) == TRUE)
     {
         switch_block(FALSE);
+        adminVoice_start();
     }
     else
     {
@@ -312,15 +347,16 @@ static void output_state(GtkToggleButton *source, gpointer user_data)
     }
     else
     {
-        proxyCartographer_signal_stop();
+        MapManager_stopCalibration();
         gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(p_builder, "mapDynamique")), FALSE);
+        currentMode = STATIC;
     }
 }
 
 int main(int argc, char **argv)
 {
     p_wins = malloc(sizeof(GtkWidget *) * NUMBER_OF_SCREENS);
-
+    GtkStyleContext *context;
     GError *p_err = NULL;
     GtkCssProvider *cssProvider1;
     cssProvider1 = gtk_css_provider_new();
@@ -328,8 +364,6 @@ int main(int argc, char **argv)
     /* Initialisation de GTK+ */
     gtk_init(&argc, &argv);
     gtk_css_provider_load_from_path(cssProvider1, "Jump_CSS/gtk.css", NULL);
-    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
-                                              GTK_STYLE_PROVIDER(cssProvider1), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     //postman_jumpC_start();
     /* Creation d'un nouveau GtkBuilder */
@@ -361,8 +395,9 @@ int main(int argc, char **argv)
             p_wins[4] = p_win_popup;
             for (int i = 0; i < 4; i++)
             {
-                gtk_window_set_default_size(GTK_WINDOW(p_wins[i]), 600, 350);
-                gtk_window_set_resizable(GTK_WINDOW(p_wins[i]), FALSE);
+                //gtk_window_set_default_size(GTK_WINDOW(p_wins[i]), 600, 350);
+                gtk_window_maximize(GTK_WINDOW(p_wins[i]));
+                //gtk_window_set_resizable(GTK_WINDOW(p_wins[i]), FALSE);
                 g_signal_connect(
                     p_wins[i],
                     "delete-event", G_CALLBACK(cb_quit), NULL);
@@ -428,8 +463,12 @@ int main(int argc, char **argv)
                 gtk_builder_get_object(p_builder, "mapStatique"),
                 "clicked", G_CALLBACK(cb_mapStatic), NULL);
 
-            /* Send a signal to ask position to Cartographer  */
+            context = gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(p_builder, "box")));
+            gtk_style_context_add_class(context, "box");
 
+            /* Send a signal to ask position to Cartographer  */
+            gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                                                      GTK_STYLE_PROVIDER(cssProvider1), GTK_STYLE_PROVIDER_PRIORITY_USER);
             //gtk_widget_set_events(GTK_WIDGET(gtk_builder_get_object(p_builder, "draw1")), GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK);
             //css_set(cssProvider1, gtk_builder_get_object(p_builder, "stopButton"));
             //gtk_widget_show_all(p_win);

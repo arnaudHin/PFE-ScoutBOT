@@ -60,7 +60,6 @@ static const char *const stateName[] = {
     "S_IDLE",
     "S_WAITING_FOR_POSITIONS",
     "S_IS_SENDING_TO_MAP_POSITIONS ",
-    "S_IS_LIFTING",
     "S_END_OF_CALIBRATION",
     "S_DEATH",
     "NB_STATE"};
@@ -207,7 +206,7 @@ static Transition mySm[STATE_NB][EVENT_NB] = {
     [S_IS_SENDING_TO_MAP_POSITIONS][E_STOP_CALIBRATION] = {S_END_OF_CALIBRATION, A_ENDOFCALIB},
 
     //From EndTour to Active
-    [S_END_OF_CALIBRATION][E_START_CALIBRATION] = {S_WAITING_FOR_POSITIONS, A_ENTERACTIVE},
+    [S_END_OF_CALIBRATION][E_START_CALIBRATION] = {S_WAITING_FOR_POSITIONS, A_IDLETOWFP},
 
 };
 
@@ -475,7 +474,10 @@ static void actionNop()
 
 static void actionEndOfCalibration()
 {
+    reset(wat);
     mapViewer_free();
+    flag_wat = 0;
+    flag = false;
     TRACE("[MapManager] Action EndOfCalibration \n");
     proxyCartographer_signal_stop();
 }

@@ -58,6 +58,9 @@ extern void protocol_jump_encode(uint8_t *bufferWrite, Message_to_pocket_t *mess
         //protocol_jump_encodeData(bufferWrite, messageToWrite);
         postman_jumpC_send_msg(messageToWrite);
         break;
+    case ASK_STOP_CALIBRATION:
+        postman_jumpC_send_msg(messageToWrite);
+        break;
     default:
         break;
     }
@@ -104,22 +107,29 @@ static void protocol_jump_dataPositions(uint8_t *bufferRead, Message_from_pocket
     memcpy(&messageToRead->data.positionData.x, (uint8_t *)bufferRead, sizeof(float));
     index += sizeof(float);
 
-    memcpy(&messageToRead->data.positionData.y, (uint8_t *)bufferRead+index, sizeof(float));
+    memcpy(&messageToRead->data.positionData.y, (uint8_t *)bufferRead + index, sizeof(float));
     index += sizeof(float);
 
-    memcpy(&messageToRead->data.positionData.room, (uint8_t *)bufferRead+index, sizeof(uint8_t));
+    memcpy(&messageToRead->data.positionData.room, (uint8_t *)bufferRead + index, sizeof(uint8_t));
     index++;
+
+    //TRACE("Envoie des pos x : %, ")
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
-        messageToRead->data.lidarData.X_buffer[i] = protocol_jump_convert_two_bytes_into_int16(bufferRead[index], bufferRead[index +1]);
+        messageToRead->data.lidarData.X_buffer[i] = protocol_jump_convert_two_bytes_into_int16(bufferRead[index], bufferRead[index + 1]);
         index += sizeof(int16_t);
     }
     for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
     {
-        messageToRead->data.lidarData.Y_buffer[i] = protocol_jump_convert_two_bytes_into_int16(bufferRead[index], bufferRead[index +1]);
+        messageToRead->data.lidarData.Y_buffer[i] = protocol_jump_convert_two_bytes_into_int16(bufferRead[index], bufferRead[index + 1]);
         index += sizeof(int16_t);
     }
 
+    for (size_t i = 0; i < LIDAR_TOTAL_DEGREE / 8; i++)
+    {
+        fprintf(stderr, "Data lidar x[%ld] : %d \n", i, messageToRead->data.lidarData.X_buffer[i]);
+        fprintf(stderr, "Data lidar y[%ld] : %d \n", i, messageToRead->data.lidarData.Y_buffer[i]);
+    }
 
     fprintf(stderr, "\n ---END DECODE DATA --- \n");
 }

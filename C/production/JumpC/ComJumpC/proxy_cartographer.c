@@ -47,7 +47,7 @@ extern void proxyCartographer_signal_start()
 
 extern void proxyCartographer_signal_stop()
 {
-    messageToPocket.cmd= ASK_QUIT;
+    messageToPocket.cmd = ASK_STOP_CALIBRATION;
     messageToPocket.sizeData = 0;
     messageToPocket.data.direction = DEFAULT;
 

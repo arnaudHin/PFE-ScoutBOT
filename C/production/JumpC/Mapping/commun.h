@@ -49,12 +49,12 @@ typedef enum
  * Network_msg : expected structure to receive
  */
 
-
-typedef enum{
-	NO_ROOM=0,
+typedef enum
+{
+	NO_ROOM = 0,
 	ROOM_A,
 	ROOM_B,
-}Room_e;
+} Room_e;
 
 typedef enum
 {
@@ -75,9 +75,9 @@ typedef enum
 	ASK_CHECK_CONNECTION,
 	ASK_QUIT,
 	ASK_4_DATA,
+	ASK_STOP_CALIBRATION,
 	NB_CMD_FROM_JUMP
 } CMD_e;
-
 
 typedef enum
 {
@@ -89,11 +89,12 @@ typedef enum
 	NB_CMD_TO_JUMP
 } CMD_from_pocket_e;
 
-typedef struct{
+typedef struct
+{
 	float x;
 	float y;
 	Room_e room;
-}Position_data_t;
+} Position_data_t;
 
 typedef struct
 {

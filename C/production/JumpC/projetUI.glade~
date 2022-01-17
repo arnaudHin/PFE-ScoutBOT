@@ -274,28 +274,39 @@ Veuillez à réessayer s'l vous plait.</property>
         <child>
           <object class="GtkButton" id="powerOnOff">
             <property name="label" translatable="yes">Se connecter</property>
-            <property name="width-request">149</property>
-            <property name="height-request">59</property>
+            <property name="width-request">188</property>
+            <property name="height-request">82</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="on_powerOnOff_clicked" swapped="no"/>
+            <style>
+              <class name="&lt;.button&gt;"/>
+              <class name="&lt;button&gt;"/>
+            </style>
           </object>
           <packing>
-            <property name="x">231</property>
-            <property name="y">246</property>
+            <property name="x">325</property>
+            <property name="y">255</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="label5">
             <property name="width-request">363</property>
             <property name="height-request">80</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
             <property name="label" translatable="yes">Connectez-vous à ESEO-Bot en appuyant sur "Se connecter".</property>
+            <property name="justify">center</property>
+            <property name="ellipsize">middle</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 14"/>
+            </attributes>
           </object>
           <packing>
-            <property name="x">126</property>
+            <property name="x">232</property>
             <property name="y">96</property>
           </packing>
         </child>

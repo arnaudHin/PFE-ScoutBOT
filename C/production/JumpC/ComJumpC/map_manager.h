@@ -40,6 +40,12 @@ extern void MapManager_setMapPositions(DATA_from_pocket_t data);
 extern void MapManager_stop(void);
 
 /**
+ * @brief Stop the calibration process
+ * 
+ */
+extern void MapManager_stopCalibration();
+
+/**
  * @brief Destroys the message queue
  * 
  */
