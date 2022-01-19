@@ -310,12 +310,12 @@ static void cb_mapDynamic(GtkWidget *p_wid, gpointer p_data)
 
 static void output_vocal(GtkToggleButton *source, gpointer user_data)
 {
-    printf("Vocal active: %d\n", gtk_toggle_button_get_active(source));
-    if (gtk_toggle_button_get_active(source) == TRUE)
+    if (gtk_toggle_button_get_active(source) == true)
     {
         switch_block(FALSE);
         adminVoice_start();
         switch_block(TRUE);
+        gtk_toggle_button_set_active(source, false);
     }
 }
 

@@ -12,7 +12,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <stdint.h>
+#include "commun.h"
+#include "../ComJumpC/proxy_pilot.h"
 
 
 static void record_audio(){
@@ -23,9 +25,9 @@ static void process_inference(){
     system("python3 inference_mp1.py");
 }
 
-static void read_file(){
+static Direction_e read_file(){
 
-    u_int8_t command = 8;
+    uint8_t command = 8;
 
     FILE* fichier = NULL;
     fichier = fopen("voice_reco_predict.txt", "r");
@@ -39,14 +41,18 @@ static void read_file(){
 
     system("rm voice_reco_predict.txt");    
     system("rm command_record.wav");
+
+    return (Direction_e) command;
 }
 
 
 extern void adminVoice_start() {
-    
     record_audio();
 
     process_inference();
 
-    read_file();
+    Direction_e dir = read_file();
+
+    proxy_pilot_set_direction(dir);
+
 }
