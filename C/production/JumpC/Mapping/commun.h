@@ -58,12 +58,12 @@ typedef enum
 
 typedef enum
 {
-	DEFAULT = 0,
-	LEFT,
+	FORWARD=0,
 	RIGHT,
-	FORWARD,
+	LEFT,
 	BACKWARD,
 	STOP,
+	DEFAULT,
 	BREAK
 } Direction_e;
 

@@ -312,10 +312,10 @@ static void output_vocal(GtkToggleButton *source, gpointer user_data)
 {
     if (gtk_toggle_button_get_active(source) == true)
     {
-        switch_block(FALSE);
+        //switch_block(TRUE);
         adminVoice_start();
-        switch_block(TRUE);
-        gtk_toggle_button_set_active(source, false);
+        //switch_block(FALSE);
+        //gtk_toggle_button_set_active(source, false);
     }
 }
 

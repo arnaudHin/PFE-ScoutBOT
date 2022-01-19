@@ -18,7 +18,7 @@
 
 
 static void record_audio(){
-    system("arecord -D record_codec -f S16_LE -d 2 /usr/local/ai_mp1/scripts/command_record.wav");
+    system("arecord -D record_codec -f S16_LE -d 2 command_record.wav");
 }
 
 static void process_inference(){
