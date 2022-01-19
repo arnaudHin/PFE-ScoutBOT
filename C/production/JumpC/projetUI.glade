@@ -237,6 +237,20 @@ Veuillez à réessayer s'l vous plait.</property>
             <property name="y">44</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkToggleButton" id="zoom">
+            <property name="label" translatable="yes">Zoom</property>
+            <property name="width-request">60</property>
+            <property name="height-request">44</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">174</property>
+            <property name="y">18</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>

@@ -20,6 +20,7 @@
 static DATA_from_pocket_t dataPos;
 static uint8_t mapStatic = 0;
 static uint16_t count = 0;
+static Mode_Zoom mode_zoom = NONE_Z;
 /////////////////////////////////////////////////
 ///                                           ///
 ///                PROTOTYPES                 ///
@@ -71,8 +72,10 @@ static void heapSort(int16_t arr[], int16_t n);
 
 extern void mapViewer_setData(DATA_from_pocket_t data)
 {
+    Room_e room = NO_ROOM;
     dataPos = data;
     count = 0;
+    room = dataPos.positionData.room;
     // ZOOM Mode
     // heapSort(data.lidarData.X_buffer, LIDAR_TOTAL_DEGREE);
     // heapSort(data.lidarData.Y_buffer, LIDAR_TOTAL_DEGREE);
@@ -104,7 +107,7 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     //     }
     //     else
     //     {
-    //         dataPos.lidarData.X_buffer[i] = 190;
+    //         dataPos.lidarData.X_buffer[i] = 240;
     //     }
     //     if (dataPos.lidarData.Y_buffer[i] != 0)
     //     {
@@ -112,35 +115,104 @@ extern void mapViewer_setData(DATA_from_pocket_t data)
     //     }
     //     else
     //     {
-    //         dataPos.lidarData.Y_buffer[i] = 140;
+    //         dataPos.lidarData.Y_buffer[i] = 143;
     //     }
     // }
-    for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+    float widthRoomCoef = 0.0;
+    float heightRoomCoef = 0.0;
+    switch (mode_zoom)
     {
-        dataPos.lidarData.X_buffer[i] += 6000;
-        dataPos.lidarData.Y_buffer[i] += 6000;
-        if (dataPos.lidarData.X_buffer[i] != 6000)
+    case ZOOM:
+        heapSort(data.lidarData.X_buffer, LIDAR_TOTAL_DEGREE);
+        heapSort(data.lidarData.Y_buffer, LIDAR_TOTAL_DEGREE);
+        uint8_t max_x = 0;
+        uint8_t max_y = 0;
+        if (dataPos.lidarData.X_buffer[0] != 0)
         {
-            dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / 31.57);
+            max_x = abs(data.lidarData.X_buffer[0]) > abs(data.lidarData.X_buffer[359]) ? (abs(data.lidarData.X_buffer[0]) / 380) : (abs(data.lidarData.X_buffer[359]) / 480);
         }
         else
         {
-            dataPos.lidarData.X_buffer[i] = 240;
-            count += 1;
+            max_x = 240;
         }
-        if (dataPos.lidarData.Y_buffer[i] != 6000)
+        if (dataPos.lidarData.Y_buffer[0] != 0)
         {
-            dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / 42.85);
+            max_y = abs(data.lidarData.Y_buffer[0]) > abs(data.lidarData.Y_buffer[359]) ? (abs(data.lidarData.Y_buffer[0]) / 280) : (abs(data.lidarData.Y_buffer[359]) / 283);
         }
         else
         {
-            dataPos.lidarData.Y_buffer[i] = 143;
-            count += 1;
+            max_y = 143;
         }
+        for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+        {
+            dataPos.lidarData.X_buffer[i] += abs(data.lidarData.X_buffer[0]);
+            dataPos.lidarData.Y_buffer[i] += abs(data.lidarData.Y_buffer[0]);
+            if (dataPos.lidarData.X_buffer[i] != 0)
+            {
+                dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / max_x);
+            }
+            else
+            {
+                dataPos.lidarData.X_buffer[i] = 240;
+            }
+            if (dataPos.lidarData.Y_buffer[i] != 0)
+            {
+                dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / max_y);
+            }
+            else
+            {
+                dataPos.lidarData.Y_buffer[i] = 143;
+            }
+        }
+        break;
+    case NONE_Z:
+
+        switch (room)
+        {
+        case ROOM_A:
+            heightRoomCoef = 6000 / 286;
+            widthRoomCoef = 6500 / 480;
+            break;
+        case ROOM_B:
+            heightRoomCoef = 6000 / 286;
+            widthRoomCoef = 5500 / 480;
+            break;
+        default:
+            heightRoomCoef = 6000 / 286;
+            widthRoomCoef = 6500 / 480;
+            break;
+        }
+        for (size_t i = 0; i < LIDAR_TOTAL_DEGREE; i++)
+        {
+            dataPos.lidarData.X_buffer[i] += 6000;
+            dataPos.lidarData.Y_buffer[i] += 6000;
+            if (dataPos.lidarData.X_buffer[i] != 6000)
+            {
+                dataPos.lidarData.X_buffer[i] = (uint16_t)(dataPos.lidarData.X_buffer[i] / widthRoomCoef);
+            }
+            else
+            {
+                dataPos.lidarData.X_buffer[i] = 240;
+                count += 1;
+            }
+            if (dataPos.lidarData.Y_buffer[i] != 6000)
+            {
+                dataPos.lidarData.Y_buffer[i] = (uint16_t)(dataPos.lidarData.Y_buffer[i] / heightRoomCoef);
+            }
+            else
+            {
+                dataPos.lidarData.Y_buffer[i] = 143;
+                count += 1;
+            }
+        }
+
+        dataPos.positionData.x = (uint16_t)(dataPos.positionData.x / widthRoomCoef);
+        dataPos.positionData.y = (uint16_t)(dataPos.positionData.y / heightRoomCoef);
+        break;
+    default:
+        break;
     }
 
-    dataPos.positionData.x = (uint16_t)(dataPos.positionData.x / 31.57);
-    dataPos.positionData.y = (uint16_t)(dataPos.positionData.y / 42.85);
     // switch(dataPos.positionData.room){
     //     case ROOM_A :
     //     dataPos.positionData.x =
@@ -180,6 +252,11 @@ extern void mapViewer_free()
     mapStatic = 0;
 }
 
+extern void mapViewer_setZoomDynamic(Mode_Zoom pmode_zoom)
+{
+    mode_zoom = pmode_zoom;
+}
+
 /////////////////////////////////////////////////
 ///                                           ///
 ///              PRIVATE METHODS              ///
@@ -188,12 +265,10 @@ extern void mapViewer_free()
 
 static void mapViewer_draw_map_static()
 {
-    if (NONE == getStaticStarted() && 500 > count)
+    if (NONE_S == getStaticStarted() && 500 > count)
     {
-        TRACE("TA race \n");
         setStaticStarted(STARTED_IN_PROGRESS);
     }
-    TRACE("TA race martin \n");
     mainScreen_draw_static_refresh(dataPos);
 }
 

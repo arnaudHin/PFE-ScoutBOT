@@ -18,6 +18,12 @@ typedef struct{
    uint8_t y_robot; 
 }Coordonnees;
 
+typedef enum{
+   NONE_Z,
+   ZOOM
+} Mode_Zoom;
+
+
 
 /**
  * @brief aloow to memorize the new positions values and display them in the main screen
@@ -37,3 +43,10 @@ extern void mapViewer_calibrationSuccessful();
  * 
  */
 extern void mapViewer_free();
+
+/**
+ * @brief Set the Zoom Dynamic object
+ * 
+ */
+extern void mapViewer_setZoomDynamic(Mode_Zoom pmode_zoom);
+

@@ -28,7 +28,7 @@ typedef enum
 
 typedef enum
 {
-    NONE = 0,
+    NONE_S = 0,
     STARTED_IN_PROGRESS,
     STARTED
 } Static_Status;
@@ -80,3 +80,5 @@ extern void setStaticStarted(Static_Status started);
  * @return Static_Status 
  */
 extern Static_Status getStaticStarted();
+
+

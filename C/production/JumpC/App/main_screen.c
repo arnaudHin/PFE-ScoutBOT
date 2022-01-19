@@ -21,6 +21,8 @@
 #include "calibration_screen.h"
 #include "../ComJumpC/proxy_cartographer.h"
 #include "../Vocal/admin_voice.h"
+#include "../Mapping/map_viewer.h"
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                     ////
 ////                                  TYPEDEF & VARIABLES                                ////
@@ -32,7 +34,7 @@ static GtkBuilder *p_builder = NULL;
 static DATA_from_pocket_t dataPos;
 static GtkWidget **p_wins;
 static Mode_A currentMode = STATIC;
-static Static_Status startedStatic = NONE;
+static Static_Status startedStatic = NONE_S;
 static Lidar_data_t dataPosStatic;
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                     ////
@@ -113,6 +115,14 @@ static void cb_moveback(GtkWidget *p_wid, gpointer p_data);
  * @param user_data 
  */
 static void output_vocal(GtkToggleButton *source, gpointer user_data);
+
+/**
+ * @brief 
+ * 
+ * @param source 
+ * @param user_data 
+ */
+static void cb_zoom(GtkToggleButton *source, gpointer user_data);
 
 /**
  * @brief 
@@ -263,7 +273,7 @@ static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
         cairo_stroke(cr);
         cairo_set_line_width(cr, 1.0);
         cairo_set_source_rgb(cr, 1.0, 0.32, 0.4);
-        cairo_rectangle(cr, 480 / 2 - 5, 246 / 2 - 5, 10.0, 10.0); //Middle point - car in the center
+        cairo_rectangle(cr, 480 / 2 - 5, 286 / 2 - 5, 10.0, 10.0); //Middle point - car in the center
     }
     cairo_stroke(cr);
 
@@ -285,6 +295,7 @@ static void cb_mapStatic(GtkWidget *p_wid, gpointer p_data)
     gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(p_builder, "mapStatique")), FALSE);
     gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(p_builder, "mapDynamique")), TRUE);
     currentMode = STATIC;
+    gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(p_builder, "zoom")));
     mainScreen_draw_static_refresh(dataPos);
 }
 
@@ -294,6 +305,7 @@ static void cb_mapDynamic(GtkWidget *p_wid, gpointer p_data)
     gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(p_builder, "mapStatique")), TRUE);
     currentMode = DYNAMIC;
     mainScreen_draw_dynamic_refresh(dataPos.lidarData);
+    gtk_widget_show(GTK_WIDGET(gtk_builder_get_object(p_builder, "zoom")));
 }
 
 static void output_vocal(GtkToggleButton *source, gpointer user_data)
@@ -353,6 +365,17 @@ static void output_state(GtkToggleButton *source, gpointer user_data)
     }
 }
 
+static void cb_zoom(GtkToggleButton *source, gpointer user_data)
+{
+    if (gtk_toggle_button_get_active(source) == TRUE)
+    {
+    }
+    else
+    {
+        mapViewer_setZoomDynamic(NONE_Z);
+    }
+}
+
 int main(int argc, char **argv)
 {
     p_wins = malloc(sizeof(GtkWidget *) * NUMBER_OF_SCREENS);
@@ -393,7 +416,7 @@ int main(int argc, char **argv)
             GtkWidget *p_win_popup = (GtkWidget *)gtk_builder_get_object(
                 p_builder, "popup");
             p_wins[4] = p_win_popup;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 //gtk_window_set_default_size(GTK_WINDOW(p_wins[i]), 600, 350);
                 gtk_window_maximize(GTK_WINDOW(p_wins[i]));
@@ -402,8 +425,8 @@ int main(int argc, char **argv)
                     p_wins[i],
                     "delete-event", G_CALLBACK(cb_quit), NULL);
             }
-            gtk_window_set_default_size(GTK_WINDOW(p_wins[4]), 500, 220);
-            gtk_window_set_resizable(GTK_WINDOW(p_wins[4]), FALSE);
+            // gtk_window_set_default_size(GTK_WINDOW(p_wins[4]), 500, 220);
+            // gtk_window_set_resizable(GTK_WINDOW(p_wins[4]), FALSE);
 
             /* Vocal button signal */
             g_signal_connect(
@@ -460,6 +483,12 @@ int main(int argc, char **argv)
             /* Change the static mapScreen mode into a dynamic  */
 
             g_signal_connect(
+                gtk_builder_get_object(p_builder, "zoom"),
+                "toggled", G_CALLBACK(cb_zoom), NULL);
+
+            /* Change the static mapScreen mode into a dynamic  */
+
+            g_signal_connect(
                 gtk_builder_get_object(p_builder, "mapStatique"),
                 "clicked", G_CALLBACK(cb_mapStatic), NULL);
 
@@ -474,6 +503,7 @@ int main(int argc, char **argv)
             //gtk_widget_show_all(p_win);
             //gtk_widget_show_all(p_wins[0]);
             //splashScreen_new();
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(p_builder, "zoom")));
             connectionScreen_new();
             //switch_block(FALSE);
             gtk_main();
