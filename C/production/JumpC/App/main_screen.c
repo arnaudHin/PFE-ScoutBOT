@@ -233,7 +233,7 @@ static void draw_brush(GtkWidget *p_wid)
 static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
 {
     cairo_set_line_width(cr, 2.0);
-    cairo_set_source_rgb(cr, 1.0, 1.0, 0.0);
+    cairo_set_source_rgb(cr, 1.0, 0.32, 0.4);
     if (STATIC == currentMode)
     {
         //TRACE(" STARTEDVariable %d \n", currentMode);
@@ -249,7 +249,7 @@ static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
 
         cairo_stroke(cr);
         cairo_set_line_width(cr, 1.0);
-        cairo_set_source_rgb(cr, 1.0, 0.32, 0.4);
+        cairo_set_source_rgb(cr, 0.1, 0.1, 0.2);
         cairo_rectangle(cr, dataPos.positionData.x, dataPos.positionData.y, 4.5, 4.5);
         switch (dataPos.positionData.room)
         {
@@ -272,7 +272,7 @@ static gboolean on_draw1_draw(GtkWidget *p_wid, cairo_t *cr, gpointer data)
         }
         cairo_stroke(cr);
         cairo_set_line_width(cr, 1.0);
-        cairo_set_source_rgb(cr, 1.0, 0.32, 0.4);
+        cairo_set_source_rgb(cr, 0.1, 0.1, 0.2);
         cairo_rectangle(cr, 480 / 2 - 5, 286 / 2 - 5, 10.0, 10.0); //Middle point - car in the center
     }
     cairo_stroke(cr);
@@ -315,9 +315,6 @@ static void output_vocal(GtkToggleButton *source, gpointer user_data)
     {
         switch_block(FALSE);
         adminVoice_start();
-    }
-    else
-    {
         switch_block(TRUE);
     }
 }
@@ -347,6 +344,7 @@ static void cb_stop(GtkWidget *p_wid, gpointer p_data)
 static void display()
 {
     gtk_widget_show_all(p_wins[0]);
+    gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(p_builder, "zoom")));
 }
 
 static void output_state(GtkToggleButton *source, gpointer user_data)
@@ -503,7 +501,6 @@ int main(int argc, char **argv)
             //gtk_widget_show_all(p_win);
             //gtk_widget_show_all(p_wins[0]);
             //splashScreen_new();
-            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(p_builder, "zoom")));
             connectionScreen_new();
             //switch_block(FALSE);
             gtk_main();
