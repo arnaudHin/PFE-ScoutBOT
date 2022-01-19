@@ -367,6 +367,7 @@ static void cb_zoom(GtkToggleButton *source, gpointer user_data)
 {
     if (gtk_toggle_button_get_active(source) == TRUE)
     {
+        mapViewer_setZoomDynamic(ZOOM);
     }
     else
     {
