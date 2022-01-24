@@ -71,7 +71,7 @@ extern void postman_jumpC_send_msg(Message_to_pocket_t *msg)
 ssize_t postman_jumpC_receive_msg(uint8_t *bufferToReceive, ssize_t nbBytes)
 {
 	int resultRead = 0;
-	resultRead = recv(a_socket, bufferToReceive, nbBytes, MSG_WAITALL);
+	resultRead = recv(a_socket, bufferToReceive, nbBytes, 0);
 	if (resultRead == -1)
 	{
 		perror("ERROR POSTMAN MONITOR APP READ\n");

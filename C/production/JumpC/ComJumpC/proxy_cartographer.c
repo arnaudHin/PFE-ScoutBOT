@@ -19,7 +19,7 @@ extern void proxyCartographer_ask4data()
 {
     messageToPocket.cmd = ASK_4_DATA;
     messageToPocket.sizeData = 0;
-    messageToPocket.data.direction = DEFAULT;
+    messageToPocket.data.direction = 0;
 
     uint16_t bytesToSend = 1 + 2 + messageToPocket.sizeData;
     uint8_t bufferToSend[bytesToSend]; //1+2+(720*2)
@@ -34,7 +34,7 @@ extern void proxyCartographer_signal_start()
 {
     messageToPocket.cmd = ASK_4_DATA;
     messageToPocket.sizeData = 0;
-    messageToPocket.data.direction = DEFAULT;
+    messageToPocket.data.direction = 0;
 
     uint16_t bytesToSend = 1 + 2 + messageToPocket.sizeData;
     uint8_t bufferToSend[bytesToSend]; //1+2+(720*2) + = 1443 
@@ -49,7 +49,7 @@ extern void proxyCartographer_signal_stop()
 {
     messageToPocket.cmd = ASK_STOP_CALIBRATION;
     messageToPocket.sizeData = 0;
-    messageToPocket.data.direction = DEFAULT;
+    messageToPocket.data.direction = 0;
 
     uint16_t bytesToSend = 1 + 2 + messageToPocket.sizeData;
     uint8_t bufferToSend[bytesToSend]; //1+2+(720*2)
