@@ -1,0 +1,10 @@
+\section{Conclusion}
+Pour conclure, la géolocalisation en intérieur est un domaine en pleine expansion.
+Répondant à de nombreuses problématiques actuelles et futures, sa nécessité croissante dans différents domaines
+fait d'elle une des cibles majeures des géants du numérique.\\
+\newline
+Après avoir mis en lumière différentes technologies d'indoor positioning, qu'elles soient basées sur les ondes radiofréquence ou sur l'imagerie, et différentes méthodes de positioning, range-based ou range-free, 
+il était plus aisé de choisir celle qui serait la plus à même à répondre aux attentes de notre projet.\\
+\newline
+Devant faire face à diverses contraintes, qu’elles soient matérielles, budgétaires ou temporelles, nous avons choisi une technologie basée sur les ondes radiofréquences et une méthode range-based.\\
+\newline

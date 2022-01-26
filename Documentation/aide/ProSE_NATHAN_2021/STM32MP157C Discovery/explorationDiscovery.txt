@@ -1,0 +1,84 @@
+//fait par Nathan BRIENT
+
+Ce document relate mon avancée avec l'exploration de la discovery
+
+getting started pour débuter avec la discovery
+https://wiki.st.com/stm32mpu/wiki/Getting_started/STM32MP1_boards/STM32MP157x-DK2/Let%27s_start
+
+Description du harware de la carte : 
+https://wiki.st.com/stm32mpu/wiki/STM32MP157x-DKx_-_hardware_description
+
+https://docs.zephyrproject.org/latest/boards/arm/stm32mp157c_dk2/doc/stm32mp157_dk2.html
+
+Discovery Board schematic
+https://www.st.com/content/ccc/resource/technical/layouts_and_diagrams/schematic_pack/group0/36/8e/ea/7a/ca/ca/4b/e4/mb1272-dk2-c01_schematic/files/MB1272-DK2-C01_Schematic.pdf/jcr:content/translations/en.MB1272-DK2-C01_Schematic.pdf
+
+on peut communiquer avec la board avec l'UART
+On peut via le bale micro usb STLink V2/1
+voir les port connecté : ls /dev/ttyACM*
+s'y connecter : minicom -D /dev/ttyACM0
+
+quelques commandes : 
+	cat /etc/build : Printing distribution specific information 
+	uname -a : Printing system information :
+	cat /proc/version : Printing Linux kernel and GCC versions 
+	df -h : Printing the amount of disk space available on all mounted file systems 
+	ssh connection (only if Ethernet cable is connected) : 
+		ip addr show eth0 : avoir l'ip
+		ssh root@xx.xx.xx.xx : s'y connecter 
+		
+
+netdata provides all monitoring information on a web page accessible at the IP address of the board. (https://www.netdata.cloud/)
+		
+On peut se connecter à la carte en wifi en activant le hotspot dans l'onglet netdata sur l'IHM
+On se connecte ensuite au reseau avec le ssid ST... et le mdp stm32mp1
+
+On peut ensuite accéder via http://192.168.72.1:19999
+
+On va en fait compiler sur le pc et l'exécuter sur le noyau linux de la carte
+
+On installe le sdk et d'autres outils 
+Each time you wish to use the SDK in a new shell session, you need to source the environment setup script e.g.
+ $ . /home/nathan/STM32MPU_workspace/STM32MP15-Ecosystem-v2.1.0/Developer-Package/SDK/environment-setup-cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi
+
+pour voir si l'environnement est correctement configuré : echo $ARCH
+la toolchain : echo $CROSS_COMPILE
+version du compilateur : $CC --version
+verifier la version du sdk : echo $OECORE_SDK_VERSION
+
+exemple pour hello world : cd $HOME/STM32MPU_workspace/STM32MP15-Ecosystem-v2.1.0/Developer-Package/stm32mp1-openstlinux-20-11-12/sources/gtk_hello_world_example
+
+INSTALLATION SDK /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+en.SDK-x86_64-stm32mp1-openstlinux-5-4-dunfell-mp1-20-11-12.tar.xz
+J'installe le SDK ici :/opt/st/stm32mp1/3.1-openstlinux-5.4-dunfell-mp1-20-11-12
+			/opt/st/stm32mp1/3.1-openstlinux-5.4-dunfell-mp1-20-11-12/environment-setup-cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi
+			
+on le run :
+	source /opt/st/stm32mp1/3.1-openstlinux-5.4-dunfell-mp1-20-11-12/environment-setup-cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi
+	
+Vidéo suivie : https://www.youtube.com/watch?v=ARvKOEb482M&list=PLnMKNibPkDnFeV4sBarnsAtFTg7h6V-9_&index=5
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Vidéo suivie : https://www.youtube.com/watch?v=ARvKOEb482M&list=PLnMKNibPkDnFeV4sBarnsAtFTg7h6V-9_&index=5
+
+- ou suit ce qu'il dit, on met le binaire de helloworld sur la clé usb
+- on branche la clé sub à la carte
+- on monte la clé mount /dev/sda1 /mnt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

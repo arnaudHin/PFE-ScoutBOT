@@ -1,0 +1,45 @@
+%--------------------------
+% ETAT DE L'ART
+%--------------------------
+
+% Macro
+\newcommand{\VersionDocument}{1.00}
+\newcommand{\RevisionDocument}{1}
+\newcommand{\pathAutre}{Images/Autre}
+\newcommand{\pathTextes}{Textes/}
+
+% Document
+\documentclass[paper=a4,fontsize=11pt]{scrartcl}
+
+\include{\pathTextes/packages}
+
+\title{Recherches}
+\author{PROSE - A1}
+\date{\today}
+
+\begin{document}
+
+\include{\pathTextes/pagedegarde}
+\include{TableVersions}
+
+\renewcommand{\contentsname}{Sommaire}
+\tableofcontents % Table des matières.
+\newpage
+\listoffigures % Table des figures.
+\listoftables % Table des tables
+
+\include{\pathTextes/introduction}
+\include{\pathTextes/glossaire}
+\include{\pathTextes/enjeux}
+\include{\pathTextes/domainedutilisation}
+\include{\pathTextes/contexte}
+\include{\pathTextes/technologies}
+\include{\pathTextes/methodes}
+\include{\pathTextes/choix}
+\include{\pathTextes/conclusion}
+\include{\pathTextes/sources}
+
+
+\end{document}
+
+% --- END ---

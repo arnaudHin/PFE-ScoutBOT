@@ -1,0 +1,48 @@
+%--------------
+% Page de garde
+%--------------
+
+
+\makeatletter
+    \begin{titlepage}
+    \centering
+        \begin{figure}[H]
+            \begin{minipage}[c]{.46\linewidth}
+                \centering
+                \includegraphics[width=0.8\textwidth]{\pathAutre/Logo_ESEO.jpg}
+            \end{minipage}
+            \hfill%
+            \begin{minipage}[c]{.46\linewidth}
+                \centering
+                \includegraphics[width=0.5\textwidth]{\pathAutre/Logo_STM.png}
+            \end{minipage}
+        \end{figure}
+
+
+\vspace{1cm}
+\vfill
+        {\Huge \textbf{\@title}} \\
+        \vspace{1em}
+        {\Large \textsl{État de l'art technologique : Indoor Positionning}}\\
+    \vspace{4em}
+    \begin{flushleft}
+        {\LARGE \textsc{Version : \VersionDocument\\
+                     Révision : \RevisionDocument\\
+                     État : Version finale\\}
+            \vspace{2em}    
+        \@author\\
+        Responsable du document : Antoine ROBERT\       
+        }        
+        
+    \end{flushleft}
+
+
+\begin{flushleft}
+AVERTISSEMENT : Le présent document est la propriété de l’équipe PROSE A1 dans le cadre d’un projet à but pédagogique. Il ne peut pas être diffusé ou recopié sans une autorisation écrite préalable, et en notifiant l’origine de ce document. Aucune information concernant le contenu de ce document ne saurait être communiquée à une personne extérieure à l’activité pédagogique de ce projet sans une autorisation écrite préalable.
+\end{flushleft}
+        
+\vfill
+        {\Large \textsc{\copyright Groupe - A1, Tous droits réservés}} \\
+    \end{titlepage}
+\makeatother
+

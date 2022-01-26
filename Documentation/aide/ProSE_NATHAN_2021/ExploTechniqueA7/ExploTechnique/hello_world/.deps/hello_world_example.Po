@@ -1,0 +1,106 @@
+hello_world_example.o: hello_world_example.c \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/stdc-predef.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/stdio.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/libc-header-start.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/features.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/sys/cdefs.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/wordsize.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/wordsize-32.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/long-double.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/long-double-32.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/gnu/stubs.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/gnu/stubs-32.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/gnu/stubs-hard.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/x86_64-ostl_sdk-linux/usr/lib/arm-ostl-linux-gnueabi/gcc/arm-ostl-linux-gnueabi/9.3.0/include/stddef.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/x86_64-ostl_sdk-linux/usr/lib/arm-ostl-linux-gnueabi/gcc/arm-ostl-linux-gnueabi/9.3.0/include/stdarg.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/timesize.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/typesizes.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/typesizes-32.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/time64.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__fpos_t.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__mbstate_t.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__fpos64_t.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__FILE.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/FILE.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/struct_FILE.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/stdio_lim.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/sys_errlist.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/stdio.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/unistd.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/posix_opt.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/environments.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/confname.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/getopt_posix.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/getopt_core.h \
+ /home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/unistd_ext.h
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/stdc-predef.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/stdio.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/libc-header-start.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/features.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/sys/cdefs.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/wordsize.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/wordsize-32.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/long-double.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/long-double-32.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/gnu/stubs.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/gnu/stubs-32.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/gnu/stubs-hard.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/x86_64-ostl_sdk-linux/usr/lib/arm-ostl-linux-gnueabi/gcc/arm-ostl-linux-gnueabi/9.3.0/include/stddef.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/x86_64-ostl_sdk-linux/usr/lib/arm-ostl-linux-gnueabi/gcc/arm-ostl-linux-gnueabi/9.3.0/include/stdarg.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/timesize.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/typesizes.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/typesizes-32.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/time64.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__fpos_t.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__mbstate_t.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__fpos64_t.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/__FILE.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/FILE.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/types/struct_FILE.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/stdio_lim.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/sys_errlist.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/stdio.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/unistd.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/posix_opt.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/environments.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/confname.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/getopt_posix.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/getopt_core.h:
+
+/home/nisrine/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/SDK/sysroots/cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi/usr/include/bits/unistd_ext.h:
