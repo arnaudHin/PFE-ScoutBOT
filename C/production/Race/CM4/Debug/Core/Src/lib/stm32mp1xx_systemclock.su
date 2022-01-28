@@ -1,2 +1,0 @@
-stm32mp1xx_systemclock.c:16:6:SystemClock_Config	336	static
-stm32mp1xx_systemclock.c:99:6:PeriphCommonClock_Config	352	static

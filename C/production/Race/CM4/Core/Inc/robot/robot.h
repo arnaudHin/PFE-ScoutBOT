@@ -10,6 +10,7 @@
 
 
 #include "utils.h"
+#include "commun.h"
 
 typedef enum{
 	E_STOP=0,
@@ -20,17 +21,8 @@ typedef enum{
 }Robot_event_e;
 
 
-typedef enum{
-	STOP=0,
-	FORWARD,
-	BACKWARD,
-	LEFT,
-	RIGHT,
-	NB_DIRECTION
-}Robot_direction_e;
-
 typedef struct{
-	Robot_direction_e directionToPerform;
+	Direction_e directionToPerform;
 	Robot_event_e event;
 }Robot_mq_t;
 

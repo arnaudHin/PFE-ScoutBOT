@@ -19,17 +19,21 @@
 /*********************************************************************************/
 
 
-extern void intercore_protocole_decode_message(uint8_t * bufferToDecode, Pilot_message_r * message){
+extern void intercore_protocole_decode_message(uint8_t * bufferToDecode, Message_with_race_t * message){
 
 	// Get values
 	uint16_t counterMemory = 0;
-	memcpy(&message->start_flag, (bufferToDecode + counterMemory), FLAG_SIZE); 		//  START_FLAG
+	memcpy(&(message->command), (bufferToDecode + counterMemory), FLAG_SIZE); 		//  START_FLAG
 	counterMemory += FLAG_SIZE;
-	memcpy(&message->slave_addr, (bufferToDecode + counterMemory), SLAVE_ADDR_SIZE);	//  SLAVE_ADDR
+
+	uint16_t size;
+	memcpy(&size, (bufferToDecode + counterMemory), SLAVE_ADDR_SIZE);	//  SLAVE_ADDR
+	message->sizeData = size;
 	counterMemory += SLAVE_ADDR_SIZE;
-	memcpy(&message->order_r, (bufferToDecode + counterMemory), CMD_SIZE);				//  CMD
+
+
+	memcpy(&(message->data.direction), (bufferToDecode + counterMemory), 1);				//  CMD
 	counterMemory += CMD_SIZE;
-	memcpy(&message->max_data, (bufferToDecode + counterMemory), MAX_DATA);
 
 }
 

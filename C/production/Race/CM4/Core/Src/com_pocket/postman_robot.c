@@ -10,6 +10,7 @@
 #include <com_pocket/dispatcher_robot.h>
 #include <com_pocket/intercore_protocol.h>
 #include <utils.h>
+#include "commun.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +23,7 @@
 /*********************************************************************************/
 
 static __IO FlagStatus flag = RESET;
-Pilot_message_r * pMessageFromPilot;
+Message_with_race_t * pMessageFromPocket;
 uint8_t buffer_read[MAX_RECEPTION_VUART_SIZE];
 
 
@@ -32,7 +33,6 @@ uint8_t buffer_read[MAX_RECEPTION_VUART_SIZE];
 /*********************************************************************************/
 
 static void postman_robot_read_message();
-static void postman_dispatch (unsigned char * buffer_read, Pilot_message_r * pilot_message );
 
 
 /*********************************************************************************/
@@ -41,10 +41,10 @@ static void postman_dispatch (unsigned char * buffer_read, Pilot_message_r * pil
 
 extern ScoutBOT_Status_e postman_robot_init(){
 
-	/* Init pMessageFromPilot */
-	pMessageFromPilot = NULL;
-	pMessageFromPilot = calloc(1, sizeof(Pilot_message_r) );
-	if(pMessageFromPilot == NULL){
+	/* Init pMessageFromPocket */
+	pMessageFromPocket = NULL;
+	pMessageFromPocket = calloc(1, sizeof(Message_with_race_t) );
+	if(pMessageFromPocket == NULL){
 		return ERROR_BOT;
 	}
 
@@ -58,8 +58,8 @@ extern ScoutBOT_Status_e postman_robot_init(){
 
 extern ScoutBOT_Status_e postman_robot_free(){
 
-	/* free pMessageFromPilot */
-	free(pMessageFromPilot);
+	/* free pMessageFromPocket */
+	free(pMessageFromPocket);
 
 	return OK_BOT;
 }
@@ -75,9 +75,9 @@ extern void postman_robot_run(){
 
 	postman_robot_read_message();
 	set_RX_msg_0(flag);
-	intercore_protocole_decode_message(buffer_read, pMessageFromPilot);
+	intercore_protocole_decode_message(buffer_read, pMessageFromPocket);
 
-	dispatcher_robot_set_msg(*pMessageFromPilot);
+	dispatcher_robot_set_msg(*pMessageFromPocket);
 
 }
 
@@ -91,7 +91,6 @@ static void postman_robot_read_message(){
 	printf("Postman read \n");
 
 	memcpy(buffer_read, VIRT_UART_read_message_0(), MAX_RECEPTION_VUART_SIZE);
-
 }
 
 

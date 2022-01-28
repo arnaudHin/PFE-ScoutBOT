@@ -1,5 +1,0 @@
-mbox_ipcc.c:74:5:MAILBOX_Init	8	static
-mbox_ipcc.c:104:5:MAILBOX_Poll	24	static
-mbox_ipcc.c:154:5:MAILBOX_Notify	24	static
-mbox_ipcc.c:200:6:IPCC_channel1_callback	24	static
-mbox_ipcc.c:223:6:IPCC_channel2_callback	24	static

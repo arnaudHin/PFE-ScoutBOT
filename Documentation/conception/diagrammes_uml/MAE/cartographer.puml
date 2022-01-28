@@ -1,0 +1,24 @@
+
+
+@startuml cartographer
+
+[*] --> Idle : cartographer_start() / 
+
+Idle --> Running : E_START_CARTO_C / \n mapper_start() \n adminPositioning_start();
+
+Running -l-> SetLidarData : E_UPDATE_LIDAR_DATA / \n updateLidarData();
+SetLidarData --> Running : / ack_setLidar();
+
+Running --> SetPositionData : E_UPDATE_POSITION_DATA / \n updatePositionData();
+SetPositionData --> Running : / ack_setPositioning();
+
+
+Running --> Ask4ata : E_ASK_4_DATA / \n proxy_map_viewer_send_data();
+Ask4ata --> Running
+
+Running --up--> Death : E_STOP_CARTO / \n cartographer_stop() \n signal_mapper_stop() \n signal_adminPositioning_stop();
+
+Death -up-> [*]
+
+@enduml
+

@@ -14,12 +14,13 @@
 
 #include "com_pocket/postman_robot.h"
 #include "stdlib.h"
+#include "commun.h"
 
 
 
 
 #define FLAG_SIZE (1)
-#define SLAVE_ADDR_SIZE (1)
+#define SLAVE_ADDR_SIZE (2)
 #define MAX_DATA  (1)
 #define CMD_SIZE  (1)
 #define SIZE_DATA (4)
@@ -28,7 +29,28 @@
 
 
 
-extern void intercore_protocole_decode_message(uint8_t * bufferToDecode, Pilot_message_r * message);
+typedef enum{
+	TRY_DIR=1
+}CMD_from_pocket_e;
+
+
+typedef struct{
+	Direction_e direction;
+}DATA_from_pocket_t;
+
+typedef struct{
+	int a;
+}DATA_to_pocket_t;
+
+typedef struct{
+	CMD_from_pocket_e command;
+	uint16_t sizeData;
+	DATA_from_pocket_t data;
+}Message_with_race_t;
+
+
+
+extern void intercore_protocole_decode_message(uint8_t * bufferToDecode, Message_with_race_t * message);
 
 
 

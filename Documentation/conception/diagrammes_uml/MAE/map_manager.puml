@@ -1,0 +1,13 @@
+@startuml
+skinparam shadowing false
+[*] --> Active
+Active --> EndOfCalibration : stopCalibration();
+EndOfCalibration --> Active : startCalibration();
+state Active{
+[*] --> Idle  
+Idle --> WaitingForPositions : startCalibration(); / requestStartCalibrationSuccessfull();\n  askPositions(); 
+WaitingForPositions --> IsSendingToMapPositions : setMapPositions(); /requestPositionsReceivedSuccessfull();
+IsSendingToMapPositions --> WaitingForPositions : after(1S);/ askPositions();
+}
+
+@enduml

@@ -1,5 +1,0 @@
-core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
-core_cm4.h:1724:22:__NVIC_DisableIRQ	16	static,ignoring_inline_asm
-stm32mp1xx_uart.c:38:6:UART_init	24	static
-stm32mp1xx_uart.c:83:1:__io_putchar	16	static
-stm32mp1xx_uart.c:92:6:UART_puts	32	static

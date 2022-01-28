@@ -10,10 +10,11 @@
 
 #include "stm32mp1xx.h"
 #include "com_pocket/postman_robot.h"
+#include "com_pocket/intercore_protocol.h"
 #include "lib/MOTORS.h"
 
 
-extern void dispatcher_robot_set_msg(Pilot_message_r msg);
+extern void dispatcher_robot_set_msg(Message_with_race_t msg);
 
 
 #endif /* INC_LIB_COM_POCKET_DISPATCHER_ROBOT_H_ */

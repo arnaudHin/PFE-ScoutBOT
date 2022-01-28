@@ -1,3 +1,0 @@
-stm32mp1xx_hal_msp.c:64:6:HAL_MspInit	8	static
-stm32mp1xx_hal_msp.c:102:6:HAL_IPCC_MspInit	16	static
-stm32mp1xx_hal_msp.c:129:6:HAL_IPCC_MspDeInit	16	static

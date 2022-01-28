@@ -74,21 +74,29 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	HAL_Init();
 
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
 
-  if(IS_ENGINEERING_BOOT_MODE())
-  {
-    /* Configure the system clock */
-    SystemClock_Config();
-  }
+	if(IS_ENGINEERING_BOOT_MODE())
+	{
+	/* Configure the system clock */
+	SystemClock_Config();
+	}
 
-  __HAL_RCC_HSEM_CLK_ENABLE();
-  MX_IPCC_Init();
-  MX_OPENAMP_Init(RPMSG_REMOTE, NULL);
+	if(IS_ENGINEERING_BOOT_MODE())
+	{
+		/* Configure the peripherals common clocks */
+		PeriphCommonClock_Config();
+	}
+	else{
+		__HAL_RCC_HSEM_CLK_ENABLE();
+		MX_IPCC_Init();
+		MX_OPENAMP_Init(RPMSG_REMOTE, NULL);
+	}
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -96,16 +104,33 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	GPIO_Init();
 
-	#if USE_UART7
+	#if USE_PRINTF_UART7
 	  UART_init(UART7_ID,UART7_BAUDRATE);
 	#endif
 
 	#if USE_UART3
 	  UART_init(UART3_ID,UART3_BAUDRATE);
 	#endif
+
   /* USER CODE END 2 */
+
+	#if USE_MOTORS
 	  TIMER_INIT();
-	  TIMER4_RUN();
+	  TIMER4_STOP();
+	#endif
+
+
+    #if USE_MPU6050
+	  MPU6050_Init();
+    #endif
+
+	#if USE_BATTERY
+	  BSP_GPIO_PinCfg(BAT_ENABLE, GPIO_MODE_OUTPUT_PP, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH, 0);
+	  ADC_Init(BAT_ADC);
+	#endif
+
+
+
 
 
   /* USER CODE BEGIN SysInit */
@@ -114,22 +139,37 @@ int main(void)
 											((HAL_GetHalVersion() >> 16) & 0x000000FF),
 											((HAL_GetHalVersion() >> 8) & 0x000000FF));
 
-  printf("Virtual UART0 OpenAMP-rpmsg channel creation\r\n");
+	if(IS_ENGINEERING_BOOT_MODE())
+	{
+		printf("No Virtual in ENGINEERING_MODE");
+	}else{
+		printf("Virtual UART0 OpenAMP-rpmsg channel creation\r\n");
+		VIRT_UART_Init_0();
+	}
 
-  VIRT_UART_Init_0();
+	if(IS_ENGINEERING_BOOT_MODE())
+	{
+		PIN_On(BAT_ENABLE);
 
-  postman_robot_init();
-  robot_init();
-  robot_start();
+	}else{
+		postman_robot_init();
+		robot_init();
+		robot_start();
+	}
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
   while (1){
 
-	  postman_robot_run();
-
-
+	if(IS_ENGINEERING_BOOT_MODE())
+	{
+		ON_Led(LED4_GREEN);
+	}
+	else{
+		ON_Led(LED7_ORANGE);
+		postman_robot_run();
+	}
   }
   /* USER CODE END 3 */
 }

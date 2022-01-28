@@ -1,0 +1,5 @@
+Name: cmocka
+Description: The cmocka unit testing library
+Version: 1.1.5
+Libs: -L/home/montetju/Documents/Logiciels/CMocka/lib -lcmocka
+Cflags: -I/home/montetju/Documents/Logiciels/CMocka/include
